@@ -35,7 +35,7 @@
 
     <ion-content :class="{ 'dark-theme': isDark, 'white-theme': !isDark }" @ionScroll="saveScrollPosition"
       ref="scrollContainer" scroll-events="true">
-      <div>
+      <span>
         <template v-if="surah">
           <span v-for="ayah in surah.ayahs" :key="ayah.numberInSurah">
             <span :style="{
@@ -45,15 +45,29 @@
             }">
               {{ ayah.text }}
             </span>
-            <span class="px-4" :style="{ color: 'gray', fontSize: fontSize - 2 + 'px' }">
-              {{ ayah.numberInSurah }}
+            <span class="relative mx-1">
+              <span class="relative inline-flex items-center justify-center" :style="{
+                minHeight: fontSize / 1.2 + 'px',
+                minWidth: fontSize / 1.2 + 'px',
+                backgroundImage: 'url(/assets/end_ayah.png)',
+                backgroundSize: 'contain',
+                backgroundRepeat: 'no-repeat',
+                backgroundPosition: 'center',
+                fontSize: fontSize / 2.5 + 'px',
+                width: fontSize / 1.2 + 'px',
+                height: fontSize / 1.2 + 'px',
+                color: 'gray'
+              }">
+                {{ ayah.numberInSurah }}
+              </span>
+
             </span>
           </span>
         </template>
         <template v-else>
           <p class="ion-padding">جارٍ تحميل السورة...</p>
         </template>
-      </div>
+      </span>
     </ion-content>
   </ion-page>
 </template>
