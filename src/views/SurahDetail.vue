@@ -45,11 +45,12 @@
             }">
               {{ ayah.text }}
             </span>
-            <span class="relative mx-1">
+            <span class="relative mx-1" @click="toggleAyah(surah.value?.number, ayah.numberInSurah)"
+              @contextmenu.prevent="toggleAyah(surah.value.number, ayah.numberInSurah)">
               <span class="relative inline-flex items-center justify-center" :style="{
                 minHeight: fontSize / 1.012 + 'px',
                 minWidth: fontSize / 1.012 + 'px',
-                backgroundImage: 'url(/assets/end_ayah.png)',
+                backgroundImage: `url(/assets/${selectedAyahs[surah.value?.number] === ayah.numberInSurah ? 'selected_ayah' : 'end_ayah'}.svg)`,
                 backgroundSize: 'contain',
                 backgroundRepeat: 'no-repeat',
                 backgroundPosition: 'center',
@@ -86,6 +87,7 @@ import {
 } from 'ionicons/icons'
 import { IonContent, IonHeader, IonPage, IonIcon, IonItem, IonTitle, IonSegment, IonSegmentButton, IonToolbar, IonButtons, IonButton, IonList } from "@ionic/vue";
 const route = useRoute()
+const selectedAyahs = ref({}) // { '1': 5, '2': 12 } ← سورة 1 الآية 5 محددة، سورة 2 الآية 12
 
 const surah = ref(null)
 const fontSize = ref(22)
@@ -114,7 +116,19 @@ async function saveScrollPosition() {
     localStorage.setItem('scrollOffset', scrollTop.toString())
   }
 }
+function toggleAyah(surahNumber, ayahNumber) {
+  const current = selectedAyahs.value[surahNumber]
 
+  if (current === ayahNumber) {
+    // إلغاء التحديد
+    delete selectedAyahs.value[surahNumber]
+  } else {
+    // تحديد جديد
+    selectedAyahs.value[surahNumber] = ayahNumber
+  }
+
+  localStorage.setItem('selectedAyahs', JSON.stringify(selectedAyahs.value))
+}
 
 onMounted(async () => {
   const res = await fetch('/assets/quran.json')
@@ -125,6 +139,11 @@ onMounted(async () => {
   fontSize.value = parseFloat(localStorage.getItem('fontSize')) || 22
   fontFamily.value = localStorage.getItem('fontFamily') || 'Uthmani'
   isDark.value = localStorage.getItem('isDark') === 'true'
+
+  const stored = localStorage.getItem('selectedAyahs')
+  if (stored) {
+    selectedAyahs.value = JSON.parse(stored)
+  }
 
   await nextTick()
 
