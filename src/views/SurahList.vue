@@ -33,7 +33,8 @@
       </ion-toolbar>
     </ion-header>
 
-    <ion-content :class="{ 'dark-theme': isDark, 'white-theme': !isDark }" ref="listContainer" scroll-events="true">
+    <ion-content :class="{ 'dark-theme': isDark, 'white-theme': !isDark }" ref="mainScrollContainer"
+      scroll-events=" true" @ionScroll="saveMainScrollPosition">
       <ion-list v-if="surahs.length">
         <ion-item v-for="surah in surahs" :key="surah.number"
           :style="{ fontSize: fontSize + 'px', fontFamily: fontFamily, color: isDark ? 'white' : 'black' }"
@@ -63,7 +64,12 @@ import {
 const isDark = ref(false)
 const surahs = ref([])
 const router = useRouter()
-
+async function saveMainScrollPosition() {
+  const el = mainScrollContainer.value?.$el || mainScrollContainer.value
+  const scrollEl = await el?.getScrollElement?.()
+  const scrollTop = scrollEl?.scrollTop || 0
+  localStorage.setItem('mainScrollOffset', scrollTop.toString())
+}
 const initData = async () => {
   const res = await fetch('/assets/quran.json');
   const data = await res.json();
@@ -89,34 +95,28 @@ import { App } from '@capacitor/app';
 
 const lastSurah = ref(null)
 
-const listContainer = ref(null)
-
-async function scrollToLastSurah() {
-  if (!lastSurah.value) return
-
-  await nextTick()
-  const scrollEl = await listContainer.value?.getScrollElement?.()
-  const target = document.getElementById('surah-' + lastSurah.value)
-  if (scrollEl && target) {
-    const rect = target.getBoundingClientRect()
-    const contentRect = scrollEl.getBoundingClientRect()
-    const offset = target.offsetTop - contentRect.height / 2 + rect.height / 2
-    scrollEl.scrollTo({ top: offset, behavior: 'smooth' })
-  }
-}
+const mainScrollContainer = ref(null)
 
 onMounted(async () => {
   await initData();
   const stored = localStorage.getItem('lastSurah')
   if (stored.length > 0) {
     lastSurah.value = parseInt(stored)
-    console.log('SurahList mounted', stored)
   }
 
-  // مرجِع السكرول
-  nextTick(() => {
-    scrollToLastSurah()
-  })
+  await nextTick();
+
+  const savedMainOffset = localStorage.getItem('mainScrollOffset')
+
+  setTimeout(async () => {
+    const el = mainScrollContainer.value?.$el || mainScrollContainer.value;
+    const scrollEl = await el?.getScrollElement?.();
+    if (scrollEl && savedMainOffset) {
+      scrollEl.scrollTo({ top: Number(savedMainOffset), behavior: 'auto' });
+    } else {
+      console.warn("scrollEl not found or no offset");
+    }
+  }, 300);
 })
 
 const goToSurah = (surah) => {
