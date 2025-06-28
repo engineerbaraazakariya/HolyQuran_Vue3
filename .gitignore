@@ -7,3 +7,6 @@ dist
 *.env
 *.tmp
 *:Zone.Identifier
+android/app/version.properties
+keystore/baraazakariya.keystore
+keystore/keystore.properties
