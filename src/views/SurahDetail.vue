@@ -35,17 +35,17 @@
 
     <ion-content :class="{ 'dark-theme': isDark, 'white-theme': !isDark }" @ionScroll="saveScrollPosition"
       ref="scrollContainer" scroll-events="true">
-      <span>
+      <span class="flex flex-wrap justify-around px-2">
         <template v-if="surah">
-          <span v-for="ayah in surah.ayahs" :key="ayah.numberInSurah">
-            <span :style="{
+          <template v-for="ayah in surah.ayahs" :key="ayah.numberInSurah">
+            <span v-for="word in ayah.text.split(' ')" :key="word" :style="{
               fontSize: fontSize + 'px',
               fontFamily: fontFamily,
               color: isDark ? 'white' : 'black'
             }">
-              {{ ayah.text }}
+              {{ word }}&nbsp;
             </span>
-            <span class="relative mx-1" @click="toggleAyah(surah.value?.number, ayah.numberInSurah)"
+            <span class="relative mx-1 flex justify-center items-center" @click="toggleAyah(surah.value?.number, ayah.numberInSurah)"
               @contextmenu.prevent="toggleAyah(surah.value.number, ayah.numberInSurah)">
               <span class="relative inline-flex items-center justify-center" :style="{
                 minHeight: fontSize / 1.012 + 'px',
@@ -64,7 +64,7 @@
               </span>
 
             </span>
-          </span>
+          </template>
         </template>
         <template v-else>
           <p class="ion-padding">جارٍ تحميل السورة...</p>
