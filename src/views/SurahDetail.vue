@@ -16,16 +16,19 @@
           <ion-button @click="showFontMenu = !showFontMenu" title="تغيير الخط">
             <ion-icon :icon="colorPalette" />
           </ion-button>
-          <ion-button @click="goToSearch" title="بحث">
-            <ion-icon :icon="searchOutline" />
+          <ion-button router-link="/search">
+            <ion-icon slot="icon-only" :icon="searchOutline" />
           </ion-button>
         </ion-buttons>
       </ion-toolbar>
       <ion-toolbar v-if="showFontMenu">
-        <ion-segment v-model="fontFamily" @ionChange="saveFont">
-          <ion-segment-button value="UthmaniFont">عثماني</ion-segment-button>
-          <ion-segment-button value="AmiriFont">أميري</ion-segment-button>
-          <ion-segment-button value="MeQuranFont">MeQuran</ion-segment-button>
+        <ion-segment v-model="fontFamily" @ionChange="saveFont" scrollable>
+          <ion-segment-button value="Uthmani">عثماني</ion-segment-button>
+          <ion-segment-button value="Amiri">أميري</ion-segment-button>
+          <ion-segment-button value="MeQuran">مي قرآن</ion-segment-button>
+          <ion-segment-button value="DecoType">زخرفي</ion-segment-button>
+          <ion-segment-button value="Hafs">حفص</ion-segment-button>
+          <ion-segment-button value="Nabi">رقع</ion-segment-button>
         </ion-segment>
       </ion-toolbar>
     </ion-header>
@@ -40,7 +43,8 @@
           }">
             {{ ayah.text }}
           </span>
-          <span :style="{ color: 'gray', fontSize: fontSize - 2 + 'px' }"> ۝{{ ayah.numberInSurah }} </span>
+           <!-- ۝ -->
+          <span class="px-4" :style="{ color: 'gray', fontSize: fontSize - 2 + 'px' }">{{ ayah.numberInSurah }} </span>
         </span>
       </div>
     </ion-content>
@@ -58,7 +62,7 @@ import {
   colorPalette,
   searchOutline,
 } from 'ionicons/icons'
-
+import { IonContent, IonHeader, IonPage, IonIcon, IonItem, IonTitle, IonSegment, IonSegmentButton, IonToolbar, IonButtons, IonButton } from "@ionic/vue";
 const route = useRoute()
 const router = useRouter()
 
@@ -99,10 +103,6 @@ const saveFont = () => {
   localStorage.setItem('fontFamily', fontFamily.value)
 }
 
-const goToSearch = () => {
-  // لاحقاً بنعمل صفحة بحث منفصلة
-  alert('ميزة البحث قيد الإنشاء 🔍')
-}
 </script>
 
 <style scoped>

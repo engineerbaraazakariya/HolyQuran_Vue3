@@ -1,1 +1,9 @@
 node_modules
+dist
+.vscode
+.idea
+.DS_Store
+*.log
+*.env
+*.tmp
+*:Zone.Identifier
