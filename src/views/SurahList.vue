@@ -33,11 +33,12 @@
       </ion-toolbar>
     </ion-header>
 
-    <ion-content :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
+    <ion-content :class="{ 'dark-theme': isDark, 'white-theme': !isDark }" ref="listContainer" scroll-events="true">
       <ion-list v-if="surahs.length">
         <ion-item v-for="surah in surahs" :key="surah.number"
           :style="{ fontSize: fontSize + 'px', fontFamily: fontFamily, color: isDark ? 'white' : 'black' }"
-          @click="goToSurah(surah)">
+          @click="goToSurah(surah)" :id="'surah-' + surah.number"
+          :class="{ 'last-opened': lastSurah === surah.number }">
           {{ surah.name }}
         </ion-item>
       </ion-list>
@@ -48,7 +49,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { IonContent, IonHeader, IonPage, IonIcon, IonItem, IonTitle, IonSegment, IonSegmentButton, IonToolbar, IonButtons, IonButton, IonList, IonToast } from "@ionic/vue";
 import {
@@ -86,8 +87,37 @@ useBackButton(10, () => {
 import { useBackButton } from '@ionic/vue';
 import { App } from '@capacitor/app';
 
+const lastSurah = ref(null)
 
-onMounted(initData)
+const listContainer = ref(null)
+
+async function scrollToLastSurah() {
+  if (!lastSurah.value) return
+
+  await nextTick()
+  const scrollEl = await listContainer.value?.getScrollElement?.()
+  const target = document.getElementById('surah-' + lastSurah.value)
+  if (scrollEl && target) {
+    const rect = target.getBoundingClientRect()
+    const contentRect = scrollEl.getBoundingClientRect()
+    const offset = target.offsetTop - contentRect.height / 2 + rect.height / 2
+    scrollEl.scrollTo({ top: offset, behavior: 'smooth' })
+  }
+}
+
+onMounted(async () => {
+  await initData();
+  const stored = localStorage.getItem('lastSurah')
+  if (stored.length > 0) {
+    lastSurah.value = parseInt(stored)
+    console.log('SurahList mounted', stored)
+  }
+
+  // مرجِع السكرول
+  nextTick(() => {
+    scrollToLastSurah()
+  })
+})
 
 const goToSurah = (surah) => {
   router.push({ name: 'SurahDetail', params: { number: surah.number } })
@@ -119,4 +149,9 @@ const fontFamily = ref('UthmaniFont')
 const showFontMenu = ref(false)
 </script>
 
-<style scoped></style>
+<style scoped>
+.last-opened {
+  background-color: #cce7ff !important;
+  font-weight: bold;
+}
+</style>

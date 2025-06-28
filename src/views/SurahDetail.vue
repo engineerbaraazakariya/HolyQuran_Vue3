@@ -2,6 +2,9 @@
   <ion-page>
     <ion-header>
       <ion-toolbar>
+        <ion-buttons slot="start">
+          <ion-back-button defaultHref="/"></ion-back-button>
+        </ion-buttons>
         <ion-title>{{ surah?.name }}</ion-title>
         <ion-buttons slot="end">
           <ion-button @click="increaseFontSize" title="تكبير الخط">
@@ -37,6 +40,13 @@
       ref="scrollContainer" scroll-events="true">
       <span class="flex flex-wrap justify-around px-2">
         <template v-if="surah">
+          <div v-if="![1,9].includes(surah.number)" class="text-center mb-4 flex justify-center items-center w-full mt-2" :style="{
+            fontSize: fontSize + 'px',
+            fontFamily: fontFamily,
+            color: isDark ? 'white' : 'black'
+          }">
+            ﷽
+          </div>
           <template v-for="ayah in surah.ayahs" :key="ayah.numberInSurah">
             <span v-for="word in ayah.text.split(' ')" :key="word" :style="{
               fontSize: fontSize + 'px',
@@ -45,7 +55,8 @@
             }">
               {{ word }}&nbsp;
             </span>
-            <span class="relative mx-1 flex justify-center items-center" @click="toggleAyah(surah.value?.number, ayah.numberInSurah)"
+            <span class="relative mx-1 flex justify-center items-center"
+              @click="toggleAyah(surah.value?.number, ayah.numberInSurah)"
               @contextmenu.prevent="toggleAyah(surah.value.number, ayah.numberInSurah)">
               <span class="relative inline-flex items-center justify-center" :style="{
                 minHeight: fontSize / 1.012 + 'px',
@@ -85,7 +96,7 @@ import {
   colorPalette,
   searchOutline
 } from 'ionicons/icons'
-import { IonContent, IonHeader, IonPage, IonIcon, IonItem, IonTitle, IonSegment, IonSegmentButton, IonToolbar, IonButtons, IonButton, IonList } from "@ionic/vue";
+import { IonContent, IonHeader, IonPage, IonIcon, IonBackButton, IonTitle, IonSegment, IonSegmentButton, IonToolbar, IonButtons, IonButton, IonList } from "@ionic/vue";
 const route = useRoute()
 const selectedAyahs = ref({}) // { '1': 5, '2': 12 } ← سورة 1 الآية 5 محددة، سورة 2 الآية 12
 
@@ -113,6 +124,7 @@ async function saveScrollPosition() {
 
   if (surah.value) {
     localStorage.setItem('lastSurah', surah.value.number.toString())
+    console.log('Saving lastSurah:', surah.value.number)
     localStorage.setItem('scrollOffset', scrollTop.toString())
   }
 }
@@ -144,6 +156,9 @@ onMounted(async () => {
   if (stored) {
     selectedAyahs.value = JSON.parse(stored)
   }
+
+  localStorage.setItem('lastSurah', surah.value.number.toString())
+
 
   await nextTick()
 
