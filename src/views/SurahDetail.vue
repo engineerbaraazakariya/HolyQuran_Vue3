@@ -47,16 +47,17 @@
             </span>
             <span class="relative mx-1">
               <span class="relative inline-flex items-center justify-center" :style="{
-                minHeight: fontSize / 1.2 + 'px',
-                minWidth: fontSize / 1.2 + 'px',
+                minHeight: fontSize / 1.012 + 'px',
+                minWidth: fontSize / 1.012 + 'px',
                 backgroundImage: 'url(/assets/end_ayah.png)',
                 backgroundSize: 'contain',
                 backgroundRepeat: 'no-repeat',
                 backgroundPosition: 'center',
-                fontSize: fontSize / 2.5 + 'px',
+                fontSize: fontSize / 2.75 + 'px',
                 width: fontSize / 1.2 + 'px',
                 height: fontSize / 1.2 + 'px',
-                color: 'gray'
+                fontWeight: 'bold',
+                color: 'black'
               }">
                 {{ ayah.numberInSurah }}
               </span>
