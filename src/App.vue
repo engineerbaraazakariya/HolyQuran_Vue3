@@ -6,6 +6,26 @@
 
 <script setup lang="ts">
 import { IonApp, IonRouterOutlet } from '@ionic/vue';
+import { onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+onMounted(() => {
+  const lastSurah = localStorage.getItem('lastSurah')
+  const scrollOffset = localStorage.getItem('scrollOffset')
+
+  if (lastSurah) {
+    router.replace({
+      name: 'SurahDetail',
+      params: {
+        number: Number(lastSurah),
+        scrollTo: Number(scrollOffset || 0),
+      },
+    })
+  }
+})
+
+
 </script>
 
 

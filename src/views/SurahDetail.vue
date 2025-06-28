@@ -33,44 +33,65 @@
       </ion-toolbar>
     </ion-header>
 
-    <ion-content :class="{ 'dark-theme': isDark }">
-      <div v-if="surah">
-        <span v-for="ayah in surah.ayahs" :key="ayah.numberInSurah">
-          <span :style="{
-            fontSize: fontSize + 'px',
-            fontFamily: fontFamily,
-            color: isDark ? 'white' : 'black'
-          }">
-            {{ ayah.text }}
+    <ion-content :class="{ 'dark-theme': isDark }" @ionScroll="saveScrollPosition" ref="scrollContainer"
+      scroll-events="true">
+      <div>
+        <template v-if="surah">
+          <span v-for="ayah in surah.ayahs" :key="ayah.numberInSurah">
+            <span :style="{
+              fontSize: fontSize + 'px',
+              fontFamily: fontFamily,
+              color: isDark ? 'white' : 'black'
+            }">
+              {{ ayah.text }}
+            </span>
+            <span class="px-4" :style="{ color: 'gray', fontSize: fontSize - 2 + 'px' }">
+              {{ ayah.numberInSurah }}
+            </span>
           </span>
-           <!-- ۝ -->
-          <span class="px-4" :style="{ color: 'gray', fontSize: fontSize - 2 + 'px' }">{{ ayah.numberInSurah }} </span>
-        </span>
+        </template>
+        <template v-else>
+          <p class="ion-padding">جارٍ تحميل السورة...</p>
+        </template>
       </div>
     </ion-content>
   </ion-page>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { ref, onMounted, nextTick } from 'vue'
+import { useRoute } from 'vue-router'
 import {
   textOutline,
   textSharp,
   sunny,
   moon,
   colorPalette,
-  searchOutline,
+  searchOutline
 } from 'ionicons/icons'
-import { IonContent, IonHeader, IonPage, IonIcon, IonItem, IonTitle, IonSegment, IonSegmentButton, IonToolbar, IonButtons, IonButton } from "@ionic/vue";
+import { IonContent, IonHeader, IonPage, IonIcon, IonItem, IonTitle, IonSegment, IonSegmentButton, IonToolbar, IonButtons, IonButton, IonList } from "@ionic/vue";
 const route = useRoute()
-const router = useRouter()
 
 const surah = ref(null)
 const fontSize = ref(22)
-const fontFamily = ref('UthmaniFont')
+const fontFamily = ref('Uthmani')
 const isDark = ref(false)
 const showFontMenu = ref(false)
+const scrollContainer = ref(null)
+
+async function saveScrollPosition() {
+  const el = scrollContainer.value?.$el || scrollContainer.value
+  const scrollEl = await el?.getScrollElement?.()
+  const scrollTop = scrollEl?.scrollTop || 0
+
+  // console.log('Saving scroll position:', scrollTop)
+
+  if (surah.value) {
+    localStorage.setItem('lastSurah', surah.value.number.toString())
+    localStorage.setItem('scrollOffset', scrollTop.toString())
+  }
+}
+
 
 onMounted(async () => {
   const res = await fetch('/assets/quran.json')
@@ -78,31 +99,40 @@ onMounted(async () => {
   const number = parseInt(route.params.number)
   surah.value = allSurahs.find(s => s.number === number)
 
-  // Load saved settings
   fontSize.value = parseFloat(localStorage.getItem('fontSize')) || 22
-  fontFamily.value = localStorage.getItem('fontFamily') || 'UthmaniFont'
+  fontFamily.value = localStorage.getItem('fontFamily') || 'Uthmani'
   isDark.value = localStorage.getItem('isDark') === 'true'
+
+  await nextTick()
+
+
+  const savedSurah = localStorage.getItem('lastSurah')
+  const savedOffset = localStorage.getItem('scrollOffset')
+  const el = scrollContainer.value?.$el || scrollContainer.value
+  const scrollEl = await el?.getScrollElement?.()
+  if (savedSurah === surah.value.number.toString() && scrollEl) {
+    scrollEl.scrollTo({ top: Number(savedOffset), behavior: 'auto' })
+  }
 })
 
+
+
+// إعدادات المستخدم
 const increaseFontSize = () => {
   fontSize.value += 2
   localStorage.setItem('fontSize', fontSize.value)
 }
-
 const decreaseFontSize = () => {
   fontSize.value = Math.max(12, fontSize.value - 2)
   localStorage.setItem('fontSize', fontSize.value)
 }
-
 const toggleTheme = () => {
   isDark.value = !isDark.value
   localStorage.setItem('isDark', isDark.value)
 }
-
 const saveFont = () => {
   localStorage.setItem('fontFamily', fontFamily.value)
 }
-
 </script>
 
 <style scoped>

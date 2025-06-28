@@ -7,7 +7,7 @@ const routes: Array<RouteRecordRaw> = [
     redirect: '/list'
   },
   {
-    path: '/surah/:number',
+    path: '/surah/:number/:scrollTo?',
     name: 'SurahDetail',
     component: () => import('@/views/SurahDetail.vue'),
     props: route => ({

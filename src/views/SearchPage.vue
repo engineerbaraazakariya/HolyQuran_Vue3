@@ -55,7 +55,7 @@ function handleSearch() {
 
 function goToSurah(result: any) {
   router.push({
-    name: 'surah-detail',
+    name: 'SurahDetail',
     params: {
       number: result.surahNumber,
       scrollTo: result.ayahNumber
