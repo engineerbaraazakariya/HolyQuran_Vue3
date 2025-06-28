@@ -33,7 +33,7 @@
       </ion-toolbar>
     </ion-header>
 
-    <ion-content :style="{ backgroundColor: isDark ? '#333' : '#fff' }">
+    <ion-content :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
       <ion-list v-if="surahs.length">
         <ion-item v-for="surah in surahs" :key="surah.number"
           :style="{ fontSize: fontSize + 'px', fontFamily: fontFamily, color: isDark ? 'white' : 'black' }"
@@ -41,6 +41,8 @@
           {{ surah.name }}
         </ion-item>
       </ion-list>
+      <ion-toast :is-open="toastIsOpen" :message="toastMessage" :duration="2000"
+        @didDismiss="toastIsOpen = false"></ion-toast>
     </ion-content>
   </ion-page>
 </template>
@@ -70,6 +72,20 @@ const initData = async () => {
   isDark.value = JSON.parse(localStorage.getItem('isDark')) || false;
   document.documentElement.style.setProperty('--ion-background-color', isDark.value ? '#000' : '#fff');
 }
+
+let lastBackPressed = -1, toastMessage = ref(''), toastIsOpen = ref(false);
+useBackButton(10, () => {
+  if (lastBackPressed + 2000 >= Date.now()) {
+    App.exitApp();
+  } else {
+    toastIsOpen.value = true;
+    toastMessage.value = 'اضغط مرة أخرى للخروج';
+    lastBackPressed = Date.now();
+  }
+});
+import { useBackButton } from '@ionic/vue';
+import { App } from '@capacitor/app';
+
 
 onMounted(initData)
 

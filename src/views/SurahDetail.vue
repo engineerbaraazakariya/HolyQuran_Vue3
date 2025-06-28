@@ -33,8 +33,8 @@
       </ion-toolbar>
     </ion-header>
 
-    <ion-content :class="{ 'dark-theme': isDark }" @ionScroll="saveScrollPosition" ref="scrollContainer"
-      scroll-events="true">
+    <ion-content :class="{ 'dark-theme': isDark, 'white-theme': !isDark }" @ionScroll="saveScrollPosition"
+      ref="scrollContainer" scroll-events="true">
       <div>
         <template v-if="surah">
           <span v-for="ayah in surah.ayahs" :key="ayah.numberInSurah">
@@ -78,6 +78,14 @@ const fontFamily = ref('Uthmani')
 const isDark = ref(false)
 const showFontMenu = ref(false)
 const scrollContainer = ref(null)
+
+
+
+import { useBackButton } from '@ionic/vue';
+import router from '@/router';
+useBackButton(10, () => {
+  router.replace('/');
+});
 
 async function saveScrollPosition() {
   const el = scrollContainer.value?.$el || scrollContainer.value
@@ -134,10 +142,3 @@ const saveFont = () => {
   localStorage.setItem('fontFamily', fontFamily.value)
 }
 </script>
-
-<style scoped>
-.dark-theme {
-  --ion-background-color: #000;
-  --ion-text-color: #fff;
-}
-</style>

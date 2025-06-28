@@ -72,4 +72,14 @@ onMounted(() => {
   font-weight: normal;
   font-style: normal;
 }
+
+.dark-theme {
+  --ion-background-color: #000;
+  --ion-text-color: #fff;
+}
+
+.white-theme {
+  --ion-background-color: #fff;
+  --ion-text-color: #000;
+}
 </style>
