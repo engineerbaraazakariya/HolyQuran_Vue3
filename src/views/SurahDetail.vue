@@ -40,11 +40,12 @@
       ref="scrollContainer" scroll-events="true">
       <span class="flex flex-wrap justify-around px-2">
         <template v-if="surah">
-          <div v-if="![1,9].includes(surah.number)" class="text-center mb-4 flex justify-center items-center w-full mt-2" :style="{
-            fontSize: fontSize + 'px',
-            fontFamily: fontFamily,
-            color: isDark ? 'white' : 'black'
-          }">
+          <div v-if="![1, 9].includes(surah.number)"
+            class="text-center mb-4 flex justify-center items-center w-full mt-2" :style="{
+              fontSize: fontSize + 'px',
+              fontFamily: fontFamily,
+              color: isDark ? 'white' : 'black'
+            }">
             ﷽
           </div>
           <template v-for="ayah in surah.ayahs" :key="ayah.numberInSurah">
@@ -56,12 +57,12 @@
               {{ word }}&nbsp;
             </span>
             <span class="relative mx-1 flex justify-center items-center"
-              @click="toggleAyah(surah.value?.number, ayah.numberInSurah)"
-              @contextmenu.prevent="toggleAyah(surah.value.number, ayah.numberInSurah)">
+              @click="toggleAyah(surah.number, ayah.numberInSurah)"
+              @contextmenu.prevent="toggleAyah(surah.number, ayah.numberInSurah)">
               <span class="relative inline-flex items-center justify-center" :style="{
                 minHeight: fontSize / 1.012 + 'px',
                 minWidth: fontSize / 1.012 + 'px',
-                backgroundImage: `url(/assets/${selectedAyahs[surah.value?.number] === ayah.numberInSurah ? 'selected_ayah' : 'end_ayah'}.svg)`,
+                backgroundImage: `url(/assets/${selectedAyahs[surah.number] === ayah.numberInSurah ? 'selected_ayah' : 'end_ayah'}.svg)`,
                 backgroundSize: 'contain',
                 backgroundRepeat: 'no-repeat',
                 backgroundPosition: 'center',
@@ -130,6 +131,7 @@ async function saveScrollPosition() {
 }
 function toggleAyah(surahNumber, ayahNumber) {
   const current = selectedAyahs.value[surahNumber]
+  console.log('selectedAyahs.value', selectedAyahs.value);
 
   if (current === ayahNumber) {
     // إلغاء التحديد
@@ -156,6 +158,7 @@ onMounted(async () => {
   if (stored) {
     selectedAyahs.value = JSON.parse(stored)
   }
+  console.log('selectedAyahs.value', selectedAyahs.value);
 
   localStorage.setItem('lastSurah', surah.value.number.toString())
 
