@@ -63,7 +63,7 @@
               Width: '100%',
               height: fontSize / 1.2 + 'px',
               fontWeight: 'bold',
-              color: !isDark ? 'white' : 'black'
+              color: isDark ? 'white' : 'black'
             }">
               {{ surah.name }}
             </span>
