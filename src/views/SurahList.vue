@@ -101,7 +101,7 @@ const mainScrollContainer = ref(null)
 onMounted(async () => {
   await initData();
   const stored = localStorage.getItem('lastSurah')
-  if (stored.length > 0) {
+  if (stored) {
     lastSurah.value = parseInt(stored)
   }
 

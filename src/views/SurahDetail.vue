@@ -62,7 +62,7 @@
               <span class="relative inline-flex items-center justify-center" :style="{
                 minHeight: fontSize / 1.012 + 'px',
                 minWidth: fontSize / 1.012 + 'px',
-                backgroundImage: `url(/assets/${selectedAyahs[surah.number] === ayah.numberInSurah ? 'selected_ayah' : 'end_ayah'}.svg)`,
+                backgroundImage: `url(/assets/${selectedAyahs[surah.number]?.numberInSurah === ayah.numberInSurah ? 'selected_ayah' : 'end_ayah'}.svg)`,
                 backgroundSize: 'contain',
                 backgroundRepeat: 'no-repeat',
                 backgroundPosition: 'center',
@@ -99,7 +99,7 @@ import {
 } from 'ionicons/icons'
 import { IonContent, IonHeader, IonPage, IonIcon, IonBackButton, IonTitle, IonSegment, IonSegmentButton, IonToolbar, IonButtons, IonButton, IonList } from "@ionic/vue";
 const route = useRoute()
-const selectedAyahs = ref({}) // { '1': 5, '2': 12 } ← سورة 1 الآية 5 محددة، سورة 2 الآية 12
+const selectedAyahs = ref({}) // { '1': {numberInSurah:5, scrollPosition:100}, '2': {numberInSurah:10, scrollPosition:200} }
 
 const surah = ref(null)
 const fontSize = ref(22)
@@ -122,19 +122,22 @@ async function saveScrollPosition() {
   const scrollTop = scrollEl?.scrollTop || 0
 
   if (surah.value) {
-    localStorage.setItem('scrollOffset', scrollTop.toString())
+    selectedAyahs.value[surah.value.number].scrollPosition = scrollTop.toString();
+    localStorage.setItem('selectedAyahs', JSON.stringify(selectedAyahs.value))
   }
 }
 function toggleAyah(surahNumber, ayahNumber) {
-  const current = selectedAyahs.value[surahNumber]
-  console.log('selectedAyahs.value', selectedAyahs.value);
+  const current = selectedAyahs.value[surahNumber]?.numberInSurah || null
+  if (!selectedAyahs.value[surahNumber]) {
+    selectedAyahs.value[surahNumber] = { numberInSurah: null, scrollPosition: null }
+  }
 
   if (current === ayahNumber) {
     // إلغاء التحديد
     delete selectedAyahs.value[surahNumber]
   } else {
     // تحديد جديد
-    selectedAyahs.value[surahNumber] = ayahNumber
+    selectedAyahs.value[surahNumber].numberInSurah = ayahNumber
   }
 
   localStorage.setItem('selectedAyahs', JSON.stringify(selectedAyahs.value))
@@ -154,10 +157,9 @@ onMounted(async () => {
   if (stored) {
     selectedAyahs.value = JSON.parse(stored)
   }
-  console.log('selectedAyahs.value', selectedAyahs.value);
   await nextTick()
   const savedSurah = localStorage.getItem('lastSurah')
-  const savedOffset = localStorage.getItem('scrollOffset')
+  const savedOffset = selectedAyahs.value[surah.value.number]?.scrollPosition || '0'
   const el = scrollContainer.value?.$el || scrollContainer.value
   const scrollEl = await el?.getScrollElement?.()
   if (savedSurah === surah.value.number.toString() && scrollEl) {
