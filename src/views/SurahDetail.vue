@@ -47,6 +47,27 @@
       ref="scrollContainer" scroll-events="true">
       <span class="flex flex-wrap justify-around px-2">
         <template v-if="surah">
+          <div class="text-center mb-4 flex justify-center items-center w-full mt-2" :style="{
+              fontSize: fontSize + 'px',
+              fontFamily: fontFamily,
+              color: isDark ? 'white' : 'black'
+            }">
+            <span class="relative inline-flex items-center justify-center" :style="{
+              minHeight: fontSize / 1.012 + 'px',
+              minWidth: '100%',
+              backgroundImage: `url(/assets/surah_name_frame.png)`,
+              backgroundSize: 'auto',
+              backgroundRepeat: 'no-repeat',
+              backgroundPosition: 'center',
+              fontSize: fontSize + 'px',
+              Width: '100%',
+              height: fontSize / 1.2 + 'px',
+              fontWeight: 'bold',
+              color: !isDark ? 'white' : 'black'
+            }">
+              {{ surah.name }}
+            </span>
+          </div>
           <div v-if="![1, 9].includes(surah.number)"
             class="text-center mb-4 flex justify-center items-center w-full mt-2" :style="{
               fontSize: fontSize + 'px',
