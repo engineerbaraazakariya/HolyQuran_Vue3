@@ -47,12 +47,12 @@
       ref="scrollContainer" scroll-events="true">
       <span class="flex flex-wrap justify-around px-2">
         <template v-if="surah">
-          <div class="text-center mb-4 flex justify-center items-center w-full mt-2" :style="{
+          <div class="text-center mb-4 flex justify-center items-center w-full" :style="{
               fontSize: fontSize + 'px',
               fontFamily: fontFamily,
               color: isDark ? 'white' : 'black'
             }">
-            <span class="relative inline-flex items-center justify-center" :style="{
+            <span class="relative inline-flex items-center justify-center p-8" :style="{
               minHeight: fontSize / 1.012 + 'px',
               minWidth: '100%',
               backgroundImage: `url(/assets/surah_name_frame.png)`,
