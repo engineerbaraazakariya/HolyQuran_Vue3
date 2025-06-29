@@ -3,7 +3,7 @@
     <ion-header>
       <ion-toolbar>
         <ion-buttons slot="start">
-          <ion-back-button defaultHref="/"></ion-back-button>
+          <ion-back-button defaultHref="/list"></ion-back-button>
         </ion-buttons>
         <ion-title>{{ surah?.name }}</ion-title>
         <ion-buttons slot="end">
@@ -121,11 +121,7 @@ async function saveScrollPosition() {
   const scrollEl = await el?.getScrollElement?.()
   const scrollTop = scrollEl?.scrollTop || 0
 
-  // console.log('Saving scroll position:', scrollTop)
-
   if (surah.value) {
-    localStorage.setItem('lastSurah', surah.value.number.toString())
-    console.log('Saving lastSurah:', surah.value.number)
     localStorage.setItem('scrollOffset', scrollTop.toString())
   }
 }
@@ -159,13 +155,7 @@ onMounted(async () => {
     selectedAyahs.value = JSON.parse(stored)
   }
   console.log('selectedAyahs.value', selectedAyahs.value);
-
-  localStorage.setItem('lastSurah', surah.value.number.toString())
-
-
   await nextTick()
-
-
   const savedSurah = localStorage.getItem('lastSurah')
   const savedOffset = localStorage.getItem('scrollOffset')
   const el = scrollContainer.value?.$el || scrollContainer.value

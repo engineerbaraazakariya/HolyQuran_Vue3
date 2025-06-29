@@ -81,6 +81,7 @@ const initData = async () => {
 }
 
 let lastBackPressed = -1, toastMessage = ref(''), toastIsOpen = ref(false);
+
 useBackButton(10, () => {
   if (lastBackPressed + 2000 >= Date.now()) {
     App.exitApp();
@@ -120,6 +121,8 @@ onMounted(async () => {
 })
 
 const goToSurah = (surah) => {
+  lastSurah.value = surah.number
+  localStorage.setItem('lastSurah', surah.number.toString())
   router.push({ name: 'SurahDetail', params: { number: surah.number } })
 }
 
