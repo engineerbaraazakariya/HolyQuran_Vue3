@@ -1,7 +1,7 @@
 <template>
-  <ion-page>
+  <ion-page :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
     <ion-header>
-      <ion-toolbar>
+      <ion-toolbar :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
         <ion-title>القرآن الكريم</ion-title>
         <ion-buttons slot="end">
           <ion-button @click="increaseFontSize" title="تكبير الخط">
@@ -21,25 +21,32 @@
           </ion-button>
         </ion-buttons>
       </ion-toolbar>
-      <ion-toolbar v-if="showFontMenu">
-        <ion-segment v-model="fontFamily" @ionChange="saveFont" scrollable>
-          <ion-segment-button value="Uthmani">عثماني</ion-segment-button>
-          <ion-segment-button value="Amiri">أميري</ion-segment-button>
-          <ion-segment-button value="MeQuran">مي قرآن</ion-segment-button>
-          <ion-segment-button value="DecoType">زخرفي</ion-segment-button>
-          <ion-segment-button value="Hafs">حفص</ion-segment-button>
-          <ion-segment-button value="Nabi">رقع</ion-segment-button>
+      <ion-toolbar v-if="showFontMenu" :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
+        <ion-segment v-model="fontFamily" @ionChange="saveFont" scrollable
+          :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
+          <ion-segment-button :class="{ 'dark-theme': isDark, 'white-theme': !isDark }"
+            value="Uthmani">عثماني</ion-segment-button>
+          <ion-segment-button :class="{ 'dark-theme': isDark, 'white-theme': !isDark }"
+            value="Amiri">أميري</ion-segment-button>
+          <ion-segment-button :class="{ 'dark-theme': isDark, 'white-theme': !isDark }" value="MeQuran">مي
+            قرآن</ion-segment-button>
+          <ion-segment-button :class="{ 'dark-theme': isDark, 'white-theme': !isDark }"
+            value="DecoType">زخرفي</ion-segment-button>
+          <ion-segment-button :class="{ 'dark-theme': isDark, 'white-theme': !isDark }"
+            value="Hafs">حفص</ion-segment-button>
+          <ion-segment-button :class="{ 'dark-theme': isDark, 'white-theme': !isDark }"
+            value="Nabi">رقع</ion-segment-button>
         </ion-segment>
       </ion-toolbar>
     </ion-header>
 
-    <ion-content :class="{ 'dark-theme': isDark, 'white-theme': !isDark }" ref="mainScrollContainer"
-      scroll-events=" true" @ionScroll="saveMainScrollPosition">
-      <ion-list v-if="surahs.length">
+    <ion-content ref="mainScrollContainer" scroll-events=" true" @ionScroll="saveMainScrollPosition"
+      :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
+      <ion-list v-if="surahs.length" :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
         <ion-item v-for="surah in surahs" :key="surah.number"
-          :style="{ fontSize: fontSize + 'px', fontFamily: fontFamily, color: isDark ? 'white' : 'black' }"
-          @click="goToSurah(surah)" :id="'surah-' + surah.number"
-          :class="{ 'last-opened': lastSurah === surah.number }">
+          :style="{ fontSize: fontSize + 'px', fontFamily: fontFamily }" @click="goToSurah(surah)"
+          :id="'surah-' + surah.number"
+          :class="{ 'last-opened': lastSurah === surah.number, 'dark-theme': isDark, 'white-theme': !isDark }">
           {{ surah.name }}
         </ion-item>
       </ion-list>
@@ -77,7 +84,6 @@ const initData = async () => {
   fontSize.value = parseInt(localStorage.getItem('fontSize')) || 22;
   fontFamily.value = localStorage.getItem('fontFamily') || 'UthmaniFont';
   isDark.value = JSON.parse(localStorage.getItem('isDark')) || false;
-  document.documentElement.style.setProperty('--ion-background-color', isDark.value ? '#000' : '#fff');
 }
 
 let lastBackPressed = -1, toastMessage = ref(''), toastIsOpen = ref(false);

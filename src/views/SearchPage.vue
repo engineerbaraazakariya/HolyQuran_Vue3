@@ -1,27 +1,23 @@
 <template>
-  <ion-page>
-    <ion-header>
-      <ion-toolbar>
+  <ion-page :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
+    <ion-header :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
+      <ion-toolbar :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
         <ion-title>البحث في القرآن</ion-title>
       </ion-toolbar>
-      <ion-toolbar>
-        <ion-searchbar
-          v-model="searchTerm"
-          @ionInput="handleSearch"
-          placeholder="أدخل كلمة للبحث" />
+      <ion-toolbar :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
+        <ion-searchbar v-model="searchTerm" @ionInput="handleSearch" placeholder="أدخل كلمة للبحث"
+          :class="{ 'dark-theme': isDark, 'white-theme': !isDark }" />
       </ion-toolbar>
     </ion-header>
 
-    <ion-content>
-      <ion-list v-if="results.length > 0">
-        <ion-item
-          v-for="(result, index) in results"
-          :key="index"
-          button
-          @click="goToSurah(result)">
-          <ion-label>
-            <h3>{{ result.surahName }} - آية {{ result.ayahNumber }}</h3>
-            <p>{{ result.text }}</p>
+    <ion-content :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
+      <ion-list v-if="results.length > 0" :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
+        <ion-item v-for="(result, index) in results" :key="index" button @click="goToSurah(result)"
+          :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
+          <ion-label :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
+            <h3 :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">{{ result.surahName }} - آية {{
+              result.ayahNumber }}</h3>
+            <p :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">{{ result.text }}</p>
           </ion-label>
         </ion-item>
       </ion-list>
@@ -34,11 +30,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useQuranSearch } from '@/composables/useQuranSearch'
 import { useRouter } from 'vue-router'
-import { IonContent, IonHeader, IonPage, IonIcon, IonItem, IonTitle, IonSegment, IonSegmentButton, IonToolbar, IonButtons, IonButton, IonText, IonList, IonLabel, IonSearchbar } from "@ionic/vue";
-
+import { IonContent, IonHeader, IonPage, IonItem, IonTitle, IonToolbar, IonText, IonList, IonLabel, IonSearchbar } from "@ionic/vue";
+const isDark = ref(false)
 const { search } = useQuranSearch()
 const searchTerm = ref('')
 const results = ref<any[]>([])
@@ -52,6 +48,10 @@ function handleSearch() {
     results.value = []
   }
 }
+
+onMounted(() => {
+  isDark.value = localStorage.getItem('isDark') === 'true'
+})
 
 function goToSurah(result: any) {
   router.push({

@@ -1,7 +1,7 @@
 <template>
-  <ion-page>
+  <ion-page :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
     <ion-header>
-      <ion-toolbar>
+      <ion-toolbar :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
         <ion-buttons slot="start">
           <ion-back-button defaultHref="/list"></ion-back-button>
         </ion-buttons>
@@ -24,14 +24,21 @@
           </ion-button>
         </ion-buttons>
       </ion-toolbar>
-      <ion-toolbar v-if="showFontMenu">
-        <ion-segment v-model="fontFamily" @ionChange="saveFont" scrollable>
-          <ion-segment-button value="Uthmani">عثماني</ion-segment-button>
-          <ion-segment-button value="Amiri">أميري</ion-segment-button>
-          <ion-segment-button value="MeQuran">مي قرآن</ion-segment-button>
-          <ion-segment-button value="DecoType">زخرفي</ion-segment-button>
-          <ion-segment-button value="Hafs">حفص</ion-segment-button>
-          <ion-segment-button value="Nabi">رقع</ion-segment-button>
+      <ion-toolbar v-if="showFontMenu" :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
+        <ion-segment v-model="fontFamily" @ionChange="saveFont" scrollable
+          :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
+          <ion-segment-button :class="{ 'dark-theme': isDark, 'white-theme': !isDark }"
+            value="Uthmani">عثماني</ion-segment-button>
+          <ion-segment-button :class="{ 'dark-theme': isDark, 'white-theme': !isDark }"
+            value="Amiri">أميري</ion-segment-button>
+          <ion-segment-button :class="{ 'dark-theme': isDark, 'white-theme': !isDark }" value="MeQuran">مي
+            قرآن</ion-segment-button>
+          <ion-segment-button :class="{ 'dark-theme': isDark, 'white-theme': !isDark }"
+            value="DecoType">زخرفي</ion-segment-button>
+          <ion-segment-button :class="{ 'dark-theme': isDark, 'white-theme': !isDark }"
+            value="Hafs">حفص</ion-segment-button>
+          <ion-segment-button :class="{ 'dark-theme': isDark, 'white-theme': !isDark }"
+            value="Nabi">رقع</ion-segment-button>
         </ion-segment>
       </ion-toolbar>
     </ion-header>
@@ -87,7 +94,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, nextTick, toRaw } from 'vue'
+import { ref, onMounted, nextTick } from 'vue'
 import { useRoute } from 'vue-router'
 import {
   textOutline,
@@ -126,7 +133,7 @@ async function saveScrollPosition() {
       selectedAyahs.value[surah.value.number] = { selectedAyahNumber: null, scrollPosition: null }
     }
     selectedAyahs.value[surah.value.number].scrollPosition = scrollTop.toString();
-    localStorage.setItem('selectedAyahs', JSON.stringify(toRaw(selectedAyahs.value)))
+    localStorage.setItem('selectedAyahs', JSON.stringify(selectedAyahs.value))
   }
 }
 function toggleAyah(surahNumber, ayahNumber) {
@@ -141,7 +148,7 @@ function toggleAyah(surahNumber, ayahNumber) {
   } else {
     // تحديد جديد
     selectedAyahs.value[surahNumber].selectedAyahNumber = ayahNumber
-  } 
+  }
   localStorage.setItem('selectedAyahs', JSON.stringify(selectedAyahs.value))
 }
 

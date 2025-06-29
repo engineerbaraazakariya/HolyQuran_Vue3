@@ -1,5 +1,5 @@
 <template>
-  <ion-app class="!mt-4">
+  <ion-app class="!mt-8">
     <ion-router-outlet />
   </ion-app>
 </template>
@@ -74,12 +74,20 @@ onMounted(() => {
 }
 
 .dark-theme {
-  --ion-background-color: #000;
-  --ion-text-color: #fff;
+  --ion-background-color: #000 !important;
+  --background: #000 !important;
+  background: #000 !important;
+  --ion-text-color: #fff !important;
+  --color: #fff !important;
+  color: #fff !important;
 }
 
 .white-theme {
-  --ion-background-color: #fff;
-  --ion-text-color: #000;
+  --ion-background-color: #fff !important;
+  --background: #fff !important;
+  background: #fff !important;
+  --ion-text-color: #000 !important;
+  --color: #000 !important;
+  color: #000 !important;
 }
 </style>
