@@ -62,7 +62,7 @@
               <span class="relative inline-flex items-center justify-center" :style="{
                 minHeight: fontSize / 1.012 + 'px',
                 minWidth: fontSize / 1.012 + 'px',
-                backgroundImage: `url(/assets/${selectedAyahs[surah.number]?.numberInSurah === ayah.numberInSurah ? 'selected_ayah' : 'end_ayah'}.svg)`,
+                backgroundImage: `url(/assets/${selectedAyahs[surah.number]?.selectedAyahNumber === ayah.numberInSurah ? 'selected_ayah' : 'end_ayah'}.svg)`,
                 backgroundSize: 'contain',
                 backgroundRepeat: 'no-repeat',
                 backgroundPosition: 'center',
@@ -87,7 +87,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, nextTick } from 'vue'
+import { ref, onMounted, nextTick, toRaw } from 'vue'
 import { useRoute } from 'vue-router'
 import {
   textOutline,
@@ -122,14 +122,17 @@ async function saveScrollPosition() {
   const scrollTop = scrollEl?.scrollTop || 0
 
   if (surah.value) {
+    if (selectedAyahs.value[surah.value.number] === undefined) {
+      selectedAyahs.value[surah.value.number] = { selectedAyahNumber: null, scrollPosition: null }
+    }
     selectedAyahs.value[surah.value.number].scrollPosition = scrollTop.toString();
-    localStorage.setItem('selectedAyahs', JSON.stringify(selectedAyahs.value))
+    localStorage.setItem('selectedAyahs', JSON.stringify(toRaw(selectedAyahs.value)))
   }
 }
 function toggleAyah(surahNumber, ayahNumber) {
-  const current = selectedAyahs.value[surahNumber]?.numberInSurah || null
+  const current = selectedAyahs.value[surahNumber]?.selectedAyahNumber || null
   if (!selectedAyahs.value[surahNumber]) {
-    selectedAyahs.value[surahNumber] = { numberInSurah: null, scrollPosition: null }
+    selectedAyahs.value[surahNumber] = { selectedAyahNumber: null, scrollPosition: null }
   }
 
   if (current === ayahNumber) {
@@ -137,9 +140,8 @@ function toggleAyah(surahNumber, ayahNumber) {
     delete selectedAyahs.value[surahNumber]
   } else {
     // تحديد جديد
-    selectedAyahs.value[surahNumber].numberInSurah = ayahNumber
-  }
-
+    selectedAyahs.value[surahNumber].selectedAyahNumber = ayahNumber
+  } 
   localStorage.setItem('selectedAyahs', JSON.stringify(selectedAyahs.value))
 }
 
