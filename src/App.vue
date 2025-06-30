@@ -90,4 +90,15 @@ onMounted(() => {
   --color: #000 !important;
   color: #000 !important;
 }
+/* إضافة هذا في الـ <style> */
+.ltr-text {
+  direction: ltr;
+  text-align: left;
+}
+
+.rtl-text {
+  direction: rtl;
+  text-align: right;
+}
+
 </style>

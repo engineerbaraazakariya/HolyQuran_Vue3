@@ -87,8 +87,9 @@
             }">
               <span v-for="(word, index) in ayah.text.split(' ')" :key="index" :style="{
                 backgroundColor: surahVariables[surah.number]?.longPressedAyahNumber === ayah.numberInSurah ? 'pink' : 'transparent'
-              }" @mousedown="(e) => startLongPress(e, surah.number, ayah.numberInSurah)" @mouseup="stopLongPress"
-                @mouseleave="stopLongPress">
+              }" @touchstart="startLongPress($event, surah.number, ayah.numberInSurah)" @touchend="stopLongPress"
+                @touchmove="stopLongPress" @mousedown="(e) => startLongPress(e, surah.number, ayah.numberInSurah)"
+                @mouseup="stopLongPress" @mouseleave="stopLongPress">
                 {{ word }}<span v-if="index !== ayah.text.split(' ').length - 1">&nbsp;</span>
               </span>
             </span>
@@ -218,30 +219,37 @@ const longPressThreshold = 700
 const isPressing = ref(false)  // حالة الضغط المستمر
 
 function startLongPress(event, surahNumber, ayahNumber) {
-  event.preventDefault()  // منع التحديد المزعج
-  isPressing.value = true
-  popoverEvent.value = event  // حفظ حدث الماوس
+  event.preventDefault(); // لمنع التحديد غير المرغوب فيه على اللمس
+  isPressing.value = true;
+  popoverEvent.value = event; // حفظ حدث الماوس أو اللمس
 
   if (!surahVariables.value[surahNumber]) {
-    surahVariables.value[surahNumber] = { bookmarkedAyahNumber: null, scrollPosition: null }
+    surahVariables.value[surahNumber] = { bookmarkedAyahNumber: null, scrollPosition: null };
   }
 
   pressTimer.value = setTimeout(() => {
     if (isPressing.value) {
-      surahVariables.value[surahNumber].longPressedAyahNumber = ayahNumber
-      selectedSurahNumber.value = surahNumber
-      selectedAyahNumber.value = ayahNumber
-      showPopover.value = true
+      surahVariables.value[surahNumber].longPressedAyahNumber = ayahNumber;
+      selectedSurahNumber.value = surahNumber;
+      selectedAyahNumber.value = ayahNumber;
+      showPopover.value = true;
     }
-  }, longPressThreshold)
+  }, longPressThreshold);
 }
 
+// إضافة دعم لحدث اللمس
 function stopLongPress() {
-  isPressing.value = false
-  clearTimeout(pressTimer.value)
+  isPressing.value = false;
+  clearTimeout(pressTimer.value);
 }
 
-
+// أحداث اللمس
+function setupTouchEvents(ayahNumber, surahNumber) {
+  const element = document.getElementById(`ayah-${surahNumber}-${ayahNumber}`);
+  element.addEventListener("touchstart", (e) => startLongPress(e, surahNumber, ayahNumber));
+  element.addEventListener("touchend", stopLongPress);
+  element.addEventListener("touchmove", stopLongPress); // لضمان إلغاء التفاعل عند التحرك
+}
 
 
 function showOptionsMenu(surahNumber, ayahNumber) {
