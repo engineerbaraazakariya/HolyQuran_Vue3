@@ -77,41 +77,35 @@
             ﷽
           </div>
           <template v-for="ayah in surah.ayahs" :key="ayah.numberInSurah">
-            <span :style="{
+            <span v-for="(word, index) in ayah.text.split(' ')" :key="index" :style="{
               fontSize: fontSize + 'px',
               fontFamily: fontFamily,
               color: isDark ? 'white' : 'black',
-              wordSpacing: surahVariables[surah.number]?.longPressedAyahNumber === ayah.numberInSurah ? '0.25em' : 'normal',
-              backgroundColor: surahVariables[surah.number]?.longPressedAyahNumber === ayah.numberInSurah ? 'pink' : 'transparent',
-              cursor: 'default'
-            }">
-              <span v-for="(word, index) in ayah.text.split(' ')" :key="index" :style="{
-                backgroundColor: surahVariables[surah.number]?.longPressedAyahNumber === ayah.numberInSurah ? 'pink' : 'transparent'
-              }" @touchstart="startLongPress($event, surah.number, ayah.numberInSurah)" @touchend="stopLongPress"
-                @touchmove="stopLongPress" @mousedown="(e) => startLongPress(e, surah.number, ayah.numberInSurah)"
-                @mouseup="stopLongPress" @mouseleave="stopLongPress">
-                {{ word }}<span v-if="index !== ayah.text.split(' ').length - 1">&nbsp;</span>
-              </span>
+              wordSpacing: '0.25em',
+              backgroundColor: surahVariables[surah.number]?.longPressedAyahNumber === ayah.numberInSurah ? '#579758' : 'transparent',
+              cursor: 'default',
+              backgroundColor: surahVariables[surah.number]?.longPressedAyahNumber === ayah.numberInSurah ? '#579758' : 'transparent'
+            }" @touchstart="startLongPress($event, surah.number, ayah.numberInSurah)" @touchend="stopLongPress"
+              @touchmove="stopLongPress" @mousedown="(e) => startLongPress(e, surah.number, ayah.numberInSurah)"
+              @mouseup="stopLongPress" @mouseleave="stopLongPress">
+              {{ word }}<span class="!w-2 !max-w-2 !min-w-2 flex" :style="{
+                backgroundColor: surahVariables[surah.number]?.longPressedAyahNumber === ayah.numberInSurah ? '#579758' : 'transparent'
+              }" v-if="index !== ayah.text.split(' ').length - 1"></span>
             </span>
-
-            <!-- رقم الآية هنا كما هو -->
-
-            <span class="relative mx-1 flex justify-center items-center"
-              @click="toggleAyah(surah.number, ayah.numberInSurah)"
+            <span class="relative flex justify-center items-center" :style="{
+              minHeight: fontSize / 1.012 + 'px',
+              minWidth: fontSize / 1.012 + 'px',
+              backgroundImage: `url(/assets/${surahVariables[surah.number]?.bookmarkedAyahNumber === ayah.numberInSurah || surahVariables[surah.number]?.longPress ? 'bookmarked_ayah' : 'end_ayah'}.svg)`,
+              backgroundSize: 'contain',
+              backgroundRepeat: 'no-repeat',
+              backgroundPosition: 'center',
+              fontSize: fontSize / 2.75 + 'px',
+              width: fontSize / 1.2 + 'px',
+              fontWeight: 'bold',
+              color: 'black',
+            }" @click="toggleAyah(surah.number, ayah.numberInSurah)"
               @contextmenu.prevent="toggleAyah(surah.number, ayah.numberInSurah)">
-              <span class="relative inline-block items-center justify-center" :style="{
-                minHeight: fontSize / 1.012 + 'px',
-                minWidth: fontSize / 1.012 + 'px',
-                backgroundImage: `url(/assets/${surahVariables[surah.number]?.bookmarkedAyahNumber === ayah.numberInSurah || surahVariables[surah.number]?.longPress ? 'bookmarked_ayah' : 'end_ayah'}.svg)`,
-                backgroundSize: 'contain',
-                backgroundRepeat: 'no-repeat',
-                backgroundPosition: 'center',
-                fontSize: fontSize / 2.75 + 'px',
-                width: fontSize / 1.2 + 'px',
-                height: fontSize / 1.2 + 'px',
-                fontWeight: 'bold',
-                color: 'black',
-              }">
+              <span>
                 {{ ayah.numberInSurah }}
               </span>
             </span>
@@ -121,11 +115,12 @@
           <p class="ion-padding">جارٍ تحميل السورة...</p>
         </template>
       </span>
-      <IonPopover :is-open="showPopover" :event="popoverEvent" @didDismiss="showPopover = false">
+      <IonPopover :is-open="showPopover" :event="popoverEvent"
+        @didDismiss="surahVariables[selectedSurahNumber].longPressedAyahNumber = null; showPopover = false">
         <ion-list>
           <ion-item button @click="onOption('تفسير')">📖 تفسير</ion-item>
           <ion-item button @click="onOption('ترجمة')">🌐 ترجمة</ion-item>
-          <ion-item button @click="showPopover = false">❌ إلغاء</ion-item>
+          <ion-item button @click="onOption()">❌ إلغاء</ion-item>
         </ion-list>
       </IonPopover>
 
@@ -164,6 +159,10 @@ const selectedSurahNumber = ref(null)
 const selectedAyahNumber = ref(null)
 function onOption(choice) {
   showPopover.value = false
+  if (!choice) {
+    surahVariables.value[selectedSurahNumber.value].longPressedAyahNumber = null
+    return
+  }
 
   if (selectedSurahNumber.value && surahVariables.value[selectedSurahNumber.value]) {
     surahVariables.value[selectedSurahNumber.value].longPressedAyahNumber = null
