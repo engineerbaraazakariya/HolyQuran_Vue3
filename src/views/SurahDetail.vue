@@ -85,7 +85,8 @@
               backgroundColor: surahVariables[surah.number]?.longPressedAyahNumber === ayah.numberInSurah ? '#579758' : 'transparent',
               cursor: 'default',
               backgroundColor: surahVariables[surah.number]?.longPressedAyahNumber === ayah.numberInSurah ? '#579758' : 'transparent'
-            }">
+            }" @touchstart="startLongPress($event, surah.number, ayah.numberInSurah)" @touchend="stopLongPress"
+              @touchmove="stopLongPress">
               {{ word }}<span class="!w-2 !max-w-2 !min-w-2 flex" :style="{
                 backgroundColor: surahVariables[surah.number]?.longPressedAyahNumber === ayah.numberInSurah ? '#579758' : 'transparent'
               }" v-if="index !== ayah.text.split(' ').length - 1"></span>
@@ -206,7 +207,6 @@ const isPressing = ref(false)  // حالة الضغط المستمر
 const isScrolling = ref(false);  // متغير لتتبع إذا كان المستخدم يمرر
 
 function startLongPress(event, surahNumber, ayahNumber) {
-  event.preventDefault(); // منع التحديد غير المرغوب فيه
   isPressing.value = true; // بدأ الضغط الطويل
   popoverEvent.value = event;
 

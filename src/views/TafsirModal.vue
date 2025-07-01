@@ -2,7 +2,14 @@
 
 
 import { ref, computed, watch } from 'vue'
-import { IonModal, IonSelect, IonSelectOption, IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton } from '@ionic/vue';
+import { IonModal, IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon, IonSegment, IonSegmentButton } from "@ionic/vue";
+import {
+  addCircle,
+  removeCircle,
+  sunny,
+  moon,
+  colorPalette,
+} from 'ionicons/icons'
 import { onMounted } from 'vue';
 
 
@@ -97,10 +104,12 @@ const localStorageKey = computed(() =>
 )
 
 onMounted(() => {
+  isDark.value = JSON.parse(localStorage.getItem('isDark')) || false;
   // في حال كان الـ selectedFile فارغًا، قم بتعيين التفسير الافتراضي.
   if (!selectedFile.value) {
     selectedFile.value = DEFAULT_TAFSIR;
   }
+
 });
 
 // حفظ الملف المختار تلقائياً عند تغييره
@@ -120,7 +129,11 @@ const contentClass = computed(() => {
   const ltrLanguages = ['en_sahih.json', 'en_tafheem.json', 'fr_hamidullah.json', 'de_bubenheim.json', 'it_piccardo.json', 'es_navio.json', 'sv_bernstrom.json', 'pt_elhayek.json', 'nl_siregar.json', 'in_indonesian.json', 'id_indonesian.json', 'ms_basmeih.json', 'zh_jian.json', 'ru_russian.json', 'ru_kuliev.json', 'tr_diyanet.json', 'bn_bengali.json', 'ha_gumi.json', 'ta_tamil.json', 'th_thai.json', 'ml_abdulhameed.json', 'uz_sodik.json', 'bosnian.json', 'bs_korkut.json', 'so_abduh.json', 'sq_nahi.json', 'sw_barwani.json'];
 
   // إذا كانت اللغة الإنجليزية أو أي من اللغات LTR
-  return ltrLanguages.includes(selectedFile.value) ? 'ltr-text' : 'rtl-text';
+  const classTextDirection = ltrLanguages.includes(selectedFile.value) ? 'ltr-text' : 'rtl-text';
+
+  return {
+    classTextDirection,
+  };
 })
 
 
@@ -144,10 +157,36 @@ watch(() => [props.surahNumber, props.ayahNumber, props.isOpen, selectedFile.val
     }
   }
 })
+
+
+// تم تكرار الكود الخاص بالأزرار هنا
+const isDark = ref(false);
+const fontSize = ref(22);
+const fontFamily = ref('Uthmani');
+const showFontMenu = ref(false);
+
+const increaseFontSize = () => {
+  fontSize.value += 2;
+  localStorage.setItem('fontSize', fontSize.value);
+}
+
+const decreaseFontSize = () => {
+  fontSize.value = Math.max(12, fontSize.value - 2);
+  localStorage.setItem('fontSize', fontSize.value);
+}
+
+const toggleTheme = () => {
+  isDark.value = !isDark.value;
+  localStorage.setItem('isDark', isDark.value);
+}
+
+const saveFont = () => {
+  localStorage.setItem('fontFamily', fontFamily.value);
+}
 </script>
 
 <template>
-  <ion-modal :is-open="isOpen" @didDismiss="emit('close')">
+  <ion-modal :is-open="isOpen" @didDismiss="emit('close')" :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
     <ion-header>
       <ion-toolbar>
         <ion-title>
@@ -157,16 +196,39 @@ watch(() => [props.surahNumber, props.ayahNumber, props.isOpen, selectedFile.val
           <ion-button @click="emit('close')">إغلاق</ion-button>
         </ion-buttons>
       </ion-toolbar>
+
+      <!-- أزرار تكبير الخط، تصغير الخط، الوضع الليلي، تغيير الخط -->
       <ion-toolbar>
-        <ion-select v-model="selectedFile" interface="popover" placeholder="اختر ملف" :disabled="!isOpen">
-          <ion-select-option v-for="file in availableOptions" :key="file" :value="file">
-            {{ languageDisplay[file] || file.replace('.json', '') }}
-          </ion-select-option>
-        </ion-select>
+        <ion-buttons>
+          <ion-button @click="increaseFontSize" title="تكبير الخط">
+            <ion-icon :icon="addCircle" />
+          </ion-button>
+          <ion-button @click="decreaseFontSize" title="تصغير الخط">
+            <ion-icon :icon="removeCircle" />
+          </ion-button>
+          <ion-button @click="toggleTheme" title="الوضع الليلي">
+            <ion-icon :icon="isDark ? moon : sunny" />
+          </ion-button>
+          <ion-button @click="showFontMenu = !showFontMenu" title="تغيير الخط">
+            <ion-icon :icon="colorPalette" />
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+
+      <!-- في حال تغيير الخط داخل المودال -->
+      <ion-toolbar v-if="showFontMenu">
+        <ion-segment v-model="fontFamily" @ionChange="saveFont" scrollable>
+          <ion-segment-button value="Uthmani">عثماني</ion-segment-button>
+          <ion-segment-button value="Amiri">أميري</ion-segment-button>
+          <ion-segment-button value="MeQuran">مي قرآن</ion-segment-button>
+          <ion-segment-button value="DecoType">زخرفي</ion-segment-button>
+          <ion-segment-button value="Hafs">حفص</ion-segment-button>
+          <ion-segment-button value="Nabi">رقع</ion-segment-button>
+        </ion-segment>
       </ion-toolbar>
     </ion-header>
 
-    <ion-content class="ion-padding">
+    <ion-content class="ion-padding" :style="{ fontSize: fontSize + 'px', fontFamily: fontFamily }">
       <div v-if="isLoading">جارٍ التحميل...</div>
       <div v-else>
         <div :class="contentClass" v-if="props.type === 'tafsir'" v-html="content" />

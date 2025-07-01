@@ -5,10 +5,10 @@
         <ion-title>القرآن الكريم</ion-title>
         <ion-buttons slot="end">
           <ion-button @click="increaseFontSize" title="تكبير الخط">
-            <ion-icon :icon="textOutline" />
+            <ion-icon :icon="addCircle" />
           </ion-button>
           <ion-button @click="decreaseFontSize" title="تصغير الخط">
-            <ion-icon :icon="textSharp" />
+            <ion-icon :icon="removeCircle" />
           </ion-button>
           <ion-button @click="toggleTheme" title="الوضع الليلي">
             <ion-icon :icon="isDark ? moon : sunny" />
@@ -61,8 +61,8 @@ import { ref, onMounted, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { IonContent, IonHeader, IonPage, IonIcon, IonItem, IonTitle, IonSegment, IonSegmentButton, IonToolbar, IonButtons, IonButton, IonList, IonToast } from "@ionic/vue";
 import {
-  textOutline,
-  textSharp,
+  addCircle,
+  removeCircle,
   sunny,
   moon,
   colorPalette,
