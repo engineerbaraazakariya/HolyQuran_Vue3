@@ -8,10 +8,10 @@
         <ion-title>{{ surah?.name }}</ion-title>
         <ion-buttons slot="end">
           <ion-button @click="increaseFontSize" title="تكبير الخط">
-            <ion-icon :icon="textOutline" />
+            <ion-icon :icon="addCircle" />
           </ion-button>
           <ion-button @click="decreaseFontSize" title="تصغير الخط">
-            <ion-icon :icon="textSharp" />
+            <ion-icon :icon="removeCircle" />
           </ion-button>
           <ion-button @click="toggleTheme" title="الوضع الليلي">
             <ion-icon :icon="isDark ? moon : sunny" />
@@ -44,7 +44,7 @@
     </ion-header>
 
     <ion-content :class="{ 'dark-theme': isDark, 'white-theme': !isDark }" @ionScroll="saveScrollPosition"
-      ref="scrollContainer" scroll-events="true">
+      ref="scrollContainer" scroll-events="true" style="overflow-y: auto;">
       <span class="flex flex-wrap justify-around px-2">
         <template v-if="surah">
           <div class="text-center mb-4 flex justify-center items-center w-full" :style="{
@@ -85,9 +85,7 @@
               backgroundColor: surahVariables[surah.number]?.longPressedAyahNumber === ayah.numberInSurah ? '#579758' : 'transparent',
               cursor: 'default',
               backgroundColor: surahVariables[surah.number]?.longPressedAyahNumber === ayah.numberInSurah ? '#579758' : 'transparent'
-            }" @touchstart="startLongPress($event, surah.number, ayah.numberInSurah)" @touchend="stopLongPress"
-              @touchmove="stopLongPress" @mousedown="(e) => startLongPress(e, surah.number, ayah.numberInSurah)"
-              @mouseup="stopLongPress" @mouseleave="stopLongPress">
+            }">
               {{ word }}<span class="!w-2 !max-w-2 !min-w-2 flex" :style="{
                 backgroundColor: surahVariables[surah.number]?.longPressedAyahNumber === ayah.numberInSurah ? '#579758' : 'transparent'
               }" v-if="index !== ayah.text.split(' ').length - 1"></span>
@@ -139,19 +137,6 @@ const modalOpen = ref(false)
 const selectedSurah = ref(null)
 const selectedAyah = ref(null)
 
-// function showOptionsMenu(surahNumber, ayahNumber) {
-//   // بدنا نعطي المستخدم خيار (تفسير أو ترجمة) 
-//   // بدل alert، نستخدم prompt أو أي طريقة خاصة
-//   const choice = prompt('اختر:\n1. تفسير\n2. ترجمة')
-//   if (choice === '1') {
-//     selectedSurah.value = surahNumber
-//     selectedAyah.value = ayahNumber
-//     modalOpen.value = true
-//   } else if (choice === '2') {
-//     alert('ميزة الترجمة قيد التطوير')
-//   }
-// }
-
 import { IonPopover } from '@ionic/vue'
 const showPopover = ref(false)
 const popoverEvent = ref(null)  // لتخزين حدث النقر لتموضع النافذة
@@ -185,9 +170,9 @@ const modalType = ref('tafsir') // أو 'translation'
 
 import { ref, onMounted, nextTick } from 'vue'
 import { useRoute } from 'vue-router'
+import { addCircle, removeCircle } from 'ionicons/icons'
+
 import {
-  textOutline,
-  textSharp,
   sunny,
   moon,
   colorPalette,
@@ -214,20 +199,19 @@ useBackButton(10, () => {
 
 
 const pressTimer = ref(null)  // لتخزين المؤقت
-const longPressThreshold = 700
+const longPressThreshold = 2000
 const isPressing = ref(false)  // حالة الضغط المستمر
 
-function startLongPress(event, surahNumber, ayahNumber) {
-  event.preventDefault(); // لمنع التحديد غير المرغوب فيه على اللمس
-  isPressing.value = true;
-  popoverEvent.value = event; // حفظ حدث الماوس أو اللمس
 
-  if (!surahVariables.value[surahNumber]) {
-    surahVariables.value[surahNumber] = { bookmarkedAyahNumber: null, scrollPosition: null };
-  }
+const isScrolling = ref(false);  // متغير لتتبع إذا كان المستخدم يمرر
+
+function startLongPress(event, surahNumber, ayahNumber) {
+  event.preventDefault(); // منع التحديد غير المرغوب فيه
+  isPressing.value = true; // بدأ الضغط الطويل
+  popoverEvent.value = event;
 
   pressTimer.value = setTimeout(() => {
-    if (isPressing.value) {
+    if (isPressing.value && !isScrolling.value) {
       surahVariables.value[surahNumber].longPressedAyahNumber = ayahNumber;
       selectedSurahNumber.value = surahNumber;
       selectedAyahNumber.value = ayahNumber;
@@ -236,25 +220,29 @@ function startLongPress(event, surahNumber, ayahNumber) {
   }, longPressThreshold);
 }
 
-// إضافة دعم لحدث اللمس
 function stopLongPress() {
-  isPressing.value = false;
+  isPressing.value = false; // إنهاء الضغط الطويل
   clearTimeout(pressTimer.value);
+
+  // إعادة تعيين حالة التمرير
+  isScrolling.value = false;
 }
 
-// أحداث اللمس
+function handleTouchMove(event) {
+  if (isPressing.value) {
+    isScrolling.value = true; // بدأ التمرير
+  }
+}
+
+
+// إضافة مستمع للتمرير أثناء اللمس
 function setupTouchEvents(ayahNumber, surahNumber) {
   const element = document.getElementById(`ayah-${surahNumber}-${ayahNumber}`);
-  element.addEventListener("touchstart", (e) => startLongPress(e, surahNumber, ayahNumber));
-  element.addEventListener("touchend", stopLongPress);
-  element.addEventListener("touchmove", stopLongPress); // لضمان إلغاء التفاعل عند التحرك
-}
-
-
-function showOptionsMenu(surahNumber, ayahNumber) {
-  selectedSurahNumber.value = surahNumber
-  selectedAyahNumber.value = ayahNumber
-  showActionSheet.value = true
+  if (element) {
+    element.addEventListener('touchstart', (e) => startLongPress(e, surahNumber, ayahNumber));
+    element.addEventListener('touchend', stopLongPress);
+    element.addEventListener('touchmove', stopLongPress);  // لضمان إلغاء التفاعل عند التحرك
+  }
 }
 
 
@@ -302,6 +290,14 @@ onMounted(async () => {
     surahVariables.value = JSON.parse(stored)
   }
   await nextTick()
+
+  // استدعاء دالة setupTouchEvents لكل آية في السورة
+  if (surah.value && surah.value.ayahs) {
+    surah.value.ayahs.forEach((ayah) => {
+      setupTouchEvents(ayah.numberInSurah, surah.value.number)
+    });
+  }
+
   const savedSurah = localStorage.getItem('lastSurah')
   const savedOffset = surahVariables.value[surah.value.number]?.scrollPosition || '0'
   const el = scrollContainer.value?.$el || scrollContainer.value
@@ -310,6 +306,7 @@ onMounted(async () => {
     scrollEl.scrollTo({ top: Number(savedOffset), behavior: 'auto' })
   }
 })
+
 
 
 
