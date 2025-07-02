@@ -48,18 +48,15 @@ import debounce from 'lodash.debounce'
 
 
 const isDark = ref(false)
-const { search } = useQuranSearch()
+const { search, lastSurahNumber, lastAyahNumber } = useQuranSearch()
 const searchTerm = ref('')
 const results = ref<any[]>([])  // لتخزين النتائج الحالية
-const lastAyahNumber = ref<number | null>(null)  // لتخزين رقم الآية الأخيرة التي وصلنا إليها
 const isLoading = ref(false)  // لتتبع حالة التحميل
 const page = ref(1)  // الصفحة الحالية (مبدئيًا من 1)
-
 // الدالة التي يتم تفعيلها بعد كل كتابة (debounced)
 const handleSearch = debounce(() => {
   if (searchTerm.value.trim().length >= 2) {
     results.value = []  // إفراغ النتائج السابقة
-    lastAyahNumber.value = null  // إعادة تعيين رقم الآية
     loadResults()  // تحميل أول 20 نتيجة
   } else {
     results.value = []  // إفراغ النتائج إذا لم يتم إدخال كلمة بحث
@@ -71,18 +68,13 @@ async function loadResults() {
   if (isLoading.value) return;
   isLoading.value = true;
 
-  // إذا كان لدينا رقم الآية الأخير الذي وصلنا إليه، نبدأ منه
-  const startAyahNumber = lastAyahNumber.value ? lastAyahNumber.value + 1 : 1;
+  const startSurahNumber = lastSurahNumber.value || 1  // إذا لم يكن هناك رقم سورة أخير، نبدأ من السورة الأولى
+  const startAyahNumber = lastAyahNumber.value || 1  // إذا لم يكن هناك رقم آية أخير، نبدأ من الآية الأولى
 
-  // تحميل نتائج جديدة بناءً على رقم الآية الأخير
-  const newResults = await search(searchTerm.value.trim(), startAyahNumber, 20);
+  // تحميل نتائج جديدة بناءً على رقم السورة والآية الأخيرين
+  const newResults = await search(searchTerm.value.trim(), startSurahNumber, startAyahNumber, 20);
 
   results.value = [...results.value, ...newResults];
-
-  // تحديث رقم الآية الأخيرة
-  if (newResults.length > 0) {
-    lastAyahNumber.value = newResults[newResults.length - 1].ayahNumber;
-  }
 
   isLoading.value = false;
 }
@@ -99,13 +91,13 @@ onMounted(() => {
   isDark.value = localStorage.getItem('isDark') === 'true'
 })
 
-function goToSurah(result) {
+function goToSurah(result: any) {
   router.push({
     name: 'SurahDetail',
     params: {
       number: result.surahNumber,
       scrollTo: result.ayahNumber
     }
-  })
+  });
 }
 </script>
