@@ -91,7 +91,7 @@
                 backgroundColor: surahVariables[surah.number]?.longPressedAyahNumber === ayah.numberInSurah ? '#579758' : 'transparent'
               }" v-if="index !== ayah.text.split(' ').length - 1"></span>
             </span>
-            <span class="relative flex justify-center items-center" :style="{
+            <span class="relative flex justify-center items-center" :id='"ayah-" + ayah.numberInSurah' :style="{
               minHeight: fontSize / 1.012 + 'px',
               minWidth: fontSize / 1.012 + 'px',
               backgroundImage: `url(/assets/${surahVariables[surah.number]?.bookmarkedAyahNumber === ayah.numberInSurah || surahVariables[surah.number]?.longPress ? 'bookmarked_ayah' : 'end_ayah'}.svg)`,
@@ -143,29 +143,25 @@ const showPopover = ref(false)
 const popoverEvent = ref(null)  // لتخزين حدث النقر لتموضع النافذة
 const selectedSurahNumber = ref(null)
 const selectedAyahNumber = ref(null)
+
 function onOption(choice) {
-  showPopover.value = false
+  // إغلاق الـ popover
+  showPopover.value = false;
+  
   if (!choice) {
-    surahVariables.value[selectedSurahNumber.value].longPressedAyahNumber = null
-    return
+    surahVariables.value[selectedSurahNumber.value].selectedAyahNumber = null;
+    return;
   }
 
-  if (selectedSurahNumber.value && surahVariables.value[selectedSurahNumber.value]) {
-    surahVariables.value[selectedSurahNumber.value].longPressedAyahNumber = null
-  }
-
-  if (choice === 'تفسير') {
-    selectedSurah.value = selectedSurahNumber.value
-    selectedAyah.value = selectedAyahNumber.value
-    modalType.value = 'tafsir'
-    modalOpen.value = true
-  } else if (choice === 'ترجمة') {
-    selectedSurah.value = selectedSurahNumber.value
-    selectedAyah.value = selectedAyahNumber.value
-    modalType.value = 'translation'
-    modalOpen.value = true
+  // إذا كانت الآية محددة، افتح الـ popover تلقائيًا
+  if (choice === 'تفسير' || choice === 'ترجمة') {
+    selectedSurah.value = selectedSurahNumber.value;
+    selectedAyah.value = selectedAyahNumber.value;
+    modalType.value = choice === 'تفسير' ? 'tafsir' : 'translation';
+    modalOpen.value = true;
   }
 }
+
 
 const modalType = ref('tafsir') // أو 'translation'
 
@@ -268,52 +264,87 @@ async function saveScrollPosition() {
   }
 }
 function toggleAyah(surahNumber, ayahNumber) {
-  const current = surahVariables.value[surahNumber]?.bookmarkedAyahNumber || null
+  // إذا كانت الآية محددة بالفعل، قم بإلغاء التحديد
+  const current = surahVariables.value[surahNumber]?.selectedAyahNumber || null;
+  
   if (!surahVariables.value[surahNumber]) {
-    surahVariables.value[surahNumber] = { bookmarkedAyahNumber: null, scrollPosition: null }
+    surahVariables.value[surahNumber] = { selectedAyahNumber: null, scrollPosition: null };
   }
 
   if (current === ayahNumber) {
     // إلغاء التحديد
-    delete surahVariables.value[surahNumber]
+    delete surahVariables.value[surahNumber];
   } else {
-    // تحديد جديد
-    surahVariables.value[surahNumber].bookmarkedAyahNumber = ayahNumber
+    // تحديد الآية
+    surahVariables.value[surahNumber].selectedAyahNumber = ayahNumber;
   }
-  localStorage.setItem('surahVariables', JSON.stringify(surahVariables.value))
+
+  // حفظ التغييرات في الذاكرة المحلية
+  localStorage.setItem('surahVariables', JSON.stringify(surahVariables.value));
 }
 
+
 onMounted(async () => {
-  const res = await fetch('/assets/quran.json')
-  const allSurahs = await res.json()
-  const number = parseInt(route.params.number)
-  surah.value = allSurahs.find(s => s.number === number)
+  const scrollTo = route.params.scrollTo;
 
-  fontSize.value = parseFloat(localStorage.getItem('fontSize')) || 22
-  fontFamily.value = localStorage.getItem('fontFamily') || 'Uthmani'
-  isDark.value = localStorage.getItem('isDark') === 'true'
+  const res = await fetch('/assets/quran.json');
+  const allSurahs = await res.json();
+  const number = parseInt(route.params.number);
+  surah.value = allSurahs.find(s => s.number === number);
 
-  const stored = localStorage.getItem('surahVariables')
+  fontSize.value = parseFloat(localStorage.getItem('fontSize')) || 22;
+  fontFamily.value = localStorage.getItem('fontFamily') || 'Uthmani';
+  isDark.value = localStorage.getItem('isDark') === 'true';
+
+  const stored = localStorage.getItem('surahVariables');
   if (stored) {
-    surahVariables.value = JSON.parse(stored)
+    surahVariables.value = JSON.parse(stored);
   }
-  await nextTick()
 
-  // استدعاء دالة setupTouchEvents لكل آية في السورة
+  await nextTick();
+
   if (surah.value && surah.value.ayahs) {
     surah.value.ayahs.forEach((ayah) => {
-      setupTouchEvents(ayah.numberInSurah, surah.value.number)
+      setupTouchEvents(ayah.numberInSurah, surah.value.number);
     });
   }
 
-  const savedSurah = localStorage.getItem('lastSurah')
-  const savedOffset = surahVariables.value[surah.value.number]?.scrollPosition || '0'
-  const el = scrollContainer.value?.$el || scrollContainer.value
-  const scrollEl = await el?.getScrollElement?.()
-  if (savedSurah === surah.value.number.toString() && scrollEl) {
-    scrollEl.scrollTo({ top: Number(savedOffset), behavior: 'auto' })
+  // ✅ إذا تم تمرير scrollTo من البحث:
+  if (scrollTo) {
+    setTimeout(() => {
+      const element = document.getElementById('ayah-' + scrollTo);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+        // ✅ تأكد من تحديد الآية بعد التمرير
+        if (!surahVariables.value[surah.value.number]) {
+          surahVariables.value[surah.value.number] = { selectedAyahNumber: null, scrollPosition: null };
+        }
+        surahVariables.value[surah.value.number].selectedAyahNumber = parseInt(scrollTo);
+        localStorage.setItem('surahVariables', JSON.stringify(surahVariables.value));
+
+        // ✅ إضافة التأخير قليلاً قبل فتح الـ popover بعد التمرير
+        setTimeout(() => {
+          // ✅ إظهار popover تلقائيًا عند التحديد
+          selectedSurahNumber.value = surah.value.number;
+          selectedAyahNumber.value = parseInt(scrollTo);
+          showPopover.value = true;
+
+          // حدث وهمي لتحديد مكان popover
+          const fakeEvent = {
+            target: element,
+            detail: {
+              x: window.innerWidth / 2,
+              y: element.getBoundingClientRect().top + window.scrollY - 100,
+            }
+          };
+          popoverEvent.value = fakeEvent;
+        }, 500);  // تأخير بعد التمرير لضمان اكتماله
+      }
+    }, 500); // تأخير بسيط بعد تحميل الصفحة لضمان اكتمال التفاعل
   }
-})
+});
+
 
 
 
