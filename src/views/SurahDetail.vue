@@ -179,7 +179,7 @@ import {
   colorPalette,
   searchOutline
 } from 'ionicons/icons'
-import { IonContent, IonHeader, IonPage, IonIcon, IonBackButton, IonTitle, IonSegment, IonSegmentButton, IonToolbar, IonButtons, IonButton, IonList, IonItem, IonSelect } from "@ionic/vue";
+import { IonContent, IonHeader, IonPage, IonIcon, IonBackButton, IonTitle, IonSegment, IonSegmentButton, IonToolbar, IonButtons, IonButton, IonList, IonItem } from "@ionic/vue";
 const route = useRoute()
 const surahVariables = ref({}) // { '1': {numberInSurah:5, scrollPosition:100}, '2': {numberInSurah:10, scrollPosition:200} }
 
@@ -200,7 +200,7 @@ useBackButton(10, () => {
 
 
 const pressTimer = ref(null)  // لتخزين المؤقت
-const longPressThreshold = 2000
+const longPressThreshold = 200
 const isPressing = ref(false)  // حالة الضغط المستمر
 
 
@@ -212,13 +212,21 @@ function startLongPress(event, surahNumber, ayahNumber) {
 
   pressTimer.value = setTimeout(() => {
     if (isPressing.value && !isScrolling.value) {
+      // تأكد من أن الكائن موجود
+      if (!surahVariables.value[surahNumber]) {
+        surahVariables.value[surahNumber] = { longPressedAyahNumber: null, bookmarkedAyahNumber: null, scrollPosition: null };
+      }
+
+      // تعيين قيمة longPressedAyahNumber
       surahVariables.value[surahNumber].longPressedAyahNumber = ayahNumber;
+
       selectedSurahNumber.value = surahNumber;
       selectedAyahNumber.value = ayahNumber;
       showPopover.value = true;
     }
   }, longPressThreshold);
 }
+
 
 function stopLongPress() {
   isPressing.value = false; // إنهاء الضغط الطويل

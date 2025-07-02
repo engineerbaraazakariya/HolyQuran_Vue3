@@ -2,7 +2,7 @@
 
 
 import { ref, computed, watch } from 'vue'
-import { IonModal, IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon, IonSegment, IonSegmentButton } from "@ionic/vue";
+import { IonModal, IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon, IonSelect, IonSelectOption, IonSegmentButton, IonSegment } from "@ionic/vue";
 import {
   addCircle,
   removeCircle,
@@ -188,7 +188,7 @@ const saveFont = () => {
 <template>
   <ion-modal :is-open="isOpen" @didDismiss="emit('close')" :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
     <ion-header>
-      <ion-toolbar>
+      <ion-toolbar :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
         <ion-title>
           {{ props.type === 'tafsir' ? 'التفسير' : 'الترجمة' }}
         </ion-title>
@@ -198,7 +198,13 @@ const saveFont = () => {
       </ion-toolbar>
 
       <!-- أزرار تكبير الخط، تصغير الخط، الوضع الليلي، تغيير الخط -->
-      <ion-toolbar>
+      <ion-toolbar :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
+        <ion-select v-model="selectedFile" interface="popover" placeholder="اختر ملف" :disabled="!isOpen" slot="end">
+          <ion-select-option v-for="file in availableOptions" :key="file" :value="file">
+            {{ languageDisplay[file] || file.replace('.json', '') }}
+          </ion-select-option>
+        </ion-select>
+
         <ion-buttons>
           <ion-button @click="increaseFontSize" title="تكبير الخط">
             <ion-icon :icon="addCircle" />
@@ -216,14 +222,21 @@ const saveFont = () => {
       </ion-toolbar>
 
       <!-- في حال تغيير الخط داخل المودال -->
-      <ion-toolbar v-if="showFontMenu">
-        <ion-segment v-model="fontFamily" @ionChange="saveFont" scrollable>
-          <ion-segment-button value="Uthmani">عثماني</ion-segment-button>
-          <ion-segment-button value="Amiri">أميري</ion-segment-button>
-          <ion-segment-button value="MeQuran">مي قرآن</ion-segment-button>
-          <ion-segment-button value="DecoType">زخرفي</ion-segment-button>
-          <ion-segment-button value="Hafs">حفص</ion-segment-button>
-          <ion-segment-button value="Nabi">رقع</ion-segment-button>
+      <ion-toolbar :class="{ 'dark-theme': isDark, 'white-theme': !isDark }" v-if="showFontMenu">
+        <ion-segment :class="{ 'dark-theme': isDark, 'white-theme': !isDark }" v-model="fontFamily"
+          @ionChange="saveFont" scrollable>
+          <ion-segment-button :class="{ 'dark-theme': isDark, 'white-theme': !isDark }"
+            value="Uthmani">عثماني</ion-segment-button>
+          <ion-segment-button :class="{ 'dark-theme': isDark, 'white-theme': !isDark }"
+            value="Amiri">أميري</ion-segment-button>
+          <ion-segment-button :class="{ 'dark-theme': isDark, 'white-theme': !isDark }" value="MeQuran">مي
+            قرآن</ion-segment-button>
+          <ion-segment-button :class="{ 'dark-theme': isDark, 'white-theme': !isDark }"
+            value="DecoType">زخرفي</ion-segment-button>
+          <ion-segment-button :class="{ 'dark-theme': isDark, 'white-theme': !isDark }"
+            value="Hafs">حفص</ion-segment-button>
+          <ion-segment-button :class="{ 'dark-theme': isDark, 'white-theme': !isDark }"
+            value="Nabi">رقع</ion-segment-button>
         </ion-segment>
       </ion-toolbar>
     </ion-header>

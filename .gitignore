@@ -10,3 +10,5 @@ dist
 android/app/version.properties
 keystore/baraazakariya.keystore
 keystore/keystore.properties
+keystore/release-key.keystore
+keystore/upload_certificate.pem
