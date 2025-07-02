@@ -103,8 +103,17 @@ const localStorageKey = computed(() =>
   props.type === 'tafsir' ? 'preferredTafsir' : 'preferredTranslation'
 )
 
+const localStorageKeyFontSize = 'TafsirFontSize';
+const localStorageKeyFontFamily = 'TafsirFontFamily';
+
 onMounted(() => {
+  // استرجاع الإعدادات المحفوظة من localStorage
+  fontSize.value = JSON.parse(localStorage.getItem(localStorageKeyFontSize)) || 22;
+  fontFamily.value = localStorage.getItem(localStorageKeyFontFamily) || 'Uthmani';
+
+  // تحميل الحالة المظلمة
   isDark.value = JSON.parse(localStorage.getItem('isDark')) || false;
+
   // في حال كان الـ selectedFile فارغًا، قم بتعيين التفسير الافتراضي.
   if (!selectedFile.value) {
     selectedFile.value = DEFAULT_TAFSIR;
@@ -167,22 +176,18 @@ const showFontMenu = ref(false);
 
 const increaseFontSize = () => {
   fontSize.value += 2;
-  localStorage.setItem('fontSize', fontSize.value);
-}
+  localStorage.setItem(localStorageKeyFontSize, fontSize.value);  // تخزين الحجم المشترك
+};
 
 const decreaseFontSize = () => {
   fontSize.value = Math.max(12, fontSize.value - 2);
-  localStorage.setItem('fontSize', fontSize.value);
-}
-
-const toggleTheme = () => {
-  isDark.value = !isDark.value;
-  localStorage.setItem('isDark', isDark.value);
-}
+  localStorage.setItem(localStorageKeyFontSize, fontSize.value);  // تخزين الحجم المشترك
+};
 
 const saveFont = () => {
-  localStorage.setItem('fontFamily', fontFamily.value);
-}
+  localStorage.setItem(localStorageKeyFontFamily, fontFamily.value);  // تخزين نوع الخط المشترك
+};
+
 </script>
 
 <template>
@@ -211,9 +216,6 @@ const saveFont = () => {
           </ion-button>
           <ion-button @click="decreaseFontSize" title="تصغير الخط">
             <ion-icon :icon="removeCircle" />
-          </ion-button>
-          <ion-button @click="toggleTheme" title="الوضع الليلي">
-            <ion-icon :icon="isDark ? moon : sunny" />
           </ion-button>
           <ion-button @click="showFontMenu = !showFontMenu" title="تغيير الخط">
             <ion-icon :icon="colorPalette" />
