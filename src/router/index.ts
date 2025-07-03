@@ -17,6 +17,7 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     path: '/search',
+    meta: { keepAlive: true },
     name: 'search',
     component: () => import('@/views/SearchPage.vue')
   },

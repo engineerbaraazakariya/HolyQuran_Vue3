@@ -1,5 +1,5 @@
 <template>
-  <ion-page :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
+  <ion-page :key="$route.fullPath" :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
     <ion-header>
       <ion-toolbar :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
         <ion-buttons slot="start">
@@ -91,10 +91,10 @@
                 backgroundColor: surahVariables[surah.number]?.longPressedAyahNumber === ayah.numberInSurah ? '#579758' : 'transparent'
               }" v-if="index !== ayah.text.split(' ').length - 1"></span>
             </span>
-            <span class="relative flex justify-center items-center" :id='"ayah-" + ayah.numberInSurah' :style="{
+            <span :id='"ayah-" + ayah.numberInSurah' class="relative flex justify-center items-center" :style="{
               minHeight: fontSize / 1.012 + 'px',
               minWidth: fontSize / 1.012 + 'px',
-              backgroundImage: `url(/assets/${surahVariables[surah.number]?.bookmarkedAyahNumber === ayah.numberInSurah || surahVariables[surah.number]?.longPress ? 'bookmarked_ayah' : 'end_ayah'}.svg)`,
+              backgroundImage: `url(/assets/${surahVariables[surah.number]?.selectedAyahNumber === ayah.numberInSurah ? 'bookmarked_ayah' : 'end_ayah'}.svg)`,
               backgroundSize: 'contain',
               backgroundRepeat: 'no-repeat',
               backgroundPosition: 'center',
@@ -147,7 +147,7 @@ const selectedAyahNumber = ref(null)
 function onOption(choice) {
   // إغلاق الـ popover
   showPopover.value = false;
-  
+
   if (!choice) {
     surahVariables.value[selectedSurahNumber.value].selectedAyahNumber = null;
     return;
@@ -259,21 +259,21 @@ async function saveScrollPosition() {
     if (surahVariables.value[surah.value.number] === undefined) {
       surahVariables.value[surah.value.number] = { bookmarkedAyahNumber: null, scrollPosition: null }
     }
-    surahVariables.value[surah.value.number].scrollPosition = scrollTop.toString();
+    surahVariables.value[surah.value.number].scrollPosition = scrollTop.toFixed(2).toString();
     localStorage.setItem('surahVariables', JSON.stringify(surahVariables.value))
   }
 }
 function toggleAyah(surahNumber, ayahNumber) {
   // إذا كانت الآية محددة بالفعل، قم بإلغاء التحديد
   const current = surahVariables.value[surahNumber]?.selectedAyahNumber || null;
-  
+
   if (!surahVariables.value[surahNumber]) {
     surahVariables.value[surahNumber] = { selectedAyahNumber: null, scrollPosition: null };
   }
 
   if (current === ayahNumber) {
     // إلغاء التحديد
-    delete surahVariables.value[surahNumber];
+    surahVariables.value[surahNumber].selectedAyahNumber = null;
   } else {
     // تحديد الآية
     surahVariables.value[surahNumber].selectedAyahNumber = ayahNumber;
@@ -282,73 +282,128 @@ function toggleAyah(surahNumber, ayahNumber) {
   // حفظ التغييرات في الذاكرة المحلية
   localStorage.setItem('surahVariables', JSON.stringify(surahVariables.value));
 }
-
-
+ 
 onMounted(async () => {
-  const scrollTo = route.params.scrollTo;
-
-  const res = await fetch('/assets/quran.json');
-  const allSurahs = await res.json();
-  const number = parseInt(route.params.number);
-  surah.value = allSurahs.find(s => s.number === number);
-
+  isDark.value = localStorage.getItem('isDark') === 'true';
   fontSize.value = parseFloat(localStorage.getItem('fontSize')) || 22;
   fontFamily.value = localStorage.getItem('fontFamily') || 'Uthmani';
-  isDark.value = localStorage.getItem('isDark') === 'true';
 
   const stored = localStorage.getItem('surahVariables');
   if (stored) {
     surahVariables.value = JSON.parse(stored);
   }
 
-  await nextTick();
-
-  if (surah.value && surah.value.ayahs) {
-    surah.value.ayahs.forEach((ayah) => {
-      setupTouchEvents(ayah.numberInSurah, surah.value.number);
-    });
-  }
-
-  // ✅ إذا تم تمرير scrollTo من البحث:
-  if (scrollTo) {
-    setTimeout(() => {
-      const element = document.getElementById('ayah-' + scrollTo);
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-
-        // ✅ تأكد من تحديد الآية بعد التمرير
-        if (!surahVariables.value[surah.value.number]) {
-          surahVariables.value[surah.value.number] = { selectedAyahNumber: null, scrollPosition: null };
-        }
-        surahVariables.value[surah.value.number].selectedAyahNumber = parseInt(scrollTo);
-        localStorage.setItem('surahVariables', JSON.stringify(surahVariables.value));
-
-        // ✅ إضافة التأخير قليلاً قبل فتح الـ popover بعد التمرير
-        setTimeout(() => {
-          // ✅ إظهار popover تلقائيًا عند التحديد
-          selectedSurahNumber.value = surah.value.number;
-          selectedAyahNumber.value = parseInt(scrollTo);
-          showPopover.value = true;
-
-          // حدث وهمي لتحديد مكان popover
-          const fakeEvent = {
-            target: element,
-            detail: {
-              x: window.innerWidth / 2,
-              y: element.getBoundingClientRect().top + window.scrollY - 100,
-            }
-          };
-          popoverEvent.value = fakeEvent;
-        }, 500);  // تأخير بعد التمرير لضمان اكتماله
-      }
-    }, 500); // تأخير بسيط بعد تحميل الصفحة لضمان اكتمال التفاعل
-  }
+  // التعامل مع الحالة الأولية
+  await handleRouteChange(route.params.number, route.params.scrollTo);
 });
 
+async function handleScrollTo(scrollTo, surahNumber) {
+  if (!scrollTo) return;
+
+  try {
+    if (scrollTo.includes('.')) {
+      // التمرير إلى موضع معين
+      const scrollPos = parseFloat(scrollTo);
+      await scrollToPosition(scrollPos);
+    } else {
+      // التمرير إلى آية محددة
+      const ayahNumber = parseInt(scrollTo);
+      await scrollToAyah(ayahNumber, surahNumber);
+    }
+  } catch (error) {
+    console.error('فشل في التمرير:', error);
+  }
+}
+
+async function scrollToPosition(position) {
+  const ionContentElement = scrollContainer.value?.$el || scrollContainer.value;
+  if (ionContentElement) {
+    const scrollEl = await ionContentElement.getScrollElement();
+    scrollEl.scrollTo({ top: position, behavior: 'smooth' });
+  }
+}
+
+async function scrollToAyah(ayahNumber, surahNumber, attempt = 0) {
+  const maxAttempts = 5;
+  const element = document.getElementById('ayah-' + ayahNumber);
+
+  if (element) {
+    element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    updateSelectedAyah(surahNumber, ayahNumber);
+  } else if (attempt < maxAttempts) {
+    await new Promise(resolve => setTimeout(resolve, 200 * (attempt + 1)));
+    await scrollToAyah(ayahNumber, surahNumber, attempt + 1);
+  } else {
+    console.error('تعذر العثور على الآية بعد عدة محاولات');
+  }
+}
+
+function updateSelectedAyah(surahNumber, ayahNumber) {
+  if (!surahVariables.value[surahNumber]) {
+    surahVariables.value[surahNumber] = {
+      selectedAyahNumber: null,
+      scrollPosition: null
+    };
+  }
+  surahVariables.value[surahNumber].selectedAyahNumber = ayahNumber;
+  localStorage.setItem('surahVariables', JSON.stringify(surahVariables.value));
+}
+
+async function scrollToAyahWithRetry(ayahNumber, surahNumber, attempt = 0) {
+  const maxAttempts = 3;
+  await nextTick();
+
+  const element = document.getElementById('ayah-' + ayahNumber);
+  if (element) {
+    element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+    if (!surahVariables.value[surahNumber]) {
+      surahVariables.value[surahNumber] = {
+        selectedAyahNumber: null,
+        scrollPosition: null
+      };
+    }
+    surahVariables.value[surahNumber].selectedAyahNumber = ayahNumber;
+    localStorage.setItem('surahVariables', JSON.stringify(surahVariables.value));
+  } else if (attempt < maxAttempts) {
+    setTimeout(() => scrollToAyahWithRetry(ayahNumber, surahNumber, attempt + 1), 300 * (attempt + 1));
+  } else {
+    console.error('Failed to find ayah after', maxAttempts, 'attempts');
+  }
+}
+
+import { watch } from 'vue';
 
 
+watch(
+  () => route.fullPath,
+  async (newPath, oldPath) => {
+    if (newPath !== oldPath) {
+      const { number, scrollTo } = route.params;
+      await handleRouteChange(number, scrollTo);
+    }
+  },
+  { immediate: true }
+);
+async function handleRouteChange(surahNumberParam, scrollToParam) {
+  const surahNumber = parseInt(surahNumberParam);
+  
+  // إعادة تعيين حالة السورة
+  surah.value = null;
+  await nextTick();
 
-
+  // تحميل البيانات
+  const res = await fetch('/assets/quran.json');
+  const allSurahs = await res.json();
+  surah.value = allSurahs.find(s => s.number === surahNumber);
+  
+  // الانتظار حتى يتم تحديث DOM
+  await nextTick();
+  
+  if (scrollToParam) {
+    await handleScrollTo(scrollToParam, surahNumber);
+  }
+}
 // إعدادات المستخدم
 const increaseFontSize = () => {
   fontSize.value += 2

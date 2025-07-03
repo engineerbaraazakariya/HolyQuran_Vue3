@@ -1,6 +1,10 @@
 <template>
   <ion-app class="!mt-8">
-    <ion-router-outlet />
+    <router-view v-slot="{ Component, route }">
+      <keep-alive :max="3">
+        <component :is="Component" :key="route.path.includes('/surah/') ? route.fullPath : route.path" />
+      </keep-alive>
+    </router-view>
   </ion-app>
 </template>
 
@@ -12,14 +16,13 @@ import { useRouter } from 'vue-router'
 const router = useRouter()
 onMounted(() => {
   const lastSurah = localStorage.getItem('lastSurah')
-  const scrollOffset = localStorage.getItem('scrollOffset')
-
+  const stored = JSON.parse(localStorage.getItem('surahVariables') + '');
   if (lastSurah) {
     router.replace({
       name: 'SurahDetail',
       params: {
         number: Number(lastSurah),
-        scrollTo: Number(scrollOffset || 0),
+        scrollTo: stored[Number(lastSurah)].scrollPosition,
       },
     })
   }
@@ -90,6 +93,7 @@ onMounted(() => {
   --color: #000 !important;
   color: #000 !important;
 }
+
 /* إضافة هذا في الـ <style> */
 .ltr-text {
   direction: ltr;
@@ -100,5 +104,4 @@ onMounted(() => {
   direction: rtl;
   text-align: right;
 }
-
 </style>
