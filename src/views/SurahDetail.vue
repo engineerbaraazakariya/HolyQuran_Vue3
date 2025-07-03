@@ -47,6 +47,7 @@
       ref="scrollContainer" scroll-events="true" style="overflow-y: auto;">
       <span class="flex flex-wrap justify-around px-2">
         <template v-if="surah">
+          <!-- اسم السورة مع الزخرفة -->
           <div class="text-center mb-4 flex justify-center items-center w-full" :style="{
             fontSize: fontSize + 'px',
             fontFamily: fontFamily,
@@ -68,6 +69,7 @@
               {{ surah.name }}
             </span>
           </div>
+          <!-- البسملة -->
           <div v-if="![1, 9].includes(surah.number)"
             class="text-center mb-4 flex justify-center items-center w-full mt-2" :style="{
               fontSize: fontSize + 'px',
@@ -82,13 +84,13 @@
               fontFamily: fontFamily,
               color: isDark ? 'white' : 'black',
               wordSpacing: '0.25em',
-              backgroundColor: surahVariables[surah.number]?.longPressedAyahNumber === ayah.numberInSurah ? '#579758' : 'transparent',
+              backgroundColor: surahVariables[surah.number]?.longPressedAyahNumber === ayah.numberInSurah ? 'green' : 'transparent',
               cursor: 'default',
-              backgroundColor: surahVariables[surah.number]?.longPressedAyahNumber === ayah.numberInSurah ? '#579758' : 'transparent'
+              backgroundColor: surahVariables[surah.number]?.longPressedAyahNumber === ayah.numberInSurah ? 'green' : 'transparent'
             }" @touchstart="startLongPress($event, surah.number, ayah.numberInSurah)" @touchend="stopLongPress"
               @touchmove="stopLongPress">
               {{ word }}<span class="!w-2 !max-w-2 !min-w-2 flex" :style="{
-                backgroundColor: surahVariables[surah.number]?.longPressedAyahNumber === ayah.numberInSurah ? '#579758' : 'transparent'
+                backgroundColor: surahVariables[surah.number]?.longPressedAyahNumber === ayah.numberInSurah ? 'green' : 'transparent'
               }" v-if="index !== ayah.text.split(' ').length - 1"></span>
             </span>
             <span :id='"ayah-" + ayah.numberInSurah' class="relative flex justify-center items-center" :style="{
@@ -282,7 +284,7 @@ function toggleAyah(surahNumber, ayahNumber) {
   // حفظ التغييرات في الذاكرة المحلية
   localStorage.setItem('surahVariables', JSON.stringify(surahVariables.value));
 }
- 
+
 onMounted(async () => {
   isDark.value = localStorage.getItem('isDark') === 'true';
   fontSize.value = parseFloat(localStorage.getItem('fontSize')) || 22;
@@ -337,15 +339,46 @@ async function scrollToAyah(ayahNumber, surahNumber, attempt = 0) {
     console.error('تعذر العثور على الآية بعد عدة محاولات');
   }
 }
-
-function updateSelectedAyah(surahNumber, ayahNumber) {
-  if (!surahVariables.value[surahNumber]) {
-    surahVariables.value[surahNumber] = {
+const autoSelectAyah = (ayahNumber) => {
+  if (!surahVariables.value[surah.value.number]) {
+    surahVariables.value[surah.value.number] = {
       selectedAyahNumber: null,
+      longPressedAyahNumber: null,
       scrollPosition: null
     };
   }
-  surahVariables.value[surahNumber].selectedAyahNumber = ayahNumber;
+
+  // تحديد الآية وكأنها مضغوطة ضغطة طويلة
+  surahVariables.value[surah.value.number].longPressedAyahNumber = ayahNumber;
+  selectedSurahNumber.value = surah.value.number;
+  selectedAyahNumber.value = ayahNumber;
+
+  // عرض قائمة الخيارات تلقائياً
+  showPopoverForAyah(ayahNumber);
+};
+
+const showPopoverForAyah = (ayahNumber) => {
+  const element = document.getElementById(`ayah-${ayahNumber}`);
+  if (element) {
+    // إنشاء حدث وهمي لتمريره إلى البوبوفر
+    const fakeEvent = {
+      target: element,
+      clientX: element.getBoundingClientRect().left + element.offsetWidth / 2,
+      clientY: element.getBoundingClientRect().top + element.offsetHeight / 2
+    };
+
+    popoverEvent.value = fakeEvent;
+    showPopover.value = true;
+  }
+};
+function updateSelectedAyah(surahNumber, ayahNumber) {
+  if (!surahVariables.value[surahNumber]) {
+    surahVariables.value[surahNumber] = {
+      longPressedAyahNumber: null,
+      scrollPosition: null
+    };
+  }
+  surahVariables.value[surahNumber].longPressedAyahNumber = ayahNumber;
   localStorage.setItem('surahVariables', JSON.stringify(surahVariables.value));
 }
 
@@ -387,7 +420,7 @@ watch(
 );
 async function handleRouteChange(surahNumberParam, scrollToParam) {
   const surahNumber = parseInt(surahNumberParam);
-  
+
   // إعادة تعيين حالة السورة
   surah.value = null;
   await nextTick();
@@ -396,10 +429,10 @@ async function handleRouteChange(surahNumberParam, scrollToParam) {
   const res = await fetch('/assets/quran.json');
   const allSurahs = await res.json();
   surah.value = allSurahs.find(s => s.number === surahNumber);
-  
+
   // الانتظار حتى يتم تحديث DOM
   await nextTick();
-  
+
   if (scrollToParam) {
     await handleScrollTo(scrollToParam, surahNumber);
   }
