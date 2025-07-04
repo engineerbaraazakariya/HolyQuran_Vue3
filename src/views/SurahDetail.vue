@@ -9,45 +9,7 @@
           fontFamily: fontFamily,
           color: isDark ? 'white' : 'black'
         }">
-          <span class="relative inline-flex items-center justify-center !min-h-[3.5rem]" :style="{
-            minHeight: fontSize / 1.012 + 'px',
-            minWidth: '100%',
-            backgroundImage: `url(/assets/SurahHeader.png)`,
-            backgroundSize: 'contain', // أو `contain` حسب الحاجة
-            backgroundRepeat: 'no-repeat',
-            backgroundPosition: 'center',
-            fontSize: fontSize + 'px',
-            width: '100%',
-            height: fontSize / 1.2 + 'px',
-            fontWeight: 'bold',
-            color: isDark ? 'white' : 'black'
-          }">
-            <div class="flex w-full justify-evenly">
-              <div class="mr-0 pt-0">
-                <div class="flex-col w-full">
-                  <div class="h-1 text-xs">
-                    صفحة
-                  </div>
-                  <div class="h-1 mt-1 text-lg">
-                    {{ Page }}
-                  </div>
-                </div>
-              </div>
-              <div v-if="surah">
-                {{ surah.name }}
-              </div>
-              <div class="ml-1 pt-0">
-                <div class="flex-col">
-                  <div class="h-1 text-xs">
-                    جزء
-                  </div>
-                  <div class="h-1 mt-1 text-lg">
-                    {{ Juz }}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </span>
+          <img id="SurahHeader_1" src="/assets/SurahHeader.svg" />
         </div>
       </ion-toolbar>
       <ion-toolbar v-else :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
@@ -109,7 +71,7 @@
             <span class="relative inline-flex items-center justify-center !min-h-[3.5rem]" :style="{
               minHeight: fontSize / 1.012 + 'px',
               minWidth: '100%',
-              backgroundImage: `url(/assets/SurahHeader.png)`,
+              backgroundImage: `url(/assets/SurahHeader_2.png)`,
               backgroundSize: 'contain', // أو `contain` حسب الحاجة
               backgroundRepeat: 'no-repeat',
               backgroundPosition: 'center',
@@ -119,7 +81,7 @@
               fontWeight: 'bold',
               color: isDark ? 'white' : 'black'
             }">
-              <div class="flex w-full justify-evenly">
+              <div class="flex w-full justify-center">
                 <div class="mr-0 pt-0">
                   <div class="flex-col w-full">
                     <div class="h-1 text-xs">
@@ -213,9 +175,10 @@
 
 <script setup>
 import TafsirModal from './TafsirModal.vue'
+import { SVGInjector } from '@tanem/svg-injector'
 
 const modalOpen = ref(false)
-const upperSurahNameShown = ref(false)
+const upperSurahNameShown = ref(true)
 const selectedSurah = ref(null)
 const selectedAyah = ref(null)
 
@@ -396,6 +359,7 @@ async function saveScrollPosition() {
     Juz.value = juz;
     Page.value = page;
 
+    updateSurahHeader();
     localStorage.setItem('surahVariables', JSON.stringify(surahVariables.value))
   }
 }
@@ -516,42 +480,14 @@ function updateSelectedAyah(surahNumber, ayahNumber) {
   localStorage.setItem('surahVariables', JSON.stringify(surahVariables.value));
 }
 
-async function scrollToAyahWithRetry(ayahNumber, surahNumber, attempt = 0) {
-  const maxAttempts = 3;
-  await nextTick();
 
-  const element = document.getElementById('ayah-' + ayahNumber);
-  if (element) {
-    element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-
-    if (!surahVariables.value[surahNumber]) {
-      surahVariables.value[surahNumber] = {
-        selectedAyahNumber: null,
-        scrollPosition: null
-      };
-    }
-    surahVariables.value[surahNumber].selectedAyahNumber = ayahNumber;
-    localStorage.setItem('surahVariables', JSON.stringify(surahVariables.value));
-  } else if (attempt < maxAttempts) {
-    setTimeout(() => scrollToAyahWithRetry(ayahNumber, surahNumber, attempt + 1), 300 * (attempt + 1));
-  } else {
-    console.error('Failed to find ayah after', maxAttempts, 'attempts');
-  }
+const updateSurahHeader = () => {
+  document.querySelector("#SurahName").innerHTML = surah.value.name;
+  document.querySelector("#PageNumber").innerHTML = Page.value;
+  document.querySelector("#JuzNumber").innerHTML = Juz.value;
 }
 
-import { watch } from 'vue';
 
-
-watch(
-  () => route.fullPath,
-  async (newPath, oldPath) => {
-    if (newPath !== oldPath) {
-      const { number, scrollTo } = route.params;
-      await handleRouteChange(number, scrollTo);
-    }
-  },
-  { immediate: true }
-);
 async function handleRouteChange(surahNumberParam, scrollToParam) {
   const surahNumber = parseInt(surahNumberParam);
 
@@ -566,6 +502,16 @@ async function handleRouteChange(surahNumberParam, scrollToParam) {
   if (surah.value) {
     Juz.value = surah.value.ayahs[0].juz;
     Page.value = surah.value.ayahs[0].page;
+
+    let imgScene = document.querySelector("#SurahHeader_1");
+    SVGInjector(imgScene, {
+      afterAll(svg) {
+        document.querySelector("#SurahName").innerHTML = surah.value.name;
+        document.querySelector("#PageNumber").innerHTML = surah.value.ayahs[0].page;
+        document.querySelector("#JuzNumber").innerHTML = surah.value.ayahs[0].juz;
+      }
+    });
+
 
   }
 
