@@ -1,7 +1,32 @@
 <template>
   <ion-page :key="$route.fullPath" :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
     <ion-header>
-      <ion-toolbar :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
+      <ion-toolbar @click="upperSurahNameShown = false" v-if="upperSurahNameShown"
+        :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
+        <!-- اسم السورة مع الزخرفة -->
+        <div class="upperSurahName text-center flex justify-center items-center w-full" :style="{
+          fontSize: fontSize + 'px',
+          fontFamily: fontFamily,
+          color: isDark ? 'white' : 'black'
+        }">
+          <span class="relative inline-flex items-center justify-center p-8" :style="{
+            minHeight: fontSize / 1.012 + 'px',
+            minWidth: '100%',
+            backgroundImage: `url(/assets/SurahHeader_2.png)`,
+            backgroundSize: 'auto',
+            backgroundRepeat: 'no-repeat',
+            backgroundPosition: 'center',
+            fontSize: fontSize + 'px',
+            Width: '100%',
+            height: fontSize / 1.2 + 'px',
+            fontWeight: 'bold',
+            color: isDark ? 'white' : 'black'
+          }">
+            {{ surah.name }}
+          </span>
+        </div>
+      </ion-toolbar>
+      <ion-toolbar v-else :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
         <ion-buttons slot="start">
           <ion-back-button defaultHref="/list"></ion-back-button>
         </ion-buttons>
@@ -22,8 +47,12 @@
           <ion-button router-link="/search">
             <ion-icon slot="icon-only" :icon="searchOutline" />
           </ion-button>
+          <ion-button @click="upperSurahNameShown = true" title="إظهار اسم السورة مع الزخرفة">
+            <ion-icon :icon="ribbon" />
+          </ion-button>
         </ion-buttons>
       </ion-toolbar>
+
       <ion-toolbar v-if="showFontMenu" :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
         <ion-segment v-model="fontFamily" @ionChange="saveFont" scrollable
           :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
@@ -48,15 +77,17 @@
       <span class="flex flex-wrap justify-around px-2">
         <template v-if="surah">
           <!-- اسم السورة مع الزخرفة -->
-          <div class="text-center mb-4 flex justify-center items-center w-full" :style="{
-            fontSize: fontSize + 'px',
-            fontFamily: fontFamily,
-            color: isDark ? 'white' : 'black'
-          }">
+          <div v-if="!upperSurahNameShown"
+            class="upperSurahName text-center mb-4 flex justify-center items-center w-full"
+            @click="upperSurahNameShown = true" :style="{
+              fontSize: fontSize + 'px',
+              fontFamily: fontFamily,
+              color: isDark ? 'white' : 'black'
+            }">
             <span class="relative inline-flex items-center justify-center p-8" :style="{
               minHeight: fontSize / 1.012 + 'px',
               minWidth: '100%',
-              backgroundImage: `url(/assets/surah_name_frame.png)`,
+              backgroundImage: `url(/assets/SurahHeader_2.png)`,
               backgroundSize: 'auto',
               backgroundRepeat: 'no-repeat',
               backgroundPosition: 'center',
@@ -137,6 +168,7 @@
 import TafsirModal from './TafsirModal.vue'
 
 const modalOpen = ref(false)
+const upperSurahNameShown = ref(false)
 const selectedSurah = ref(null)
 const selectedAyah = ref(null)
 
@@ -169,7 +201,7 @@ const modalType = ref('tafsir') // أو 'translation'
 
 import { ref, onMounted, nextTick } from 'vue'
 import { useRoute } from 'vue-router'
-import { addCircle, removeCircle } from 'ionicons/icons'
+import { addCircle, removeCircle, ribbon } from 'ionicons/icons'
 
 import {
   sunny,
@@ -429,6 +461,8 @@ async function handleRouteChange(surahNumberParam, scrollToParam) {
   const res = await fetch('/assets/quran.json');
   const allSurahs = await res.json();
   surah.value = allSurahs.find(s => s.number === surahNumber);
+
+  upperSurahNameShown.value = true;
 
   // الانتظار حتى يتم تحديث DOM
   await nextTick();
