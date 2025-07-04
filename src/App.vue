@@ -17,7 +17,7 @@ const router = useRouter()
 onMounted(() => {
   const lastSurah = localStorage.getItem('lastSurah')
   const stored = JSON.parse(localStorage.getItem('surahVariables') + '');
-  if (lastSurah) {
+  if (lastSurah && stored[Number(lastSurah)]) {
     router.replace({
       name: 'SurahDetail',
       params: {

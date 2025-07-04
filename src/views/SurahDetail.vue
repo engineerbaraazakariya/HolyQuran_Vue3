@@ -9,20 +9,44 @@
           fontFamily: fontFamily,
           color: isDark ? 'white' : 'black'
         }">
-          <span class="relative inline-flex items-center justify-center p-8" :style="{
+          <span class="relative inline-flex items-center justify-center !min-h-[3.5rem]" :style="{
             minHeight: fontSize / 1.012 + 'px',
             minWidth: '100%',
-            backgroundImage: `url(/assets/SurahHeader_2.png)`,
-            backgroundSize: 'auto',
+            backgroundImage: `url(/assets/SurahHeader.png)`,
+            backgroundSize: 'contain', // أو `contain` حسب الحاجة
             backgroundRepeat: 'no-repeat',
             backgroundPosition: 'center',
             fontSize: fontSize + 'px',
-            Width: '100%',
+            width: '100%',
             height: fontSize / 1.2 + 'px',
             fontWeight: 'bold',
             color: isDark ? 'white' : 'black'
           }">
-            {{ surah.name }}
+            <div class="flex w-full justify-evenly">
+              <div class="mr-0 pt-0">
+                <div class="flex-col w-full">
+                  <div class="h-1 text-xs">
+                    صفحة
+                  </div>
+                  <div class="h-1 mt-1 text-lg">
+                    {{ Page }}
+                  </div>
+                </div>
+              </div>
+              <div v-if="surah">
+                {{ surah.name }}
+              </div>
+              <div class="ml-1 pt-0">
+                <div class="flex-col">
+                  <div class="h-1 text-xs">
+                    جزء
+                  </div>
+                  <div class="h-1 mt-1 text-lg">
+                    {{ Juz }}
+                  </div>
+                </div>
+              </div>
+            </div>
           </span>
         </div>
       </ion-toolbar>
@@ -30,7 +54,6 @@
         <ion-buttons slot="start">
           <ion-back-button defaultHref="/list"></ion-back-button>
         </ion-buttons>
-        <ion-title>{{ surah?.name }}</ion-title>
         <ion-buttons slot="end">
           <ion-button @click="increaseFontSize" title="تكبير الخط">
             <ion-icon :icon="addCircle" />
@@ -77,27 +100,50 @@
       <span class="flex flex-wrap justify-around px-2">
         <template v-if="surah">
           <!-- اسم السورة مع الزخرفة -->
-          <div v-if="!upperSurahNameShown"
-            class="upperSurahName text-center mb-4 flex justify-center items-center w-full"
-            @click="upperSurahNameShown = true" :style="{
+          <div @click="upperSurahNameShown = true" v-if="!upperSurahNameShown"
+            class="upperSurahName text-center flex justify-center items-center w-full" :style="{
               fontSize: fontSize + 'px',
               fontFamily: fontFamily,
               color: isDark ? 'white' : 'black'
             }">
-            <span class="relative inline-flex items-center justify-center p-8" :style="{
+            <span class="relative inline-flex items-center justify-center !min-h-[3.5rem]" :style="{
               minHeight: fontSize / 1.012 + 'px',
               minWidth: '100%',
-              backgroundImage: `url(/assets/SurahHeader_2.png)`,
-              backgroundSize: 'auto',
+              backgroundImage: `url(/assets/SurahHeader.png)`,
+              backgroundSize: 'contain', // أو `contain` حسب الحاجة
               backgroundRepeat: 'no-repeat',
               backgroundPosition: 'center',
               fontSize: fontSize + 'px',
-              Width: '100%',
+              width: '100%',
               height: fontSize / 1.2 + 'px',
               fontWeight: 'bold',
               color: isDark ? 'white' : 'black'
             }">
-              {{ surah.name }}
+              <div class="flex w-full justify-evenly">
+                <div class="mr-0 pt-0">
+                  <div class="flex-col w-full">
+                    <div class="h-1 text-xs">
+                      صفحة
+                    </div>
+                    <div class="h-1 mt-1 text-lg">
+                      {{ Page }}
+                    </div>
+                  </div>
+                </div>
+                <div v-if="surah">
+                  {{ surah.name }}
+                </div>
+                <div class="ml-1 pt-0">
+                  <div class="flex-col">
+                    <div class="h-1 text-xs">
+                      جزء
+                    </div>
+                    <div class="h-1 mt-1 text-lg">
+                      {{ Juz }}
+                    </div>
+                  </div>
+                </div>
+              </div>
             </span>
           </div>
           <!-- البسملة -->
@@ -124,18 +170,19 @@
                 backgroundColor: surahVariables[surah.number]?.longPressedAyahNumber === ayah.numberInSurah ? 'green' : 'transparent'
               }" v-if="index !== ayah.text.split(' ').length - 1"></span>
             </span>
-            <span :id='"ayah-" + ayah.numberInSurah' class="relative flex justify-center items-center" :style="{
-              minHeight: fontSize / 1.012 + 'px',
-              minWidth: fontSize / 1.012 + 'px',
-              backgroundImage: `url(/assets/${surahVariables[surah.number]?.selectedAyahNumber === ayah.numberInSurah ? 'bookmarked_ayah' : 'end_ayah'}.svg)`,
-              backgroundSize: 'contain',
-              backgroundRepeat: 'no-repeat',
-              backgroundPosition: 'center',
-              fontSize: fontSize / 2.75 + 'px',
-              width: fontSize / 1.2 + 'px',
-              fontWeight: 'bold',
-              color: 'black',
-            }" @click="toggleAyah(surah.number, ayah.numberInSurah)"
+            <span :data-page="ayah.page" :data-hizbQuarter="ayah.hizbQuarter" :data-juz="ayah.juz"
+              :id='"ayah-" + ayah.numberInSurah' class="relative flex justify-center items-center" :style="{
+                minHeight: fontSize / 1.012 + 'px',
+                minWidth: fontSize / 1.012 + 'px',
+                backgroundImage: `url(/assets/${surahVariables[surah.number]?.selectedAyahNumber === ayah.numberInSurah ? 'bookmarked_ayah' : 'end_ayah'}.svg)`,
+                backgroundSize: 'contain',
+                backgroundRepeat: 'no-repeat',
+                backgroundPosition: 'center',
+                fontSize: fontSize / 2.75 + 'px',
+                width: fontSize / 1.2 + 'px',
+                fontWeight: 'bold',
+                color: 'black',
+              }" @click="toggleAyah(surah.number, ayah.numberInSurah)"
               @contextmenu.prevent="toggleAyah(surah.number, ayah.numberInSurah)">
               <span>
                 {{ ayah.numberInSurah }}
@@ -158,8 +205,8 @@
 
 
     </ion-content>
-    <TafsirModal :is-open="modalOpen" :surah-number="selectedSurah" :ayah-number="selectedAyah" :type="modalType"
-      @close="modalOpen = false" />
+    <TafsirModal v-if="surah" :is-open="modalOpen" :surah-number="selectedSurah" :ayah-number="selectedAyah"
+      :type="modalType" @close="modalOpen = false" />
 
   </ion-page>
 </template>
@@ -282,6 +329,51 @@ function setupTouchEvents(ayahNumber, surahNumber) {
     element.addEventListener('touchmove', stopLongPress);  // لضمان إلغاء التفاعل عند التحرك
   }
 }
+function getAyahAtScrollPosition() {
+  // جمع جميع العناصر الخاصة بالآيات (التي تحتوي على المعرف "ayah-")
+  const ayahs = document.querySelectorAll("[id^='ayah-']");
+
+  let topAyah = null;
+  let topOffset = Number.POSITIVE_INFINITY;
+
+  ayahs.forEach(ayah => {
+    // قياس المسافة بين العنصر وأعلى الصفحة
+    const rect = ayah.getBoundingClientRect();
+
+    // إذا كانت الآية في أعلى الصفحة (أقرب للموقع 0)
+    if (rect.top >= 172 && rect.top < topOffset) {
+      topOffset = rect.top;
+      topAyah = ayah;
+    }
+  });
+
+  // إذا كانت هناك آية قريبة من الأعلى، نقوم بإرجاع البيانات
+  if (topAyah) {
+    // استخراج القيم من الأتريبيوتس
+    const page = topAyah.getAttribute('data-page');
+    const hizbQuarter = topAyah.getAttribute('data-hizbQuarter');
+    const juz = topAyah.getAttribute('data-juz');
+
+    // إذا كانت القيم موجودة
+    if (page && hizbQuarter && juz) {
+      // إرجاع البيانات
+      return {
+        ayahNumber: topAyah.id.split('-')[1], // استخراج رقم الآية من الـ ID
+        hizb: hizbQuarter,
+        juz: juz,
+        page: page
+      };
+    }
+  }
+
+  return null;
+
+}
+
+const AyahNumber = ref(null);
+const Hizb = ref(null);
+const Juz = ref(null);
+const Page = ref(null);
 
 
 async function saveScrollPosition() {
@@ -294,6 +386,16 @@ async function saveScrollPosition() {
       surahVariables.value[surah.value.number] = { bookmarkedAyahNumber: null, scrollPosition: null }
     }
     surahVariables.value[surah.value.number].scrollPosition = scrollTop.toFixed(2).toString();
+
+    // الحصول على البيانات من الدالة
+    const { ayahNumber, hizb, juz, page } = getAyahAtScrollPosition(scrollTop.toFixed(2).toString());
+
+    // تحديث القيم باستخدام `value`
+    AyahNumber.value = ayahNumber;
+    Hizb.value = hizb;
+    Juz.value = juz;
+    Page.value = page;
+
     localStorage.setItem('surahVariables', JSON.stringify(surahVariables.value))
   }
 }
@@ -461,6 +563,11 @@ async function handleRouteChange(surahNumberParam, scrollToParam) {
   const res = await fetch('/assets/quran.json');
   const allSurahs = await res.json();
   surah.value = allSurahs.find(s => s.number === surahNumber);
+  if (surah.value) {
+    Juz.value = surah.value.ayahs[0].juz;
+    Page.value = surah.value.ayahs[0].page;
+
+  }
 
   upperSurahNameShown.value = true;
 
