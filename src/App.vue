@@ -17,7 +17,7 @@ const router = useRouter()
 onMounted(() => {
   const lastSurah = localStorage.getItem('lastSurah')
   const stored = JSON.parse(localStorage.getItem('surahVariables') + '');
-  if (lastSurah && stored[Number(lastSurah)]) {
+  if (stored && lastSurah && stored[Number(lastSurah)]) {
     router.replace({
       name: 'SurahDetail',
       params: {
@@ -83,6 +83,7 @@ onMounted(() => {
   --ion-text-color: #fff !important;
   --color: #fff !important;
   color: #fff !important;
+  fill: #fff !important;
 }
 
 .white-theme {
@@ -92,6 +93,7 @@ onMounted(() => {
   --ion-text-color: #000 !important;
   --color: #000 !important;
   color: #000 !important;
+  fill: #000 !important;
 }
 
 /* إضافة هذا في الـ <style> */

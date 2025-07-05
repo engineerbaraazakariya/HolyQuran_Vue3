@@ -1,18 +1,19 @@
 <template>
   <ion-page :key="$route.fullPath" :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
     <ion-header>
-      <ion-toolbar @click="upperSurahNameShown = false" v-if="upperSurahNameShown"
+      <ion-toolbar @click="upperSurahNameShown = false" v-show="upperSurahNameShown"
         :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
         <!-- اسم السورة مع الزخرفة -->
-        <div class="upperSurahName text-center flex justify-center items-center w-full" :style="{
+        <div class="upperSurahName text-center flex justify-center items-center w-full h-12" :style="{
           fontSize: fontSize + 'px',
           fontFamily: fontFamily,
           color: isDark ? 'white' : 'black'
         }">
-          <img id="SurahHeader_1" src="/assets/SurahHeader.svg" />
+          <SurahInfo v-if="surah" :SurahName="surah.name" :isDark="isDark" :fontFamily="fontFamily" :pageNumber="Page"
+            :JuzNumber="Juz" />
         </div>
       </ion-toolbar>
-      <ion-toolbar v-else :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
+      <ion-toolbar v-if="!upperSurahNameShown" :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
         <ion-buttons slot="start">
           <ion-back-button defaultHref="/list"></ion-back-button>
         </ion-buttons>
@@ -37,7 +38,6 @@
           </ion-button>
         </ion-buttons>
       </ion-toolbar>
-
       <ion-toolbar v-if="showFontMenu" :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
         <ion-segment v-model="fontFamily" @ionChange="saveFont" scrollable
           :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
@@ -62,52 +62,9 @@
       <span class="flex flex-wrap justify-around px-2">
         <template v-if="surah">
           <!-- اسم السورة مع الزخرفة -->
-          <div @click="upperSurahNameShown = true" v-if="!upperSurahNameShown"
-            class="upperSurahName text-center flex justify-center items-center w-full" :style="{
-              fontSize: fontSize + 'px',
-              fontFamily: fontFamily,
-              color: isDark ? 'white' : 'black'
-            }">
-            <span class="relative inline-flex items-center justify-center !min-h-[3.5rem]" :style="{
-              minHeight: fontSize / 1.012 + 'px',
-              minWidth: '100%',
-              backgroundImage: `url(/assets/SurahHeader_2.png)`,
-              backgroundSize: 'contain', // أو `contain` حسب الحاجة
-              backgroundRepeat: 'no-repeat',
-              backgroundPosition: 'center',
-              fontSize: fontSize + 'px',
-              width: '100%',
-              height: fontSize / 1.2 + 'px',
-              fontWeight: 'bold',
-              color: isDark ? 'white' : 'black'
-            }">
-              <div class="flex w-full justify-center">
-                <div class="mr-0 pt-0">
-                  <div class="flex-col w-full">
-                    <div class="h-1 text-xs">
-                      صفحة
-                    </div>
-                    <div class="h-1 mt-1 text-lg">
-                      {{ Page }}
-                    </div>
-                  </div>
-                </div>
-                <div v-if="surah">
-                  {{ surah.name }}
-                </div>
-                <div class="ml-1 pt-0">
-                  <div class="flex-col">
-                    <div class="h-1 text-xs">
-                      جزء
-                    </div>
-                    <div class="h-1 mt-1 text-lg">
-                      {{ Juz }}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </span>
-          </div>
+          <SurahInfo @click="upperSurahNameShown = true" v-if="!upperSurahNameShown" :SurahName="surah.name"
+            :fontFamily="fontFamily" :pageNumber="Page" :isDark="isDark" :JuzNumber="Juz" />
+
           <!-- البسملة -->
           <div v-if="![1, 9].includes(surah.number)"
             class="text-center mb-4 flex justify-center items-center w-full mt-2" :style="{
@@ -175,8 +132,7 @@
 
 <script setup>
 import TafsirModal from './TafsirModal.vue'
-import { SVGInjector } from '@tanem/svg-injector'
-
+import SurahInfo from './SurahInfo.vue';
 const modalOpen = ref(false)
 const upperSurahNameShown = ref(true)
 const selectedSurah = ref(null)
@@ -276,22 +232,6 @@ function stopLongPress() {
   isScrolling.value = false;
 }
 
-function handleTouchMove(event) {
-  if (isPressing.value) {
-    isScrolling.value = true; // بدأ التمرير
-  }
-}
-
-
-// إضافة مستمع للتمرير أثناء اللمس
-function setupTouchEvents(ayahNumber, surahNumber) {
-  const element = document.getElementById(`ayah-${surahNumber}-${ayahNumber}`);
-  if (element) {
-    element.addEventListener('touchstart', (e) => startLongPress(e, surahNumber, ayahNumber));
-    element.addEventListener('touchend', stopLongPress);
-    element.addEventListener('touchmove', stopLongPress);  // لضمان إلغاء التفاعل عند التحرك
-  }
-}
 function getAyahAtScrollPosition() {
   // جمع جميع العناصر الخاصة بالآيات (التي تحتوي على المعرف "ayah-")
   const ayahs = document.querySelectorAll("[id^='ayah-']");
@@ -359,7 +299,6 @@ async function saveScrollPosition() {
     Juz.value = juz;
     Page.value = page;
 
-    updateSurahHeader();
     localStorage.setItem('surahVariables', JSON.stringify(surahVariables.value))
   }
 }
@@ -481,13 +420,6 @@ function updateSelectedAyah(surahNumber, ayahNumber) {
 }
 
 
-const updateSurahHeader = () => {
-  document.querySelector("#SurahName").innerHTML = surah.value.name;
-  document.querySelector("#PageNumber").innerHTML = Page.value;
-  document.querySelector("#JuzNumber").innerHTML = Juz.value;
-}
-
-
 async function handleRouteChange(surahNumberParam, scrollToParam) {
   const surahNumber = parseInt(surahNumberParam);
 
@@ -502,17 +434,7 @@ async function handleRouteChange(surahNumberParam, scrollToParam) {
   if (surah.value) {
     Juz.value = surah.value.ayahs[0].juz;
     Page.value = surah.value.ayahs[0].page;
-
-    let imgScene = document.querySelector("#SurahHeader_1");
-    SVGInjector(imgScene, {
-      afterAll(svg) {
-        document.querySelector("#SurahName").innerHTML = surah.value.name;
-        document.querySelector("#PageNumber").innerHTML = surah.value.ayahs[0].page;
-        document.querySelector("#JuzNumber").innerHTML = surah.value.ayahs[0].juz;
-      }
-    });
-
-
+    Hizb.value = surah.value.ayahs[0].hizb;
   }
 
   upperSurahNameShown.value = true;
