@@ -290,7 +290,7 @@ const decreaseFontSize = () => {
 
 function setFont(font) {
   fontFamily.value = font;
-  localStorage.setItem(localStorageKey, font);
+  localStorage.setItem(localStorageKeyFontFamily, font);
   showFontPopover.value = false;
 }
 
