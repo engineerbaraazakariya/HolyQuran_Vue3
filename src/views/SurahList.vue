@@ -112,16 +112,7 @@ const router = useRouter()
 import { onActivated } from 'vue'
 
 onActivated(async () => {
-  console.log('🚀 onActivated fired!')
-  await nextTick()
-  const savedOffset = localStorage.getItem('mainScrollOffset')
-  if (!savedOffset) return
-
-  const el = mainScrollContainer.value?.$el || mainScrollContainer.value
-  const scrollEl = await el?.getScrollElement?.()
-  if (scrollEl) {
-    scrollEl.scrollTo({ top: parseInt(savedOffset), behavior: 'auto' })
-  }
+  await restoreScroll();
 })
 
 async function saveMainScrollPosition() {
@@ -129,7 +120,30 @@ async function saveMainScrollPosition() {
   const scrollEl = await el?.getScrollElement?.()
   const scrollTop = scrollEl?.scrollTop || 0
   mainScrollOffset.value = scrollEl.scrollTop
-  localStorage.setItem('mainScrollOffset', scrollTop.toString())
+  console.log('mainsave', mainScrollOffset.value)
+  localStorage.setItem('mainScrollOffset', mainScrollOffset.value)
+}
+const restoreScroll = async () => {
+
+  const stored = localStorage.getItem('lastSurah')
+  if (stored) {
+    lastSurah.value = parseInt(stored)
+  }
+
+  await nextTick();
+
+  const savedMainOffset = localStorage.getItem('mainScrollOffset')
+
+  console.log('mainScrollOffset', mainScrollOffset.value)
+  setTimeout(async () => {
+    const el = mainScrollContainer.value?.$el || mainScrollContainer.value;
+    const scrollEl = await el?.getScrollElement?.();
+    if (scrollEl && savedMainOffset) {
+      scrollEl.scrollTo({ top: Number(savedMainOffset), behavior: 'auto' });
+    } else {
+      console.warn("scrollEl not found or no offset");
+    }
+  }, 300);
 }
 const initData = async () => {
   const res = await fetch('/assets/quran.json');
@@ -181,24 +195,8 @@ function setFont(font) {
 
 onMounted(async () => {
   await initData();
-  const stored = localStorage.getItem('lastSurah')
-  if (stored) {
-    lastSurah.value = parseInt(stored)
-  }
+  await restoreScroll();
 
-  await nextTick();
-
-  const savedMainOffset = localStorage.getItem('mainScrollOffset')
-
-  setTimeout(async () => {
-    const el = mainScrollContainer.value?.$el || mainScrollContainer.value;
-    const scrollEl = await el?.getScrollElement?.();
-    if (scrollEl && savedMainOffset) {
-      scrollEl.scrollTo({ top: Number(savedMainOffset), behavior: 'auto' });
-    } else {
-      console.warn("scrollEl not found or no offset");
-    }
-  }, 300);
 })
 
 const goToSurah = (surah) => {
