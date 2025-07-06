@@ -104,22 +104,31 @@ import TopToolbar from './TopToolbar.vue'
 import { provide } from 'vue'
 import { ref, onMounted, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
-import { IonContent, IonHeader, IonPage, IonIcon, IonItem, IonTitle, IonSegment, IonSegmentButton, IonToolbar, IonButtons, IonButton, IonList, IonToast } from "@ionic/vue";
-import {
-  addCircle,
-  removeCircle,
-  sunny,
-  moon,
-  colorPalette,
-  searchOutline,
-} from 'ionicons/icons'
+import { IonContent, IonHeader, IonPage, IonItem, IonList, IonToast } from "@ionic/vue";
+
 const isDark = ref(false)
 const surahs = ref([])
 const router = useRouter()
+import { onActivated } from 'vue'
+
+onActivated(async () => {
+  console.log('🚀 onActivated fired!')
+  await nextTick()
+  const savedOffset = localStorage.getItem('mainScrollOffset')
+  if (!savedOffset) return
+
+  const el = mainScrollContainer.value?.$el || mainScrollContainer.value
+  const scrollEl = await el?.getScrollElement?.()
+  if (scrollEl) {
+    scrollEl.scrollTo({ top: parseInt(savedOffset), behavior: 'auto' })
+  }
+})
+
 async function saveMainScrollPosition() {
   const el = mainScrollContainer.value?.$el || mainScrollContainer.value
   const scrollEl = await el?.getScrollElement?.()
   const scrollTop = scrollEl?.scrollTop || 0
+  mainScrollOffset.value = scrollEl.scrollTop
   localStorage.setItem('mainScrollOffset', scrollTop.toString())
 }
 const initData = async () => {
@@ -213,16 +222,9 @@ const toggleTheme = () => {
   localStorage.setItem('isDark', isDark.value)
 }
 
-const saveFont = () => {
-  localStorage.setItem('fontFamily', fontFamily.value)
-}
-
-
-const surah = ref(null)
 const fontSize = ref(22)
 const fontFamily = ref('UthmaniFont')
-const showFontMenu = ref(false)
-
+const mainScrollOffset = ref(0)
 
 provide('increaseFontSize', increaseFontSize)
 provide('decreaseFontSize', decreaseFontSize)
