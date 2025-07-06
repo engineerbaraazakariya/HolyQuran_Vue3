@@ -1,43 +1,86 @@
 <template>
   <ion-page :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
     <ion-header>
-      <ion-toolbar :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
-        <ion-title>القرآن الكريم</ion-title>
-        <ion-buttons slot="end">
-          <ion-button @click="increaseFontSize" title="تكبير الخط">
-            <ion-icon :icon="addCircle" />
-          </ion-button>
-          <ion-button @click="decreaseFontSize" title="تصغير الخط">
-            <ion-icon :icon="removeCircle" />
-          </ion-button>
-          <ion-button @click="toggleTheme" title="الوضع الليلي">
-            <ion-icon :icon="isDark ? moon : sunny" />
-          </ion-button>
-          <ion-button @click="showFontMenu = !showFontMenu" title="تغيير الخط">
-            <ion-icon :icon="colorPalette" />
-          </ion-button>
-          <ion-button router-link="/search">
-            <ion-icon slot="icon-only" :icon="searchOutline" />
-          </ion-button>
-        </ion-buttons>
-      </ion-toolbar>
-      <ion-toolbar v-if="showFontMenu" :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
-        <ion-segment v-model="fontFamily" @ionChange="saveFont" scrollable
-          :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
-          <ion-segment-button :class="{ 'dark-theme': isDark, 'white-theme': !isDark }"
-            value="Uthmani">عثماني</ion-segment-button>
-          <ion-segment-button :class="{ 'dark-theme': isDark, 'white-theme': !isDark }"
-            value="Amiri">أميري</ion-segment-button>
-          <ion-segment-button :class="{ 'dark-theme': isDark, 'white-theme': !isDark }" value="MeQuran">مي
-            قرآن</ion-segment-button>
-          <ion-segment-button :class="{ 'dark-theme': isDark, 'white-theme': !isDark }"
-            value="DecoType">زخرفي</ion-segment-button>
-          <ion-segment-button :class="{ 'dark-theme': isDark, 'white-theme': !isDark }"
-            value="Hafs">حفص</ion-segment-button>
-          <ion-segment-button :class="{ 'dark-theme': isDark, 'white-theme': !isDark }"
-            value="Nabi">رقع</ion-segment-button>
-        </ion-segment>
-      </ion-toolbar>
+      <TopToolbar :isDark="isDark" title="القرآن الكريم" :showBack="false" :showFontSizeButtons="true"
+        :showThemeToggle="true" :showFontSelector="true" :showSearch="true" :showRibbon="false" />
+
+      <IonPopover :is-open="showFontPopover" :event="fontPopoverEvent" @didDismiss="showFontPopover = false"
+        style="--backdrop-background: transparent;">
+        <ion-list :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
+          <ion-item button @click="setFont('Uthmani')" class="!p-2 rounded-md my-1 transition-all" :class="[
+            fontFamily === 'Uthmani'
+              ? isDark
+                ? 'bg-gray-700 text-white ring-2 ring-green-500'
+                : 'bg-gray-200 text-black ring-2 ring-green-600'
+              : isDark
+                ? 'text-white hover:bg-gray-700'
+                : 'text-black hover:bg-gray-100'
+          ]" :style="{ fontFamily: 'Uthmani' }">
+            عثماني
+          </ion-item>
+
+          <ion-item button @click="setFont('Amiri')" class="!p-2 rounded-md my-1 transition-all" :class="[
+            fontFamily === 'Amiri'
+              ? isDark
+                ? 'bg-gray-700 text-white ring-2 ring-green-500'
+                : 'bg-gray-200 text-black ring-2 ring-green-600'
+              : isDark
+                ? 'text-white hover:bg-gray-700'
+                : 'text-black hover:bg-gray-100'
+          ]" :style="{ fontFamily: 'Amiri' }">
+            أميري
+          </ion-item>
+
+          <ion-item button @click="setFont('MeQuran')" class="!p-2 rounded-md my-1 transition-all" :class="[
+            fontFamily === 'MeQuran'
+              ? isDark
+                ? 'bg-gray-700 text-white ring-2 ring-green-500'
+                : 'bg-gray-200 text-black ring-2 ring-green-600'
+              : isDark
+                ? 'text-white hover:bg-gray-700'
+                : 'text-black hover:bg-gray-100'
+          ]" :style="{ fontFamily: 'MeQuran' }">
+            مي قرآن
+          </ion-item>
+
+          <ion-item button @click="setFont('DecoType')" class="!p-2 rounded-md my-1 transition-all" :class="[
+            fontFamily === 'DecoType'
+              ? isDark
+                ? 'bg-gray-700 text-white ring-2 ring-green-500'
+                : 'bg-gray-200 text-black ring-2 ring-green-600'
+              : isDark
+                ? 'text-white hover:bg-gray-700'
+                : 'text-black hover:bg-gray-100'
+          ]" :style="{ fontFamily: 'DecoType' }">
+            زخرفي
+          </ion-item>
+
+          <ion-item button @click="setFont('Hafs')" class="!p-2 rounded-md my-1 transition-all" :class="[
+            fontFamily === 'Hafs'
+              ? isDark
+                ? 'bg-gray-700 text-white ring-2 ring-green-500'
+                : 'bg-gray-200 text-black ring-2 ring-green-600'
+              : isDark
+                ? 'text-white hover:bg-gray-700'
+                : 'text-black hover:bg-gray-100'
+          ]" :style="{ fontFamily: 'Hafs' }">
+            حفص
+          </ion-item>
+
+          <ion-item button @click="setFont('Nabi')" class="!p-2 rounded-md my-1 transition-all" :class="[
+            fontFamily === 'Nabi'
+              ? isDark
+                ? 'bg-gray-700 text-white ring-2 ring-green-500'
+                : 'bg-gray-200 text-black ring-2 ring-green-600'
+              : isDark
+                ? 'text-white hover:bg-gray-700'
+                : 'text-black hover:bg-gray-100'
+          ]" :style="{ fontFamily: 'Nabi' }">
+            رقع
+          </ion-item>
+
+        </ion-list>
+      </IonPopover>
     </ion-header>
 
     <ion-content ref="mainScrollContainer" scroll-events=" true" @ionScroll="saveMainScrollPosition"
@@ -57,6 +100,8 @@
 </template>
 
 <script setup>
+import TopToolbar from './TopToolbar.vue'
+import { provide } from 'vue'
 import { ref, onMounted, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { IonContent, IonHeader, IonPage, IonIcon, IonItem, IonTitle, IonSegment, IonSegmentButton, IonToolbar, IonButtons, IonButton, IonList, IonToast } from "@ionic/vue";
@@ -103,6 +148,27 @@ import { App } from '@capacitor/app';
 const lastSurah = ref(null)
 
 const mainScrollContainer = ref(null)
+const showFontPopover = ref(false)
+const fontPopoverEvent = ref(null)
+
+
+function openFontPopover(event) {
+  const rect = event.target.getBoundingClientRect();
+  fontPopoverEvent.value = {
+    clientX: rect.left + rect.width / 2,
+    clientY: rect.top + rect.height / 2
+  };
+  showFontPopover.value = true;
+}
+
+
+import { IonPopover } from '@ionic/vue'
+function setFont(font) {
+  fontFamily.value = font;
+  localStorage.setItem('fontFamily', font);
+  showFontPopover.value = false;
+}
+
 
 onMounted(async () => {
   await initData();
@@ -156,6 +222,13 @@ const surah = ref(null)
 const fontSize = ref(22)
 const fontFamily = ref('UthmaniFont')
 const showFontMenu = ref(false)
+
+
+provide('increaseFontSize', increaseFontSize)
+provide('decreaseFontSize', decreaseFontSize)
+provide('toggleTheme', toggleTheme)
+provide('openFontPopover', openFontPopover)
+provide('isDark', isDark)
 </script>
 
 <style scoped>

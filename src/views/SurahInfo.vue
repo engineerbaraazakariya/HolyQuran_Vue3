@@ -63,11 +63,11 @@ export default {
       required: true,
     },
     pageNumber: {
-      type: String,
+      type: [String, Number],
       required: true,
     },
     JuzNumber: {
-      type: String,
+      type: [String, Number],
       required: true,
     },
     fontFamily: {
