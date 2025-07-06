@@ -22,7 +22,7 @@
       <ion-button v-if="showSearch" router-link="/search">
         <ion-icon slot="icon-only" :icon="searchOutline" />
       </ion-button>
-      <ion-button v-if="showRibbon" @click="$emit('showRibbon')">
+      <ion-button v-if="showRibbon" @click="toggleUpperSurahInfo">
         <ion-icon :icon="ribbon" />
       </ion-button>
     </ion-buttons>
@@ -69,6 +69,7 @@ const increaseFontSize = inject('increaseFontSize')
 const decreaseFontSize = inject('decreaseFontSize')
 const toggleTheme = inject('toggleTheme')
 const openFontPopover = inject('openFontPopover')
+const toggleUpperSurahInfo = inject('toggleUpperSurahInfo')
 const isDark = inject('isDark')
 
 const isOpen = inject('isOpen')

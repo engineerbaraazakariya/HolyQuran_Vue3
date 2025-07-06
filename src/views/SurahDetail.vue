@@ -13,8 +13,9 @@
             :JuzNumber="Juz" />
         </div>
       </ion-toolbar>
-      <TopToolbar v-if="!upperSurahNameShown" :isDark="isDark" title="القرآن الكريم" :showBack="true" :showFontSizeButtons="true"
-        :showThemeToggle="true" :showFontSelector="true" :showSearch="true" :showRibbon="false" />
+      <TopToolbar v-if="!upperSurahNameShown" :isDark="isDark" title="القرآن الكريم" :showBack="true"
+        :showFontSizeButtons="true" :showThemeToggle="true" :showFontSelector="true" :showSearch="true"
+        :showRibbon="true" />
     </ion-header>
 
     <ion-content :class="{ 'dark-theme': isDark, 'white-theme': !isDark }" @ionScroll="saveScrollPosition"
@@ -226,15 +227,7 @@ const modalType = ref('tafsir') // أو 'translation'
 
 import { ref, onMounted, nextTick } from 'vue'
 import { useRoute } from 'vue-router'
-import { addCircle, removeCircle, ribbon } from 'ionicons/icons'
-
-import {
-  sunny,
-  moon,
-  colorPalette,
-  searchOutline
-} from 'ionicons/icons'
-import { IonContent, IonHeader, IonPage, IonIcon, IonBackButton, IonTitle, IonSegment, IonSegmentButton, IonToolbar, IonButtons, IonButton, IonList, IonItem } from "@ionic/vue";
+import { IonContent, IonHeader, IonPage, IonToolbar, IonList, IonItem } from "@ionic/vue";
 import TopToolbar from './TopToolbar.vue'
 import { provide } from 'vue'
 const route = useRoute()
@@ -520,12 +513,16 @@ const toggleTheme = () => {
   isDark.value = !isDark.value
   localStorage.setItem('isDark', isDark.value)
 }
+const toggleUpperSurahInfo = () => {
+  upperSurahNameShown.value = !upperSurahNameShown.value
+}
 const saveFont = () => {
   localStorage.setItem('fontFamily', fontFamily.value)
 }
 provide('increaseFontSize', increaseFontSize)
 provide('decreaseFontSize', decreaseFontSize)
 provide('toggleTheme', toggleTheme)
+provide('toggleUpperSurahInfo', toggleUpperSurahInfo)
 provide('openFontPopover', openFontPopover)
 provide('isDark', isDark)
 </script>

@@ -12,14 +12,39 @@
 
     <ion-content :class="{ 'dark-theme': isDark, 'white-theme': !isDark }" @ionInfinite="loadMoreResults"
       scroll-events="true">
-      <ion-list v-if="results.length > 0" :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
-        <ion-item v-for="(result, index) in results" :key="index" button @click="goToSurah(result)"
+      <ion-list v-if="results.length" :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
+        <ion-item v-for="(result, index) in results" :key="index"
           :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
-          <ion-label :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
-            <h3 :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">{{ result.surahName }} - آية {{
-              result.ayahNumber }}</h3>
-            <p :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">{{ result.text }}</p>
-          </ion-label>
+          <!-- الحاوي الكامل -->
+          <div class="flex items-center justify-between w-full" @click="goToSurah(result)">
+            <!-- نصّ النتيجة -->
+            <ion-label class="flex-1 truncate" :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
+              <h3 class="truncate">
+                {{ result.surahName }} - آية {{ result.ayahNumber }}
+              </h3>
+
+              <p class="truncate" v-html="highlightSearchTerm(result.text, result.no_Tashkeel_text)" />
+            </ion-label>
+
+            <!-- ▬▬▬ الزرّان ▬▬▬ -->
+            <!-- الزرّان مع النصوص -->
+            <div class="flex gap-2 ml-2" @click.stop>
+              <!-- 📖 زرّ التفسير -->
+              <ion-button size="small" fill="clear"
+                class="rounded-full h-6 min-h-[1.5rem] px-2 text-white text-[0.65rem] font-semibold bg-gradient-to-r from-blue-500 to-blue-700"
+                @click="openTafsir(result)">
+                📖 تفسير
+              </ion-button>
+
+              <!-- زر الترجمة -->
+              <ion-button size="small" fill="clear"
+                class="rounded-full h-6 min-h-[1.5rem] px-2 text-white text-[0.65rem] font-semibold bg-gradient-to-r from-blue-500 to-blue-700"
+                @click="openTranslation(result)">
+                🌐 ترجمة
+              </ion-button>
+            </div>
+
+          </div>
         </ion-item>
       </ion-list>
 
@@ -34,11 +59,14 @@
     </ion-content>
 
 
+    <TafsirModal v-if="modalOpen" :is-open="modalOpen" :surah-number="selectedSurah" :ayah-number="selectedAyah"
+      :type="modalType" @close="modalOpen = false" />
 
   </ion-page>
 </template>
 
 <script setup lang="ts">
+import TafsirModal from './TafsirModal.vue'
 import { onMounted, ref } from 'vue'
 import { useQuranSearch } from '@/composables/useQuranSearch'
 import { useRouter } from 'vue-router'
@@ -46,6 +74,25 @@ import { IonContent, IonHeader, IonPage, IonItem, IonTitle, IonToolbar, IonText,
 
 import debounce from 'lodash.debounce'
 
+
+function openTafsir(result: any) {
+  selectedSurah.value = result.surahNumber;
+  selectedAyah.value = result.ayahNumber;
+  modalType.value = 'tafsir';
+  modalOpen.value = true;
+}
+
+function openTranslation(result: any) {
+  selectedSurah.value = result.surahNumber;
+  selectedAyah.value = result.ayahNumber;
+  modalType.value = 'translation';
+  modalOpen.value = true;
+}
+
+const modalOpen = ref(false);
+const selectedSurah = ref<number | null>(null);
+const selectedAyah = ref<number | null>(null);
+const modalType = ref<'tafsir' | 'translation'>('tafsir');
 
 const isDark = ref(false)
 const { search, lastSurahNumber, lastAyahNumber } = useQuranSearch()
@@ -100,4 +147,61 @@ function goToSurah(result: any) {
     }
   });
 }
+function escapeRegExp(str: string) {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function getContextSnippet(text: string, term: string, contextWordsBefore = 5, contextWordsAfter = 5) {
+  // تقسيم النص لكلمات (نستخدم فراغ كفاصل)
+  const words = text.split(/\s+/);
+
+  // البحث عن أول ظهور للكلمة (تجاهل حالة الحروف)
+  const lowerWords = words.map(w => w.toLowerCase());
+  const lowerTerm = term.toLowerCase();
+
+  // إيجاد موضع أول تطابق للكلمة (يمكن تعديل لتطابق كلمة كاملة أو جزء)
+  // هنا نبحث عن كلمة تحتوي term كجزء (مثل "النور" و "نور")
+  let index = -1;
+  for (let i = 0; i < lowerWords.length; i++) {
+    if (lowerWords[i].includes(lowerTerm)) {
+      index = i;
+      break;
+    }
+  }
+
+  if (index === -1) {
+    // الكلمة غير موجودة، نرجع النص كامل
+    return text;
+  }
+
+  // حساب حدود القطعة المراد عرضها
+  const start = Math.max(0, index - contextWordsBefore);
+  const end = Math.min(words.length - 1, index + contextWordsAfter);
+
+  // تجميع الكلمات المختارة مع ...
+  const snippetWords = words.slice(start, end + 1);
+
+  let prefix = start > 0 ? '... ' : '';
+  let suffix = end < words.length - 1 ? ' ...' : '';
+
+  return prefix + snippetWords.join(' ') + suffix;
+}
+
+function highlightSearchTerm(text: string, noTashkeelText?: string) {
+  if (!searchTerm.value.trim()) return text;
+
+  const term = searchTerm.value.trim();
+
+  // لو noTashkeelText غير معرف أو فارغ، نستعمل النص الأصلي بدل
+  const sourceText = noTashkeelText && noTashkeelText.length > 0 ? noTashkeelText : text;
+
+  const snippet = getContextSnippet(sourceText, term, 5, 5);
+
+  const escapedTerm = escapeRegExp(term);
+  const re = new RegExp(`(${escapedTerm})`, 'gi');
+
+  return snippet.replace(re, '<strong>$1</strong>');
+}
+
+
 </script>
