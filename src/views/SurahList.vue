@@ -5,81 +5,23 @@
         :showThemeToggle="true" :showFontSelector="true" :showSearch="true" :showRibbon="false" />
 
       <IonPopover :is-open="showFontPopover" :event="fontPopoverEvent" @didDismiss="showFontPopover = false"
-        style="--backdrop-background: transparent;">
-        <ion-list :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
-          <ion-item button @click="setFont('Uthmani')" class="!p-2 rounded-md my-1 transition-all" :class="[
-            fontFamily === 'Uthmani'
-              ? isDark
-                ? 'bg-gray-700 text-white ring-2 ring-green-500'
-                : 'bg-gray-200 text-black ring-2 ring-green-600'
-              : isDark
-                ? 'text-white hover:bg-gray-700'
-                : 'text-black hover:bg-gray-100'
-          ]" :style="{ fontFamily: 'Uthmani' }">
-            عثماني
-          </ion-item>
-
-          <ion-item button @click="setFont('Amiri')" class="!p-2 rounded-md my-1 transition-all" :class="[
-            fontFamily === 'Amiri'
-              ? isDark
-                ? 'bg-gray-700 text-white ring-2 ring-green-500'
-                : 'bg-gray-200 text-black ring-2 ring-green-600'
-              : isDark
-                ? 'text-white hover:bg-gray-700'
-                : 'text-black hover:bg-gray-100'
-          ]" :style="{ fontFamily: 'Amiri' }">
-            أميري
-          </ion-item>
-
-          <ion-item button @click="setFont('MeQuran')" class="!p-2 rounded-md my-1 transition-all" :class="[
-            fontFamily === 'MeQuran'
-              ? isDark
-                ? 'bg-gray-700 text-white ring-2 ring-green-500'
-                : 'bg-gray-200 text-black ring-2 ring-green-600'
-              : isDark
-                ? 'text-white hover:bg-gray-700'
-                : 'text-black hover:bg-gray-100'
-          ]" :style="{ fontFamily: 'MeQuran' }">
-            مي قرآن
-          </ion-item>
-
-          <ion-item button @click="setFont('DecoType')" class="!p-2 rounded-md my-1 transition-all" :class="[
-            fontFamily === 'DecoType'
-              ? isDark
-                ? 'bg-gray-700 text-white ring-2 ring-green-500'
-                : 'bg-gray-200 text-black ring-2 ring-green-600'
-              : isDark
-                ? 'text-white hover:bg-gray-700'
-                : 'text-black hover:bg-gray-100'
-          ]" :style="{ fontFamily: 'DecoType' }">
-            زخرفي
-          </ion-item>
-
-          <ion-item button @click="setFont('Hafs')" class="!p-2 rounded-md my-1 transition-all" :class="[
-            fontFamily === 'Hafs'
-              ? isDark
-                ? 'bg-gray-700 text-white ring-2 ring-green-500'
-                : 'bg-gray-200 text-black ring-2 ring-green-600'
-              : isDark
-                ? 'text-white hover:bg-gray-700'
-                : 'text-black hover:bg-gray-100'
-          ]" :style="{ fontFamily: 'Hafs' }">
-            حفص
-          </ion-item>
-
-          <ion-item button @click="setFont('Nabi')" class="!p-2 rounded-md my-1 transition-all" :class="[
-            fontFamily === 'Nabi'
-              ? isDark
-                ? 'bg-gray-700 text-white ring-2 ring-green-500'
-                : 'bg-gray-200 text-black ring-2 ring-green-600'
-              : isDark
-                ? 'text-white hover:bg-gray-700'
-                : 'text-black hover:bg-gray-100'
-          ]" :style="{ fontFamily: 'Nabi' }">
-            رقع
-          </ion-item>
-
-        </ion-list>
+        style="--backdrop-background: transparent; max-height: 80vh;">
+        <ion-content :scroll-y="true">
+          <ion-list class="max-h-[70vh] overflow-y-auto" :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
+            <ion-item v-for="font in fonts" :key="font.value" button @click="setFont(font.value)"
+              class="!p-2 rounded-md my-1 transition-all" :class="[
+                fontFamily === font.value
+                  ? isDark
+                    ? 'bg-gray-700 text-white ring-2 ring-green-500'
+                    : 'bg-gray-200 text-black ring-2 ring-green-600'
+                  : isDark
+                    ? 'text-white hover:bg-gray-700'
+                    : 'text-black hover:bg-gray-100'
+              ]" :style="{ fontFamily: font.value }">
+              {{ font.label }}
+            </ion-item>
+          </ion-list>
+        </ion-content>
       </IonPopover>
     </ion-header>
 
@@ -105,7 +47,19 @@ import { provide } from 'vue'
 import { ref, onMounted, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { IonContent, IonHeader, IonPage, IonItem, IonList, IonToast } from "@ionic/vue";
-
+const fonts = [
+  { value: 'GoldenLotus', label: 'لوتس' },
+  { value: 'Amiri', label: 'أميري' },
+  { value: 'Deco_Type', label: 'زخرفي 2' },
+  { value: 'KFGQPC', label: 'عثمان طه' },
+  { value: 'Muhammadi', label: 'محمدي' },
+  { value: 'MeQuran', label: 'مي قرآن' },
+  { value: 'Kamel_med', label: 'كامل وسط' },
+  { value: 'Nabi', label: 'نبي' },
+  { value: 'Sada', label: 'صدى' },
+  { value: 'Samim', label: 'صميم' },
+  { value: 'MyLotus', label: 'ماي لوتس' }
+];
 const isDark = ref(false)
 const surahs = ref([])
 const router = useRouter()

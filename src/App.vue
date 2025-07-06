@@ -34,44 +34,78 @@ onMounted(() => {
 
 <style>
 @font-face {
-  font-family: 'Amiri';
-  src: url('/assets/AmiriQuran-Regular.ttf') format('truetype');
+  font-family: 'GoldenLotus';
+  src: url('/assets/fonts/AAAGoldenLotus_Stg1_Ver1_Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Kamel_med';
+  src: url('/assets/fonts/Kamel_med.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }
 
 @font-face {
-  font-family: 'Uthmani';
-  src: url('/assets/uthmani.otf') format('opentype');
+  font-family: 'Amiri';
+  src: url('/assets/fonts/AmiriQuran-Regular.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }
 
+@font-face {
+  font-family: 'Deco_Type';
+  src: url('/assets/fonts/Deco_Type.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'KFGQPC';
+  src: url('/assets/fonts/KFGQPC_Uthman_Taha_Naskh_Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Muhammadi';
+  src: url('/assets/fonts/MUHAMMADI_QURANIC_FONT.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
 
 @font-face {
   font-family: 'MeQuran';
-  src: url('/assets/MeQuran.ttf') format('truetype');
+  src: url('/assets/fonts/MeQuran.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }
 
-@font-face {
-  font-family: 'DecoType';
-  src: url('/assets/DecoType.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'Hafs';
-  src: url('/assets/Hafs.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
-}
 
 @font-face {
   font-family: 'Nabi';
-  src: url('/assets/Nabi.ttf') format('truetype');
+  src: url('/assets/fonts/Nabi.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Sada';
+  src: url('/assets/fonts/Sada-Regular_.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Samim';
+  src: url('/assets/fonts/Samim_Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'MyLotus';
+  src: url('/assets/fonts/mylotus_Regular.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }
