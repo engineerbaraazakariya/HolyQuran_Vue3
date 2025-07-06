@@ -187,6 +187,11 @@ function getContextSnippet(text: string, term: string, contextWordsBefore = 5, c
   return prefix + snippetWords.join(' ') + suffix;
 }
 
+import { useBackButton } from '@ionic/vue';
+useBackButton(10, () => {
+  router.back();
+});
+
 function highlightSearchTerm(text: string, noTashkeelText?: string) {
   if (!searchTerm.value.trim()) return text;
 
