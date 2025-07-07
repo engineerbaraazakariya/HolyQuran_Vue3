@@ -41,14 +41,14 @@ onMounted(() => {
 }
 @font-face {
   font-family: 'Kamel_med';
-  src: url('/assets/fonts/Kamel_med.ttf') format('truetype');
+  src: url('/assets/fonts/Kamel_med.otf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }
 
 @font-face {
   font-family: 'Amiri';
-  src: url('/assets/fonts/AmiriQuran-Regular.ttf') format('truetype');
+  src: url('/assets/fonts/AmiriQuran-Regular.otf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }
