@@ -97,12 +97,38 @@
 
       <IonPopover :is-open="showPopover" :event="popoverEvent"
         @didDismiss="surahVariables[selectedSurahNumber].longPressedAyahNumber = null; showPopover = false">
+
         <ion-list>
           <ion-item button @click="onOption('تفسير')">📖 تفسير</ion-item>
           <ion-item button @click="onOption('ترجمة')">🌐 ترجمة</ion-item>
           <ion-item button @click="onOption()">❌ إلغاء</ion-item>
         </ion-list>
+
+        <!-- الأزرار الدائرية -->
+        <!-- الأزرار الدائرية -->
+        <div class="flex justify-around p-4 pt-2 border-t border-gray-300 dark:border-gray-700">
+
+          <!-- زر التشغيل/الإيقاف -->
+          <button @click="playAyahAudio(selectedSurahNumber, selectedAyahNumber)"
+            class="w-12 h-12 rounded-full bg-blue-500 text-white flex items-center justify-center shadow-md hover:bg-blue-600 transition">
+            <IonIcon :icon="isPlaying ? pauseOutline : playOutline" />
+          </button>
+
+          <!-- زر النسخ -->
+          <button @click="copyAyah"
+            class="w-12 h-12 rounded-full bg-blue-500 text-white flex items-center justify-center shadow-md hover:bg-blue-600 transition">
+            <IonIcon :icon="copyOutline" />
+          </button>
+          <!-- زر المشاركة -->
+          <button @click="shareAyah"
+            class="w-12 h-12 rounded-full bg-blue-500 text-white flex items-center justify-center shadow-md hover:bg-blue-600 transition">
+            <IonIcon :icon="shareSocialOutline" />
+          </button>
+        </div>
+
       </IonPopover>
+
+
 
 
     </ion-content>
@@ -113,6 +139,48 @@
 </template>
 
 <script setup>
+import { IonIcon } from '@ionic/vue'
+import { shareSocialOutline, copyOutline, playOutline, pauseOutline } from 'ionicons/icons'
+const isPlaying = ref(false)
+
+function padNumber(num) {
+  return String(num).padStart(3, '0');
+}
+
+function getAudioPath(surahNumber, ayahNumber) {
+  const surahStr = padNumber(surahNumber); // 1 → "001"
+  const ayahStr = padNumber(ayahNumber);   // 5 → "005"
+  return `/assets/sound/Sa3d_Alghamdy/${surahStr}/${surahStr}${ayahStr}.mp3`;
+}
+function playAyahAudio(surahNumber, ayahNumber) {
+  const audioPath = getAudioPath(surahNumber, ayahNumber);
+  const audio = new Audio(audioPath);
+  audio.play();
+}
+
+
+function copyAyah() {
+  const ayahText = surah.value?.ayahs.find(a => a.numberInSurah === selectedAyahNumber.value)?.text;
+  if (ayahText) {
+    navigator.clipboard.writeText(ayahText)
+      .then(() => console.log('✅ تم نسخ الآية!'))
+      .catch(() => console.log('❌ فشل النسخ.'));
+  }
+}
+
+function shareAyah() {
+  const ayah = surah.value?.ayahs.find(a => a.numberInSurah === selectedAyahNumber.value);
+  if (ayah && navigator.share) {
+    navigator.share({
+      title: `سورة ${surah.value.name}`,
+      text: ayah.text,
+      url: window.location.href
+    }).catch(err => console.error('لم يتم المشاركة:', err));
+  } else {
+    console.log('❌ المشاركة غير مدعومة في هذا المتصفح.');
+  }
+}
+
 import TafsirModal from './TafsirModal.vue'
 import SurahInfo from './SurahInfo.vue';
 const modalOpen = ref(false)
