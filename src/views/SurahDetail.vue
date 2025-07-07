@@ -120,7 +120,7 @@
             <IonIcon :icon="copyOutline" />
           </button>
           <!-- زر المشاركة -->
-          <button @click="shareAyah"
+          <button @click="shareAyahText"
             class="w-12 h-12 rounded-full bg-blue-500 text-white flex items-center justify-center shadow-md hover:bg-blue-600 transition">
             <IonIcon :icon="shareSocialOutline" />
           </button>
@@ -152,10 +152,47 @@ function getAudioPath(surahNumber, ayahNumber) {
   const ayahStr = padNumber(ayahNumber);   // 5 → "005"
   return `/assets/sound/Sa3d_Alghamdy/${surahStr}/${surahStr}${ayahStr}.mp3`;
 }
+
+let currentAudio = null;
+let currentAudioSrc = '';
+
 function playAyahAudio(surahNumber, ayahNumber) {
   const audioPath = getAudioPath(surahNumber, ayahNumber);
+
+  // ✅ إذا الملف نفسه قيد التشغيل، تجاهل الأمر
+  if (currentAudio && !currentAudio.paused && currentAudioSrc === audioPath) {
+    return;
+  }
+
+  // ✅ إذا فيه صوت آخر شغال، أوقفه
+  if (currentAudio) {
+    currentAudio.pause();
+    currentAudio.currentTime = 0;
+    currentAudio = null;
+    currentAudioSrc = '';
+  }
+
+  // ✅ شغل الصوت الجديد
   const audio = new Audio(audioPath);
-  audio.play();
+  currentAudio = audio;
+  currentAudioSrc = audioPath;
+
+  audio.play().catch(err => {
+    console.error('فشل تشغيل الصوت:', err);
+    currentAudio = null;
+    currentAudioSrc = '';
+  });
+
+  audio.addEventListener('ended', () => {
+    currentAudio = null;
+    currentAudioSrc = '';
+  });
+
+  audio.addEventListener('error', () => {
+    console.error('حدث خطأ في الملف الصوتي:', audioPath);
+    currentAudio = null;
+    currentAudioSrc = '';
+  });
 }
 
 
@@ -168,18 +205,23 @@ function copyAyah() {
   }
 }
 
-function shareAyah() {
-  const ayah = surah.value?.ayahs.find(a => a.numberInSurah === selectedAyahNumber.value);
-  if (ayah && navigator.share) {
-    navigator.share({
-      title: `سورة ${surah.value.name}`,
-      text: ayah.text,
-      url: window.location.href
-    }).catch(err => console.error('لم يتم المشاركة:', err));
-  } else {
-    console.log('❌ المشاركة غير مدعومة في هذا المتصفح.');
+import { Share } from '@capacitor/share';
+
+const shareAyahText = async () => {
+  const ayahText = surah.value?.ayahs.find(a => a.numberInSurah === selectedAyahNumber.value)?.text;
+  if (ayahText) {
+    try {
+      await Share.share({
+        title: `📖 ${surah.value.name}`,
+        text: ayahText,
+        dialogTitle: 'مشاركة الآية'
+      });
+    } catch (err) {
+      console.error('خطأ في المشاركة:', err);
+    }
   }
 }
+
 
 import TafsirModal from './TafsirModal.vue'
 import SurahInfo from './SurahInfo.vue';
