@@ -12,3 +12,4 @@ keystore/baraazakariya.keystore
 keystore/keystore.properties
 keystore/release-key.keystore
 keystore/upload_certificate.pem
+keystore/my-release-key.jks
