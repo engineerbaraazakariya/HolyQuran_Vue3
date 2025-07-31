@@ -143,68 +143,48 @@ import { IonIcon } from '@ionic/vue'
 import { shareSocialOutline, copyOutline, playOutline, pauseOutline } from 'ionicons/icons'
 
 const isPlaying = ref(false)
-let currentMediaId = null
-
-function padNumber(num) {
-  return String(num).padStart(3, '0');
-}
 
 import { Capacitor } from '@capacitor/core'
-import { Media, MediaObject } from '@ionic-native/media'
+import { Media } from '@ionic-native/media'
 
 let file = null
 
+let currentAudio = null;
 
 function getAudioPath(surahNumber, ayahNumber) {
   const surahStr = String(surahNumber).padStart(3, '0');
   const ayahStr = String(ayahNumber).padStart(3, '0');
-  return `sound/Sa3d_Alghamdy/${surahStr}/${surahStr}${ayahStr}.mp3`;
+  return `assets/sounds/Sa3d_Alghamdy/${surahStr}/${surahStr}${ayahStr}.opus`;
 }
 
 async function playAyahAudio(surahNumber, ayahNumber) {
-  // ❌ إذا فيه ملف صوتي شغال، لا تعمل شي
-  if (file && isPlaying) {
-    console.log('🔁 الصوت قيد التشغيل، تجاهل الطلب');
-    return;
+  // أوقف الصوت السابق إذا كان شغال
+  if (currentAudio) {
+    currentAudio.pause();
+    currentAudio = null;
+    isPlaying.value = false;
   }
 
   const path = getAudioPath(surahNumber, ayahNumber);
-  const fullPath = Capacitor.getPlatform() === 'android'
-    ? `/android_asset/${path}`
-    : path;
+  currentAudio = new Audio(path);
 
-  // أوقف الصوت السابق (إذا انتهى أو ما كان شغال)
-  if (file) {
-    file.stop();
-    file.release();
-    file = null;
-    isPlaying = false;
-  }
+  currentAudio.onended = () => {
+    isPlaying.value = false;
+  };
+
+  currentAudio.onerror = (e) => {
+    console.error('❌ خطأ في تشغيل الصوت:', e);
+    isPlaying.value = false;
+  };
 
   try {
-    file = Media.create(fullPath);
-
-    file.play();
-    isPlaying = true;
-
-    file.onSuccess.subscribe(() => {
-      console.log('✅ انتهى التشغيل');
-      isPlaying = false;
-    });
-
-    file.onError.subscribe(e => {
-      console.error('❌ خطأ في الصوت:', e);
-      isPlaying = false;
-    });
-
+    await currentAudio.play();
+    isPlaying.value = true;
   } catch (err) {
-    console.error('❌ فشل إنشاء الصوت:', err);
-    isPlaying = false;
+    console.error('❌ فشل التشغيل:', err);
+    isPlaying.value = false;
   }
 }
-
-let currentAudio = null;
-let currentAudioSrc = '';
 
 
 function copyAyah() {
