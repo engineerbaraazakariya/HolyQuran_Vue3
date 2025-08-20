@@ -294,7 +294,7 @@ const surahVariables = ref({}) // { '1': {numberInSurah:5, scrollPosition:100}, 
 const surah = ref(null)
 const fontSize = ref(22)
 const fontFamily = ref('Uthmani')
-const isDark = ref(false)
+const isDark = ref(true)
 const showFontMenu = ref(false)
 const scrollContainer = ref(null)
 

@@ -60,7 +60,7 @@ const fonts = [
   { value: 'Samim', label: 'صميم' },
   { value: 'MyLotus', label: 'ماي لوتس' }
 ];
-const isDark = ref(false)
+const isDark = ref(true)
 const surahs = ref([])
 const router = useRouter()
 import { onActivated } from 'vue'
@@ -74,7 +74,6 @@ async function saveMainScrollPosition() {
   const scrollEl = await el?.getScrollElement?.()
   const scrollTop = scrollEl?.scrollTop || 0
   mainScrollOffset.value = scrollEl.scrollTop
-  console.log('mainsave', mainScrollOffset.value)
   localStorage.setItem('mainScrollOffset', mainScrollOffset.value)
 }
 const restoreScroll = async () => {
@@ -88,7 +87,6 @@ const restoreScroll = async () => {
 
   const savedMainOffset = localStorage.getItem('mainScrollOffset')
 
-  console.log('mainScrollOffset', mainScrollOffset.value)
   setTimeout(async () => {
     const el = mainScrollContainer.value?.$el || mainScrollContainer.value;
     const scrollEl = await el?.getScrollElement?.();

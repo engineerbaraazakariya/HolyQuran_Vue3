@@ -94,7 +94,7 @@ const selectedSurah = ref<number | null>(null);
 const selectedAyah = ref<number | null>(null);
 const modalType = ref<'tafsir' | 'translation'>('tafsir');
 
-const isDark = ref(false)
+const isDark = ref(true)
 const { search, lastSurahNumber, lastAyahNumber } = useQuranSearch()
 const searchTerm = ref('')
 const results = ref<any[]>([])  // لتخزين النتائج الحالية

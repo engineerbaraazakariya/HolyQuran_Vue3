@@ -221,7 +221,7 @@ watch(() => [props.surahNumber, props.ayahNumber, props.isOpen, selectedFile.val
 
 
 // تم تكرار الكود الخاص بالأزرار هنا
-const isDark = ref(false);
+const isDark = ref(true);
 const fontSize = ref(22);
 const fontFamily = ref('Uthmani');
 const showFontMenu = ref(false);
