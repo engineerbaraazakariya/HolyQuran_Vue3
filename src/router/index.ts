@@ -9,6 +9,7 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/surah/:number/:scrollTo?',
     name: 'SurahDetail',
+    meta: { keepAlive: true },
     component: () => import('@/views/SurahDetail.vue'),
     props: route => ({
       number: Number(route.params.number),
