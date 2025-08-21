@@ -34,11 +34,6 @@ onMounted(() => {
 
 <style>
 @font-face {
-  font-family: "AlQuranAli";
-  src: url("assets/fonts/AlQuranAli-L3A83.ttf") format("truetype");
-}
-
-@font-face {
   font-family: "Arabic";
   src: url("assets/fonts/Arabic Regular.ttf") format("truetype");
 }

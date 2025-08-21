@@ -1,5 +1,4 @@
 export const fonts = [
-  { value: "AlQuranAli", label: "القرآن علي" },
   { value: "Arabic", label: "عربي" },
   { value: "FS_Arabic", label: "عربي ف" },
   { value: "KFGQPCUthmanTaha", label: "عثمان طه" },
