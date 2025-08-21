@@ -34,80 +34,88 @@ onMounted(() => {
 
 <style>
 @font-face {
-  font-family: 'GoldenLotus';
-  src: url('/assets/fonts/AAAGoldenLotus_Stg1_Ver1_Regular.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
-}
-@font-face {
-  font-family: 'Kamel_med';
-  src: url('/assets/fonts/Kamel_med.otf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
+  font-family: "AlQuranAli";
+  src: url("assets/fonts/AlQuranAli-L3A83.ttf") format("truetype");
 }
 
 @font-face {
-  font-family: 'Amiri';
-  src: url('/assets/fonts/AmiriQuran-Regular.otf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
+  font-family: "Arabic";
+  src: url("assets/fonts/Arabic Regular.ttf") format("truetype");
 }
 
 @font-face {
-  font-family: 'Deco_Type';
-  src: url('/assets/fonts/Deco_Type.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
+  font-family: "FS_Arabic";
+  src: url("assets/fonts/FS_Arabic Regular.ttf") format("truetype");
 }
 
 @font-face {
-  font-family: 'KFGQPC';
-  src: url('/assets/fonts/KFGQPC_Uthman_Taha_Naskh_Regular.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
+  font-family: "KFGQPCUthmanTaha";
+  src: url("assets/fonts/KFGQPC Uthman Taha Naskh Regular.ttf") format("truetype");
 }
 
 @font-face {
-  font-family: 'Muhammadi';
-  src: url('/assets/fonts/MUHAMMADI_QURANIC_FONT.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
+  font-family: "KFGQPCDot";
+  src: url("assets/fonts/KFGQPCDotFont.otf") format("opentype");
 }
 
 @font-face {
-  font-family: 'MeQuran';
-  src: url('/assets/fonts/MeQuran.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
-}
-
-
-@font-face {
-  font-family: 'Nabi';
-  src: url('/assets/fonts/Nabi.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
+  font-family: "Kamel";
+  src: url("assets/fonts/Kamel_med.otf") format("opentype");
 }
 
 @font-face {
-  font-family: 'Sada';
-  src: url('/assets/fonts/Sada-Regular_.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
+  font-family: "MuhammadiQuranic";
+  src: url("assets/fonts/MUHAMMADI_QURANIC_FONT.ttf") format("truetype");
 }
 
 @font-face {
-  font-family: 'Samim';
-  src: url('/assets/fonts/Samim_Regular.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
+  font-family: "Outlined";
+  src: url("assets/fonts/Outlinedv001.otf") format("opentype");
 }
 
 @font-face {
-  font-family: 'MyLotus';
-  src: url('/assets/fonts/mylotus_Regular.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
+  font-family: "Sada";
+  src: url("assets/fonts/Sada-Regular_.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Samim";
+  src: url("assets/fonts/Samim_Regular.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "UthmanTNB";
+  src: url("assets/fonts/UthmanTNB_v2-0.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "UthmanTN";
+  src: url("assets/fonts/UthmanTN_v2-0.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "UthmanTSB";
+  src: url("assets/fonts/UthmanTSBVer1.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "UthmanTS";
+  src: url("assets/fonts/UthmanTSVer1.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Zakhrfa";
+  src: url("assets/fonts/Zakhrfa.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "ZakhrfaOutline";
+  src: url("assets/fonts/ZakhrfaOutline.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "MyLotus";
+  src: url("assets/fonts/mylotus_Regular.ttf") format("truetype");
 }
 
 .dark-theme {

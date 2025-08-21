@@ -47,19 +47,8 @@ import { provide } from 'vue'
 import { ref, onMounted, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { IonContent, IonHeader, IonPage, IonItem, IonList, IonToast } from "@ionic/vue";
-const fonts = [
-  { value: 'GoldenLotus', label: 'لوتس' },
-  { value: 'Amiri', label: 'أميري' },
-  { value: 'Deco_Type', label: 'زخرفي 2' },
-  { value: 'KFGQPC', label: 'عثمان طه' },
-  { value: 'Muhammadi', label: 'محمدي' },
-  { value: 'MeQuran', label: 'مي قرآن' },
-  { value: 'Kamel_med', label: 'كامل وسط' },
-  { value: 'Nabi', label: 'نبي' },
-  { value: 'Sada', label: 'صدى' },
-  { value: 'Samim', label: 'صميم' },
-  { value: 'MyLotus', label: 'ماي لوتس' }
-];
+import { fonts } from '@/composables/fonts.ts'
+
 const isDark = ref(true)
 const surahs = ref([])
 const router = useRouter()

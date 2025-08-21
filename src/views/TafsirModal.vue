@@ -49,19 +49,7 @@
 import TopToolbar from './TopToolbar.vue'
 import { ref, computed, watch, provide } from 'vue'
 import { IonModal, IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton } from "@ionic/vue";
-const fonts = [
-  { value: 'GoldenLotus', label: 'لوتس' },
-  { value: 'Amiri', label: 'أميري' },
-  { value: 'Deco_Type', label: 'زخرفي 2' },
-  { value: 'KFGQPC', label: 'عثمان طه' },
-  { value: 'Muhammadi', label: 'محمدي' },
-  { value: 'MeQuran', label: 'مي قرآن' },
-  { value: 'Kamel_med', label: 'كامل وسط' },
-  { value: 'Nabi', label: 'نبي' },
-  { value: 'Sada', label: 'صدى' },
-  { value: 'Samim', label: 'صميم' },
-  { value: 'MyLotus', label: 'ماي لوتس' }
-];
+import { fonts } from '@/composables/fonts.ts'
 import { onMounted } from 'vue';
 
 
