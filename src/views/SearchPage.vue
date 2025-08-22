@@ -70,7 +70,7 @@ import TafsirModal from './TafsirModal.vue'
 import { onMounted, ref } from 'vue'
 import { useQuranSearch } from '@/composables/useQuranSearch'
 import { useRouter } from 'vue-router'
-import { IonContent, IonHeader, IonPage, IonItem, IonTitle, IonToolbar, IonText, IonList, IonLabel, IonSearchbar, IonInfiniteScrollContent, IonInfiniteScroll } from "@ionic/vue";
+import { IonButton, IonContent, IonHeader, IonPage, IonItem, IonTitle, IonToolbar, IonText, IonList, IonLabel, IonSearchbar, IonInfiniteScrollContent, IonInfiniteScroll } from "@ionic/vue";
 
 import debounce from 'lodash.debounce'
 

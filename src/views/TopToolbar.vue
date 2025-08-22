@@ -72,10 +72,9 @@ const openFontPopover = inject('openFontPopover')
 const toggleUpperSurahInfo = inject('toggleUpperSurahInfo')
 const isDark = inject('isDark')
 
-const isOpen = inject('isOpen')
-const selectedFile = inject('selectedFile')
-const availableOptions = inject('availableOptions')
-const languageDisplay = inject('languageDisplay')
+const selectedFile = inject('selectedFile', null)
+const availableOptions = inject('availableOptions', [])
+const languageDisplay = inject('languageDisplay', [])
 
 </script>
 
