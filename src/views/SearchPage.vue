@@ -183,11 +183,14 @@ const { search, lastSurahNumber, lastAyahNumber } = useQuranSearch()
 const searchTerm = ref('')
 const results = ref<any[]>([])  // لتخزين النتائج الحالية
 const isLoading = ref(false)  // لتتبع حالة التحميل
-const page = ref(1)  // الصفحة الحالية (مبدئيًا من 1)
+const noMoreResults = ref(false)  // لتتبع حالة التحميل
 // الدالة التي يتم تفعيلها بعد كل كتابة (debounced)
 const handleSearch = debounce(() => {
   if (searchTerm.value.trim().length >= 2) {
     results.value = []  // إفراغ النتائج السابقة
+    noMoreResults.value = false;
+    lastSurahNumber.value = 1;
+    lastAyahNumber.value = 1;
     loadResults()  // تحميل أول 20 نتيجة
   } else {
     results.value = []  // إفراغ النتائج إذا لم يتم إدخال كلمة بحث
@@ -199,19 +202,25 @@ async function loadResults() {
   if (isLoading.value) return;
   isLoading.value = true;
 
+
   const startSurahNumber = lastSurahNumber.value || 1  // إذا لم يكن هناك رقم سورة أخير، نبدأ من السورة الأولى
   const startAyahNumber = lastAyahNumber.value || 1  // إذا لم يكن هناك رقم آية أخير، نبدأ من الآية الأولى
 
   // تحميل نتائج جديدة بناءً على رقم السورة والآية الأخيرين
   const newResults = await search(searchTerm.value.trim(), startSurahNumber, startAyahNumber, 20);
 
+  noMoreResults.value = newResults[newResults.length - 1].noMoreResults;
   results.value = [...results.value, ...newResults];
+
 
   isLoading.value = false;
 }
 
 function loadMoreResults(event: any) {
-  loadResults();  // تحميل المزيد من النتائج
+  if (!noMoreResults.value) {
+    loadResults();  // تحميل المزيد من النتائج
+  }
+
   event.target.complete();  // إتمام عملية التحميل
 }
 
