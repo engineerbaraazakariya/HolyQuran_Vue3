@@ -24,7 +24,7 @@
               </h3>
 
               <p class="truncate" v-html="highlightSearchTerm(result.text, result.no_Tashkeel_text)" />
-              <div class="flex gap-2 ml-2" @click.stop>
+              <div class="flex px-2" @click.stop>
                 <ion-button size="small" fill="clear"
                   class="rounded-full h-6 min-h-[1.5rem] px-2 text-white text-[0.65rem] font-semibold bg-gradient-to-r from-blue-500 to-blue-700"
                   @click="openTafsir(result)">
