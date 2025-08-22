@@ -48,7 +48,7 @@
 
 import TopToolbar from './TopToolbar.vue'
 import { ref, computed, watch, provide } from 'vue'
-import { IonModal, IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonList, IonItem,  } from "@ionic/vue";
+import { IonModal, IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonList, IonItem } from "@ionic/vue";
 import { fonts } from '@/composables/fonts.ts'
 import { onMounted } from 'vue';
 

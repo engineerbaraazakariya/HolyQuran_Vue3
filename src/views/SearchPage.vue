@@ -24,25 +24,44 @@
               </h3>
 
               <p class="truncate" v-html="highlightSearchTerm(result.text, result.no_Tashkeel_text)" />
+              <div class="flex gap-2 ml-2" @click.stop>
+                <ion-button size="small" fill="clear"
+                  class="rounded-full h-6 min-h-[1.5rem] px-2 text-white text-[0.65rem] font-semibold bg-gradient-to-r from-blue-500 to-blue-700"
+                  @click="openTafsir(result)">
+                  📖 تفسير
+                </ion-button>
+
+                <ion-button size="small" fill="clear"
+                  class="rounded-full h-6 min-h-[1.5rem] px-2 text-white text-[0.65rem] font-semibold bg-gradient-to-r from-blue-500 to-blue-700"
+                  @click="openTranslation(result)">
+                  🌐 ترجمة
+                </ion-button>
+
+                <ion-button size="small" fill="clear"
+                  class="rounded-full h-6 min-h-[1.5rem] px-2 text-white text-[0.65rem] font-semibold bg-gradient-to-r from-blue-500 to-blue-700"
+                  @click="copyAyah(result.text)">
+                  📋 نسخ
+                </ion-button>
+
+                <ion-button size="small" fill="clear"
+                  class="rounded-full h-6 min-h-[1.5rem] px-2 text-white text-[0.65rem] font-semibold transition"
+                  :class="currentAudio == null
+                    ? 'bg-gradient-to-r from-blue-500 to-blue-700 cursor-pointer'
+                    : 'bg-gray-400 opacity-50 cursor-not-allowed'"
+                  @click=" playAyahAudio(result.surahNumber, result.ayahNumber)">
+                  {{ isPlaying ? "⏸️" : "▶️" }} تلاوة
+                </ion-button>
+
+
+
+                <ion-button size="small" fill="clear"
+                  class="rounded-full h-6 min-h-[1.5rem] px-2 text-white text-[0.65rem] font-semibold bg-gradient-to-r from-blue-500 to-blue-700"
+                  @click="shareAyahText(result.text, result.surahName)">
+                  📤 مشاركة
+                </ion-button>
+
+              </div>
             </ion-label>
-
-            <!-- ▬▬▬ الزرّان ▬▬▬ -->
-            <!-- الزرّان مع النصوص -->
-            <div class="flex gap-2 ml-2" @click.stop>
-              <!-- 📖 زرّ التفسير -->
-              <ion-button size="small" fill="clear"
-                class="rounded-full h-6 min-h-[1.5rem] px-2 text-white text-[0.65rem] font-semibold bg-gradient-to-r from-blue-500 to-blue-700"
-                @click="openTafsir(result)">
-                📖 تفسير
-              </ion-button>
-
-              <!-- زر الترجمة -->
-              <ion-button size="small" fill="clear"
-                class="rounded-full h-6 min-h-[1.5rem] px-2 text-white text-[0.65rem] font-semibold bg-gradient-to-r from-blue-500 to-blue-700"
-                @click="openTranslation(result)">
-                🌐 ترجمة
-              </ion-button>
-            </div>
 
           </div>
         </ion-item>
@@ -74,6 +93,71 @@ import { IonButton, IonContent, IonHeader, IonPage, IonItem, IonTitle, IonToolba
 
 import debounce from 'lodash.debounce'
 
+let currentAudio = ref(null);
+
+function getAudioPath(surahNumber, ayahNumber) {
+  const surahStr = String(surahNumber).padStart(3, '0');
+  const ayahStr = String(ayahNumber).padStart(3, '0');
+  return `assets/sounds/Sa3d_Alghamdy/${surahStr}/${surahStr}${ayahStr}.opus`;
+}
+
+
+async function playAyahAudio(surahNumber, ayahNumber) {
+
+  if (currentAudio.value) {
+    return;
+  }
+
+  const path = getAudioPath(surahNumber, ayahNumber);
+  currentAudio.value = new Audio(path);
+
+  currentAudio.value.onended = () => {
+    isPlaying.value = false;
+    currentAudio.value = null;
+  };
+
+  currentAudio.value.onerror = (e) => {
+    console.error('❌ خطأ في تشغيل الصوت:', e);
+    isPlaying.value = false;
+  };
+
+  try {
+    await currentAudio.value.play();
+    isPlaying.value = true;
+  } catch (err) {
+    console.error('❌ فشل التشغيل:', err);
+    isPlaying.value = false;
+  }
+}
+
+
+function copyAyah(ayahText: string) {
+  if (ayahText) {
+    navigator.clipboard.writeText(ayahText)
+      .then(() => console.log('✅ تم نسخ الآية!'))
+      .catch(() => console.log('❌ فشل النسخ.'));
+  }
+}
+
+import { Share } from '@capacitor/share';
+
+const shareAyahText = async (ayahText, surahName) => {
+  if (ayahText) {
+    try {
+      await Share.share({
+        title: `📖 ${surahName}`,
+        text: ayahText,
+        dialogTitle: 'مشاركة الآية'
+      });
+    } catch (err) {
+      console.error('خطأ في المشاركة:', err);
+    }
+  }
+}
+
+
+
+const isPlaying = ref(false)
 
 function openTafsir(result: any) {
   selectedSurah.value = result.surahNumber;
