@@ -141,14 +141,13 @@
 <script setup>
 import { IonIcon } from '@ionic/vue'
 import { shareSocialOutline, copyOutline, playOutline, pauseOutline } from 'ionicons/icons'
+import { onActivated } from "vue";
+
+onActivated(async () => {
+    await handleRouteChange(route.params.number, route.params.scrollTo);
+});
 
 const isPlaying = ref(false)
-
-import { Capacitor } from '@capacitor/core'
-import { Media } from '@ionic-native/media'
-
-let file = null
-
 let currentAudio = null;
 
 function getAudioPath(surahNumber, ayahNumber) {
