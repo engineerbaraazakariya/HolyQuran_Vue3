@@ -8,7 +8,7 @@
           fontSize: fontSize + 'px',
           fontFamily: fontFamily,
           color: isDark ? 'white' : 'black'
-        }">
+        }" style="transform: scaleY(1.6) scaleX(1.4);">
           <SurahInfo v-if="surah" :SurahName="surah.name" :isDark="isDark" :fontFamily="fontFamily" :pageNumber="Page"
             :JuzNumber="Juz" />
         </div>
