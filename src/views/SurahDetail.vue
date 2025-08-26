@@ -41,7 +41,7 @@
             <span v-for="(word, index) in ayah.text.split(' ')" :key="index" :style="{
               fontSize: fontSize + 'px',
               fontFamily: fontFamily,
-              color: basicMeaning[surah.number - 1][ayah.numberInSurah - 1][index].length > 0 ? '#6363f9' : isDark ? 'white' : 'black',
+              color: basicMeaning[surah.number - 1][ayah.numberInSurah - 1][index]?.length > 0 ? '#6363f9' : isDark ? 'white' : 'black',
               wordSpacing: '0.25em',
               backgroundColor: surahVariables[surah.number]?.longPressedAyahNumber === ayah.numberInSurah ? 'green' : !isDark ? 'white' : 'black',
               cursor: 'default',
