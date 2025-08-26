@@ -4,18 +4,18 @@
       <ion-toolbar @click="upperSurahNameShown = false" v-show="upperSurahNameShown"
         :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
         <!-- اسم السورة مع الزخرفة -->
-        <div class="upperSurahName text-center flex justify-center items-center w-full h-12" :style="{
+        <div class="flex w-full my-4" :style="{
           fontSize: fontSize + 'px',
           fontFamily: fontFamily,
           color: isDark ? 'white' : 'black'
         }" style="transform: scaleY(1.6) scaleX(1.4);">
-          <SurahInfo v-if="surah" :SurahName="surah.name" :isDark="isDark" :fontFamily="fontFamily" :pageNumber="Page"
-            :JuzNumber="Juz" />
+          <SurahInfo v-if="surah" :fontSize="fontSize" :SurahName="surah.name" :isDark="isDark" :fontFamily="fontFamily"
+            :pageNumber="Page" :JuzNumber="Juz" />
+
         </div>
       </ion-toolbar>
-      <TopToolbar v-if="!upperSurahNameShown" :isDark="isDark" title="القرآن الكريم" :showBack="true"
-        :showFontSizeButtons="true" :showThemeToggle="true" :showFontSelector="true" :showSearch="true"
-        :showRibbon="true" />
+      <TopToolbar v-if="!upperSurahNameShown" :isDark="isDark" title="" :showBack="true" :showFontSizeButtons="true"
+        :showThemeToggle="true" :showFontSelector="true" :showSearch="true" :showRibbon="true" />
     </ion-header>
 
     <ion-content :class="{ 'dark-theme': isDark, 'white-theme': !isDark }" @ionScroll="saveScrollPosition"
@@ -23,8 +23,10 @@
       <span class="flex flex-wrap justify-around px-2">
         <template v-if="surah">
           <!-- اسم السورة مع الزخرفة -->
-          <SurahInfo @click="upperSurahNameShown = true" v-if="!upperSurahNameShown" :SurahName="surah.name"
-            :fontFamily="fontFamily" :pageNumber="Page" :isDark="isDark" :JuzNumber="Juz" />
+          <div class="flex w-full mb-8 mt-4" style="transform: scaleY(1.6) scaleX(1.4);" v-if="!upperSurahNameShown">
+            <SurahInfo @click="upperSurahNameShown = true" :SurahName="surah.name" :fontFamily="fontFamily"
+              :pageNumber="Page" :isDark="isDark" :JuzNumber="Juz" />
+          </div>
 
           <!-- البسملة -->
           <div v-if="![1, 9].includes(surah.number)"
@@ -144,7 +146,7 @@ import { shareSocialOutline, copyOutline, playOutline, pauseOutline } from 'ioni
 import { onActivated } from "vue";
 
 onActivated(async () => {
-    await handleRouteChange(route.params.number, route.params.scrollTo);
+  await handleRouteChange(route.params.number, route.params.scrollTo);
 });
 
 const isPlaying = ref(false)
