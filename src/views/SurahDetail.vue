@@ -41,15 +41,16 @@
             <span v-for="(word, index) in ayah.text.split(' ')" :key="index" :style="{
               fontSize: fontSize + 'px',
               fontFamily: fontFamily,
-              color: isDark ? 'white' : 'black',
+              color: basicMeaning[surah.number - 1][ayah.numberInSurah - 1][index].length > 0 ? '#6363f9' : isDark ? 'white' : 'black',
               wordSpacing: '0.25em',
-              backgroundColor: surahVariables[surah.number]?.longPressedAyahNumber === ayah.numberInSurah ? 'green' : 'transparent',
+              backgroundColor: surahVariables[surah.number]?.longPressedAyahNumber === ayah.numberInSurah ? 'green' : !isDark ? 'white' : 'black',
               cursor: 'default',
-              backgroundColor: surahVariables[surah.number]?.longPressedAyahNumber === ayah.numberInSurah ? 'green' : 'transparent'
-            }" @touchstart="startLongPress($event, surah.number, ayah.numberInSurah)" @touchend="stopLongPress"
-              @touchmove="stopLongPress">
+              backgroundColor: surahVariables[surah.number]?.longPressedAyahNumber === ayah.numberInSurah ? 'green' : !isDark ? 'white' : 'black',
+            }" @touchstart="startLongPress($event, surah.number, ayah.numberInSurah)"
+              @click="setMaany(surah, ayah, index)" @touchend="stopLongPress" @touchmove="stopLongPress"
+              class="relative">
               {{ word }}<span class="!w-2 !max-w-2 !min-w-2 flex" :style="{
-                backgroundColor: surahVariables[surah.number]?.longPressedAyahNumber === ayah.numberInSurah ? 'green' : 'transparent'
+                backgroundColor: surahVariables[surah.number]?.longPressedAyahNumber === ayah.numberInSurah ? 'green' : !isDark ? 'white' : 'black',
               }" v-if="index !== ayah.text.split(' ').length - 1"></span>
             </span>
             <span :data-page="ayah.page" :data-hizbQuarter="ayah.hizbQuarter" :data-juz="ayah.juz"
@@ -76,6 +77,31 @@
           <p class="ion-padding">جارٍ تحميل السورة...</p>
         </template>
       </span>
+      <!-- start of dialog -->
+
+      <div v-if="showCurrentMaany.length > 0" class="fixed inset-0 flex items-center justify-center bg-black/50 z-[1]"
+        @click="showCurrentMaany = ''">
+        <div class="w-max h-max max-w-[75vw] overflow-scroll opacity-100 rounded-xl shadow-lg p-6 relative"
+          :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
+
+          <!-- زر الإغلاق -->
+          <button class="absolute top-2 right-2  text-xl font-bold"
+            :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
+            ×
+          </button>
+
+          <!-- النص -->
+          <div :class="{ 'dark-theme': isDark, 'white-theme': !isDark }" class="overflow-scroll no-scrollbar" :style="{
+            fontSize: fontSize + 'px',
+            fontFamily: fontFamily,
+            color: isDark ? 'white' : 'black'
+          }">
+            {{ showCurrentMaany }}
+          </div>
+
+        </div>
+      </div>
+
       <IonPopover :is-open="showFontPopover" :event="fontPopoverEvent" @didDismiss="showFontPopover = false"
         style="--backdrop-background: transparent; max-height: 80vh;">
         <ion-content :scroll-y="true">
@@ -197,7 +223,7 @@ function copyAyah() {
   }
 }
 
-import { Share } from '@capacitor/share';
+import basicMeaning from '@/assets/meanings_nested.js';
 
 const shareAyahText = async () => {
   const ayahText = surah.value?.ayahs.find(a => a.numberInSurah === selectedAyahNumber.value)?.text;
@@ -424,6 +450,12 @@ function toggleAyah(surahNumber, ayahNumber) {
   localStorage.setItem('surahVariables', JSON.stringify(surahVariables.value));
 }
 
+let showCurrentMaany = ref('')
+function setMaany(surah, ayah, index) {
+  showCurrentMaany.value = basicMeaning[surah.number - 1][ayah.numberInSurah - 1][index][0]
+}
+
+
 onMounted(async () => {
   isDark.value = localStorage.getItem('isDark') === 'true';
   fontSize.value = parseFloat(localStorage.getItem('fontSize')) || 22;
@@ -433,6 +465,9 @@ onMounted(async () => {
   if (stored) {
     surahVariables.value = JSON.parse(stored);
   }
+
+
+  // loadBasicMaany();
 
   // التعامل مع الحالة الأولية
   await handleRouteChange(route.params.number, route.params.scrollTo);
