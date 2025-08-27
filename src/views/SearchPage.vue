@@ -209,7 +209,7 @@ async function loadResults() {
   // تحميل نتائج جديدة بناءً على رقم السورة والآية الأخيرين
   const newResults = await search(searchTerm.value.trim(), startSurahNumber, startAyahNumber, 20);
 
-  noMoreResults.value = newResults[newResults.length - 1].noMoreResults;
+  noMoreResults.value = newResults[newResults.length - 1] && newResults[newResults.length - 1].noMoreResults;
   results.value = [...results.value, ...newResults];
 
 

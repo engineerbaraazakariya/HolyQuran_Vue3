@@ -51,7 +51,7 @@ export function useQuranSearch() {
     }
 
     // لما يتم الانتهاء من البحث ولم يبق المزيد من امكانية البحث يتم تحديث هذه
-    if (lastSurahNumber.value === 114 && lastAyahNumber.value === 6) {
+    if (results[results.length - 1] && lastSurahNumber.value === 114 && lastAyahNumber.value === 6) {
       results[results.length - 1].noMoreResults = true;
     }
     // إرجاع النتائج بعد التوقف عند أول 20 نتيجة
