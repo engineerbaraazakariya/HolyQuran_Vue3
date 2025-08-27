@@ -156,7 +156,7 @@ onMounted(() => {
 
   // في حال كان الـ selectedFile فارغًا، قم بتعيين التفسير الافتراضي.
   if (!selectedFile.value) {
-    selectedFile.value = DEFAULT_TAFSIR;
+    selectedFile.value = (props.type === 'tafsir' ? DEFAULT_TAFSIR : DEFAULT_TRANSLATION)
   }
 
 });
@@ -212,7 +212,6 @@ watch(() => [props.surahNumber, props.ayahNumber, props.isOpen, selectedFile.val
 const isDark = ref(true);
 const fontSize = ref(22);
 const fontFamily = ref('Uthmani');
-const showFontMenu = ref(false);
 
 const increaseFontSize = () => {
   fontSize.value += 2;

@@ -47,7 +47,7 @@
               cursor: 'default',
               backgroundColor: surahVariables[surah.number]?.longPressedAyahNumber === ayah.numberInSurah ? 'green' : !isDark ? 'white' : 'black',
             }" @touchstart="startLongPress($event, surah.number, ayah.numberInSurah)"
-              @click="setMaany(surah, ayah, index)" @touchend="stopLongPress" @touchmove="stopLongPress"
+              @click="basicMeaning[surah.number - 1][ayah.numberInSurah - 1][index]?.length > 0 && setMaany(surah, ayah, index)" @touchend="stopLongPress" @touchmove="stopLongPress"
               class="relative">
               {{ word }}<span class="!w-2 !max-w-2 !min-w-2 flex" :style="{
                 backgroundColor: surahVariables[surah.number]?.longPressedAyahNumber === ayah.numberInSurah ? 'green' : !isDark ? 'white' : 'black',
@@ -85,14 +85,14 @@
           :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
 
           <!-- زر الإغلاق -->
-          <button class="absolute top-2 right-2  text-xl font-bold"
+          <button class="absolute top-1 right-1  text-xl font-bold"
             :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
             ×
           </button>
 
           <!-- النص -->
           <div :class="{ 'dark-theme': isDark, 'white-theme': !isDark }" class="overflow-scroll no-scrollbar" :style="{
-            fontSize: fontSize + 'px',
+            fontSize: fontSize*.7 + 'px',
             fontFamily: fontFamily,
             color: isDark ? 'white' : 'black'
           }">
@@ -311,7 +311,6 @@ const surah = ref(null)
 const fontSize = ref(22)
 const fontFamily = ref('Uthmani')
 const isDark = ref(true)
-const showFontMenu = ref(false)
 const scrollContainer = ref(null)
 
 
