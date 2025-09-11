@@ -11,7 +11,7 @@
     </ion-header>
 
     <ion-content :class="{ 'dark-theme': isDark, 'white-theme': !isDark }" @ionInfinite="loadMoreResults"
-      scroll-events="true">
+      :scroll-events="true">
       <ion-list v-if="results.length" :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
         <ion-item v-for="(result, index) in results" :key="index"
           :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
@@ -93,16 +93,16 @@ import { IonButton, IonContent, IonHeader, IonPage, IonItem, IonTitle, IonToolba
 
 import debounce from 'lodash.debounce'
 
-let currentAudio = ref(null);
+let currentAudio = ref<HTMLAudioElement | null>(null);
 
-function getAudioPath(surahNumber, ayahNumber) {
+function getAudioPath(surahNumber: number, ayahNumber: number) {
   const surahStr = String(surahNumber).padStart(3, '0');
   const ayahStr = String(ayahNumber).padStart(3, '0');
   return `assets/sounds/Sa3d_Alghamdy/${surahStr}/${surahStr}${ayahStr}.opus`;
 }
 
 
-async function playAyahAudio(surahNumber, ayahNumber) {
+async function playAyahAudio(surahNumber: number, ayahNumber: number) {
 
   if (currentAudio.value) {
     return;
@@ -141,7 +141,7 @@ function copyAyah(ayahText: string) {
 
 import { Share } from '@capacitor/share';
 
-const shareAyahText = async (ayahText, surahName) => {
+const shareAyahText = async (ayahText: string, surahName: string) => {
   if (ayahText) {
     try {
       await Share.share({
