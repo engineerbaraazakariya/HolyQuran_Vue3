@@ -2,7 +2,7 @@
   <ion-page :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
     <ion-header :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
       <ion-toolbar :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
-        <ion-title>البحث في القرآن</ion-title>
+        <ion-title>البحث في القرآن الكريم</ion-title>
       </ion-toolbar>
       <ion-toolbar :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
         <ion-searchbar v-model="searchTerm" @ionInput="handleSearch" placeholder="أدخل كلمة للبحث"

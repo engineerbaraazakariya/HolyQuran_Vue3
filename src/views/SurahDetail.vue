@@ -4,11 +4,8 @@
       <ion-toolbar @click="upperSurahNameShown = false" v-show="upperSurahNameShown"
         :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
         <!-- اسم السورة مع الزخرفة -->
-        <div class="flex w-full my-4" :style="{
-          fontSize: fontSize + 'px',
-          fontFamily: fontFamily,
-          color: isDark ? 'white' : 'black'
-        }" style="transform: scaleY(1.6) scaleX(1.4);">
+        <div class="SurahInfo flex w-full overflow-hidden "
+          :style="{ transform: `scaleY(${scaleYSurahInfo}) scaleX(1.4)` }">
           <SurahInfo v-if="surah" :fontSize="fontSize" :SurahName="surah.name" :isDark="isDark" :fontFamily="fontFamily"
             :pageNumber="Page" :JuzNumber="Juz" />
 
@@ -20,63 +17,72 @@
 
     <ion-content :class="{ 'dark-theme': isDark, 'white-theme': !isDark }" @ionScroll="saveScrollPosition"
       ref="scrollContainer" scroll-events="true" style="overflow-y: auto;">
-      <span class="flex flex-wrap justify-around px-2">
-        <template v-if="surah">
-          <!-- اسم السورة مع الزخرفة -->
-          <div class="flex w-full mb-8 mt-4" style="transform: scaleY(1.6) scaleX(1.4);" v-if="!upperSurahNameShown">
-            <SurahInfo @click="upperSurahNameShown = true" :SurahName="surah.name" :fontFamily="fontFamily"
-              :pageNumber="Page" :isDark="isDark" :JuzNumber="Juz" />
-          </div>
+      <div class="flex flex-row justify-between">
 
-          <!-- البسملة -->
-          <div v-if="![1, 9].includes(surah.number)"
-            class="text-center mb-4 flex justify-center items-center w-full mt-2" :style="{
-              fontSize: fontSize + 'px',
-              fontFamily: fontFamily,
-              color: isDark ? 'white' : 'black'
-            }">
-            ﷽
-          </div>
-          <template v-for="ayah in surah.ayahs" :key="ayah.numberInSurah">
-            <span v-for="(word, index) in ayah.text.split(' ')" :key="index" :style="{
-              fontSize: fontSize + 'px',
-              fontFamily: fontFamily,
-              color: basicMeaning[surah.number - 1][ayah.numberInSurah - 1][index]?.length > 0 ? '#6363f9' : isDark ? 'white' : 'black',
-              wordSpacing: '0.25em',
-              backgroundColor: surahVariables[surah.number]?.longPressedAyahNumber === ayah.numberInSurah ? 'green' : !isDark ? 'white' : 'black',
-              cursor: 'default',
-              backgroundColor: surahVariables[surah.number]?.longPressedAyahNumber === ayah.numberInSurah ? 'green' : !isDark ? 'white' : 'black',
-            }" @touchstart="startLongPress($event, surah.number, ayah.numberInSurah)"
-              @click="basicMeaning[surah.number - 1][ayah.numberInSurah - 1][index]?.length > 0 && setMaany(surah, ayah, index)" @touchend="stopLongPress" @touchmove="stopLongPress"
-              class="relative">
-              {{ word }}<span class="!w-2 !max-w-2 !min-w-2 flex" :style="{
+        <div v-if="OnlyOnOrientationLandscape" class="flex !w-16 !min-w-16">
+          <TopToolbar :vertical="true" :isDark="isDark" title="" :showBack="true" :showFontSizeButtons="true"
+            :showThemeToggle="true" :showFontSelector="true" :showSearch="true" :showRibbon="false" />
+        </div>
+
+        <span class="flex flex-wrap justify-around px-2">
+          <template v-if="surah">
+            <!-- اسم السورة مع الزخرفة -->
+            <div class="flex w-full SurahInfo" :style="{ transform: `scaleY(${scaleYSurahInfo}) scaleX(1.4)` }"
+              v-if="!upperSurahNameShown">
+              <SurahInfo @click="upperSurahNameShown = true" :SurahName="surah.name" :fontFamily="fontFamily"
+                :pageNumber="Page" :isDark="isDark" :JuzNumber="Juz" />
+            </div>
+
+            <!-- البسملة -->
+            <div v-if="![1, 9].includes(surah.number)"
+              class="text-center mb-4 flex justify-center items-center w-full mt-2" :style="{
+                fontSize: fontSize + 'px',
+                fontFamily: fontFamily,
+                color: isDark ? 'white' : 'black'
+              }">
+              ﷽
+            </div>
+            <template v-for="ayah in surah.ayahs" :key="ayah.numberInSurah">
+              <span v-for="(word, index) in ayah.text.split(' ')" :key="index" :style="{
+                fontSize: fontSize + 'px',
+                fontFamily: fontFamily,
+                color: basicMeaning[surah.number - 1][ayah.numberInSurah - 1][index]?.length > 0 ? '#6363f9' : isDark ? 'white' : 'black',
+                wordSpacing: '0.25em',
                 backgroundColor: surahVariables[surah.number]?.longPressedAyahNumber === ayah.numberInSurah ? 'green' : !isDark ? 'white' : 'black',
-              }" v-if="index !== ayah.text.split(' ').length - 1"></span>
-            </span>
-            <span :data-page="ayah.page" :data-hizbQuarter="ayah.hizbQuarter" :data-juz="ayah.juz"
-              :id='"ayah-" + ayah.numberInSurah' class="relative flex justify-center items-center" :style="{
-                minHeight: fontSize / 1.012 + 'px',
-                minWidth: fontSize / 1.012 + 'px',
-                backgroundImage: `url(/assets/${surahVariables[surah.number]?.selectedAyahNumber === ayah.numberInSurah ? 'bookmarked_ayah' : 'end_ayah'}.svg)`,
-                backgroundSize: 'contain',
-                backgroundRepeat: 'no-repeat',
-                backgroundPosition: 'center',
-                fontSize: fontSize / 2.75 + 'px',
-                width: fontSize / 1.2 + 'px',
-                fontWeight: 'bold',
-                color: 'black',
-              }" @click="toggleAyah(surah.number, ayah.numberInSurah)"
-              @contextmenu.prevent="toggleAyah(surah.number, ayah.numberInSurah)">
-              <span>
-                {{ ayah.numberInSurah }}
+                cursor: 'default',
+                backgroundColor: surahVariables[surah.number]?.longPressedAyahNumber === ayah.numberInSurah ? 'green' : !isDark ? 'white' : 'black',
+              }" @touchstart="startLongPress($event, surah.number, ayah.numberInSurah)"
+                @click="basicMeaning[surah.number - 1][ayah.numberInSurah - 1][index]?.length > 0 && setMaany(surah, ayah, index)"
+                @touchend="stopLongPress" @touchmove="stopLongPress" class="relative">
+                {{ word }}<span class="!w-2 !max-w-2 !min-w-2 flex" :style="{
+                  backgroundColor: surahVariables[surah.number]?.longPressedAyahNumber === ayah.numberInSurah ? 'green' : !isDark ? 'white' : 'black',
+                }" v-if="index !== ayah.text.split(' ').length - 1"></span>
               </span>
-            </span>
+              <span :data-page="ayah.page" :data-hizbQuarter="ayah.hizbQuarter" :data-juz="ayah.juz"
+                :id='"ayah-" + ayah.numberInSurah' class="relative flex justify-center items-center" :style="{
+                  minHeight: fontSize / 1.012 + 'px',
+                  minWidth: fontSize / 1.012 + 'px',
+                  backgroundImage: `url(/assets/${surahVariables[surah.number]?.selectedAyahNumber === ayah.numberInSurah ? 'bookmarked_ayah' : 'end_ayah'}.svg)`,
+                  backgroundSize: 'contain',
+                  backgroundRepeat: 'no-repeat',
+                  backgroundPosition: 'center',
+                  fontSize: fontSize / 2.75 + 'px',
+                  width: fontSize / 1.2 + 'px',
+                  fontWeight: 'bold',
+                  color: 'black',
+                }" @click="toggleAyah(surah.number, ayah.numberInSurah)"
+                @contextmenu.prevent="toggleAyah(surah.number, ayah.numberInSurah)">
+                <span>
+                  {{ ayah.numberInSurah }}
+                </span>
+              </span>
+            </template>
           </template>
-        </template>
-        <template v-else>
-          <p class="ion-padding">جارٍ تحميل السورة...</p>
-        </template>
-      </span>
+          <template v-else>
+            <p class="ion-padding">جارٍ تحميل السورة...</p>
+          </template>
+        </span>
+      </div>
       <!-- start of dialog -->
 
       <div v-if="showCurrentMaany.length > 0" class="fixed inset-0 flex items-center justify-center bg-black/50 z-[1]"
@@ -92,7 +98,7 @@
 
           <!-- النص -->
           <div :class="{ 'dark-theme': isDark, 'white-theme': !isDark }" class="overflow-scroll no-scrollbar" :style="{
-            fontSize: fontSize*.7 + 'px',
+            fontSize: fontSize * .7 + 'px',
             fontFamily: fontFamily,
             color: isDark ? 'white' : 'black'
           }">
@@ -299,7 +305,7 @@ function onOption(choice) {
 
 const modalType = ref('tafsir') // أو 'translation'
 
-import { ref, onMounted, nextTick } from 'vue'
+import { ref, onMounted, nextTick, onBeforeUnmount } from 'vue'
 import { useRoute } from 'vue-router'
 import { IonContent, IonHeader, IonPage, IonToolbar, IonList, IonItem } from "@ionic/vue";
 import TopToolbar from './TopToolbar.vue'
@@ -311,6 +317,7 @@ const surah = ref(null)
 const fontSize = ref(22)
 const fontFamily = ref('Uthmani')
 const isDark = ref(true)
+const scaleYSurahInfo = ref(1.2)
 const scrollContainer = ref(null)
 
 
@@ -455,9 +462,18 @@ function setMaany(surah, ayah, index) {
 }
 
 
+
+onBeforeUnmount(() => {
+  window.removeEventListener("resize", checkOrientation);
+});
+
 onMounted(async () => {
+  checkOrientation(); // أول مرة
+  window.addEventListener("resize", checkOrientation);
+
   isDark.value = localStorage.getItem('isDark') === 'true';
   fontSize.value = parseFloat(localStorage.getItem('fontSize')) || 22;
+  scaleYSurahInfo.value = parseFloat(localStorage.getItem('scaleYSurahInfo')) || 1;
   fontFamily.value = localStorage.getItem('fontFamily') || 'Uthmani';
 
   const stored = localStorage.getItem('surahVariables');
@@ -598,13 +614,71 @@ const toggleTheme = () => {
 const toggleUpperSurahInfo = () => {
   upperSurahNameShown.value = !upperSurahNameShown.value
 }
-const saveFont = () => {
-  localStorage.setItem('fontFamily', fontFamily.value)
-}
+
 provide('increaseFontSize', increaseFontSize)
 provide('decreaseFontSize', decreaseFontSize)
 provide('toggleTheme', toggleTheme)
 provide('toggleUpperSurahInfo', toggleUpperSurahInfo)
 provide('openFontPopover', openFontPopover)
 provide('isDark', isDark)
+
+
+const OnlyOnOrientationLandscape = ref(false);
+
+function checkOrientation() {
+  OnlyOnOrientationLandscape.value = window.innerWidth > window.innerHeight;
+}
+
 </script>
+
+<style scoped>
+
+.vertical-toolbar {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    height: auto;
+    padding: 8px;
+    height: 30rem;
+    position: fixed;
+    width: 4rem;
+    top: 0;
+}
+
+.vertical-toolbar ion-buttons {
+  display: flex;
+  flex-direction: column;
+}
+
+.vertical-toolbar ion-button {
+  width: 100%;
+  min-width: 100%;
+  max-width: 100%;
+  margin: 4px 0;
+}
+
+@media (orientation: landscape) {
+  .ion-header, 
+  ion-header ion-toolbar:first-of-type,
+  ion-toolbar:not(.vertical-toolbar), 
+  .toolbar-container,
+  .horizonal-buttons {
+    display: none !important;
+  }
+
+    .SurahInfo {
+    display: none;
+  }
+  
+}
+
+
+@media (orientation: portrait) {
+
+  .vertical-buttons {
+    display: none !important;
+  }
+
+}
+
+</style>
