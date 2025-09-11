@@ -191,7 +191,7 @@ watch(() => [props.surahNumber, props.ayahNumber, props.isOpen, selectedFile.val
     isLoading.value = true
     const folder = props.type === 'tafsir' ? 'tafasir' : 'tarajem'
     try {
-      const res = await fetch(`/assets/${folder}/${selectedFile.value}`)
+      const res = await fetch(`assets/${folder}/${selectedFile.value}`)
       if (!res.ok) {
         throw new Error('حدث خطأ في تحميل البيانات')
       }

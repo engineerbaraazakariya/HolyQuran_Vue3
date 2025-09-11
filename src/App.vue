@@ -35,57 +35,57 @@ onMounted(() => {
 <style>
 @font-face {
   font-family: "Arabic Regular";
-  src: url("/assets/fonts/Arabic Regular.ttf") format("truetype");
+  src: url("@@/assets/fonts/Arabic Regular.ttf") format("truetype");
 }
 
 @font-face {
   font-family: "FS_Arabic Regular";
-  src: url("/assets/fonts/FS_Arabic Regular.ttf") format("truetype");
+  src: url("@@/assets/fonts/FS_Arabic Regular.ttf") format("truetype");
 }
 
 @font-face {
   font-family: "KFGQPC Uthman Taha Naskh Regular";
-  src: url("/assets/fonts/KFGQPC Uthman Taha Naskh Regular.ttf") format("truetype");
+  src: url("@@/assets/fonts/KFGQPC Uthman Taha Naskh Regular.ttf") format("truetype");
 }
 
 @font-face {
   font-family: "Kamel_med";
-  src: url("/assets/fonts/Kamel_med.otf") format("truetype");
+  src: url("@@/assets/fonts/Kamel_med.otf") format("truetype");
 }
 
 @font-face {
   font-family: "MUHAMMADI_QURANIC_FONT";
-  src: url("/assets/fonts/MUHAMMADI_QURANIC_FONT.ttf") format("truetype");
+  src: url("@@/assets/fonts/MUHAMMADI_QURANIC_FONT.ttf") format("truetype");
 }
 
 @font-face {
   font-family: "Nabi";
-  src: url("/assets/fonts/Nabi.ttf") format("truetype");
+  src: url("@@/assets/fonts/Nabi.ttf") format("truetype");
 }
 
 @font-face {
   font-family: "Sada_Regular";
-  src: url("/assets/fonts/Sada-Regular_.ttf") format("truetype");
+  src: url("@@/assets/fonts/Sada-Regular_.ttf") format("truetype");
 }
 
 @font-face {
   font-family: "Samim_Regular";
-  src: url("/assets/fonts/Samim_Regular.ttf") format("truetype");
+  src: url("@@/assets/fonts/Samim_Regular.ttf") format("truetype");
 }
 
 @font-face {
   font-family: "UthmanTNB";
-  src: url("/assets/fonts/UthmanTNB_v2-0.ttf") format("truetype");
+  src: url("@@/assets/fonts/UthmanTNB_v2-0.ttf") format("truetype");
 }
 
 @font-face {
   font-family: "UthmanTN";
-  src: url("/assets/fonts/UthmanTN_v2-0.ttf") format("truetype");
+  src: url("@@/assets/fonts/UthmanTN_v2-0.ttf") format("truetype");
 }
 
 @font-face {
   font-family: "mylotus_Regular";
-  src: url("/assets/fonts/mylotus_Regular.ttf") format("truetype");
+  src: url("@@/assets/fonts/mylotus_Regular.ttf") format("truetype");
 }
 
 .dark-theme {

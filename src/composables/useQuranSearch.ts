@@ -7,7 +7,7 @@ export function useQuranSearch() {
 
   // تحميل البيانات من الملف عند التهيئة
   async function loadData() {
-    const res = await fetch('/assets/quran.json')
+    const res = await fetch('assets/quran.json')
     quranData.value = await res.json()
   }
 

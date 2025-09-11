@@ -5,7 +5,7 @@ import { defineConfig } from 'vite'
 
 export default defineConfig(({ command, mode }) => {
   // تحديد قيمة base حسب الـ mode
-  const base = mode === 'web' ? '/HolyQuran/' : '/'
+  const base = mode === 'web' ? '/HolyQuran/' : ''
 
   return {
     base,
@@ -18,6 +18,7 @@ export default defineConfig(({ command, mode }) => {
     resolve: {
       alias: {
         '@': path.resolve(__dirname, './src'),
+        '@@': path.resolve(__dirname, './public'),
       },
     },
 

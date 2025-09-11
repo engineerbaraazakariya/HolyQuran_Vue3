@@ -87,7 +87,7 @@ const restoreScroll = async () => {
   }, 300);
 }
 const initData = async () => {
-  const res = await fetch('/assets/quran.json');
+  const res = await fetch('assets/quran.json');
   const data = await res.json();
   surahs.value = data;
   fontSize.value = parseInt(localStorage.getItem('fontSize')) || 22;

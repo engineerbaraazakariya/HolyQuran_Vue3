@@ -28,8 +28,8 @@
           <template v-if="surah">
             <!-- اسم السورة مع الزخرفة -->
             <div class="flex w-full SurahInfo" :style="{ transform: `scaleY(${scaleYSurahInfo}) scaleX(1.4)` }"
-              v-if="!upperSurahNameShown">
-              <SurahInfo @click="upperSurahNameShown = true" :SurahName="surah.name" :fontFamily="fontFamily"
+              v-if="!upperSurahNameShown || OnlyOnOrientationLandscape">
+              <SurahInfo @click="!OnlyOnOrientationLandscape.value ? upperSurahNameShown = true: null" :SurahName="surah.name" :fontFamily="fontFamily"
                 :pageNumber="Page" :isDark="isDark" :JuzNumber="Juz" />
             </div>
 
@@ -53,7 +53,9 @@
                 backgroundColor: surahVariables[surah.number]?.longPressedAyahNumber === ayah.numberInSurah ? 'green' : !isDark ? 'white' : 'black',
               }" @touchstart="startLongPress($event, surah.number, ayah.numberInSurah)"
                 @click="basicMeaning[surah.number - 1][ayah.numberInSurah - 1][index]?.length > 0 && setMaany(surah, ayah, index)"
-                @touchend="stopLongPress" @touchmove="stopLongPress" class="relative">
+                @touchend="stopLongPress" @touchmove="stopLongPress"
+                @contextmenu.prevent="startLongPress($event, surah.number, ayah.numberInSurah, 0)"
+                class="relative">
                 {{ word }}<span class="!w-2 !max-w-2 !min-w-2 flex" :style="{
                   backgroundColor: surahVariables[surah.number]?.longPressedAyahNumber === ayah.numberInSurah ? 'green' : !isDark ? 'white' : 'black',
                 }" v-if="index !== ayah.text.split(' ').length - 1"></span>
@@ -62,7 +64,7 @@
                 :id='"ayah-" + ayah.numberInSurah' class="relative flex justify-center items-center" :style="{
                   minHeight: fontSize / 1.012 + 'px',
                   minWidth: fontSize / 1.012 + 'px',
-                  backgroundImage: `url(/assets/${surahVariables[surah.number]?.selectedAyahNumber === ayah.numberInSurah ? 'bookmarked_ayah' : 'end_ayah'}.svg)`,
+                  backgroundImage: `url(assets/${surahVariables[surah.number]?.selectedAyahNumber === ayah.numberInSurah ? 'bookmarked_ayah' : 'end_ayah'}.svg)`,
                   backgroundSize: 'contain',
                   backgroundRepeat: 'no-repeat',
                   backgroundPosition: 'center',
@@ -336,7 +338,7 @@ const isPressing = ref(false)  // حالة الضغط المستمر
 
 const isScrolling = ref(false);  // متغير لتتبع إذا كان المستخدم يمرر
 
-function startLongPress(event, surahNumber, ayahNumber) {
+function startLongPress(event, surahNumber, ayahNumber, forceTime = null) {
   isPressing.value = true; // بدأ الضغط الطويل
   popoverEvent.value = event;
 
@@ -354,7 +356,7 @@ function startLongPress(event, surahNumber, ayahNumber) {
       selectedAyahNumber.value = ayahNumber;
       showPopover.value = true;
     }
-  }, longPressThreshold);
+  }, forceTime ?? longPressThreshold);
 }
 
 
@@ -580,7 +582,7 @@ async function handleRouteChange(surahNumberParam, scrollToParam) {
   await nextTick();
 
   // تحميل البيانات
-  const res = await fetch('/assets/quran.json');
+  const res = await fetch('assets/quran.json');
   const allSurahs = await res.json();
   surah.value = allSurahs.find(s => s.number === surahNumber);
   if (surah.value) {
@@ -632,17 +634,16 @@ function checkOrientation() {
 </script>
 
 <style scoped>
-
 .vertical-toolbar {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    height: auto;
-    padding: 8px;
-    height: 30rem;
-    position: fixed;
-    width: 4rem;
-    top: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  height: auto;
+  padding: 8px;
+  height: 30rem;
+  position: fixed;
+  width: 4rem;
+  top: 0;
 }
 
 .vertical-toolbar ion-buttons {
@@ -658,18 +659,19 @@ function checkOrientation() {
 }
 
 @media (orientation: landscape) {
-  .ion-header, 
+
+  .ion-header,
   ion-header ion-toolbar:first-of-type,
-  ion-toolbar:not(.vertical-toolbar), 
+  ion-toolbar:not(.vertical-toolbar),
   .toolbar-container,
   .horizonal-buttons {
     display: none !important;
   }
 
-    .SurahInfo {
+  /* .SurahInfo {
     display: none;
-  }
-  
+  } */
+
 }
 
 
@@ -680,5 +682,4 @@ function checkOrientation() {
   }
 
 }
-
 </style>
