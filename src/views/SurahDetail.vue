@@ -134,13 +134,59 @@
         @didDismiss="surahVariables[selectedSurahNumber].longPressedAyahNumber = null; showPopover = false">
 
         <ion-list>
-          <ion-item button @click="onOption('تفسير')">📖 تفسير</ion-item>
-          <ion-item button @click="onOption('ترجمة')">🌐 ترجمة</ion-item>
-          <ion-item button @click="playAyahAudio(selectedSurahNumber, selectedAyahNumber)">
-            <IonIcon class="pl-1" :icon="isPlaying ? pauseOutline : playOutline" /> تلاوة
+          <!-- تفسير -->
+          <ion-item>
+            <ion-button fill="clear" @click="onOption('تفسير', selectedTafsir)">
+              📖 تفسير
+            </ion-button>
+            <!-- سيتم صناعتها -->
+            <!-- <ion-select interface="popover" :value="selectedTafsir"
+              @ionChange="val => onTafsirChange(val.detail.value)">
+              <ion-select-option value="تفسير الطبري">تفسير الطبري</ion-select-option>
+              <ion-select-option value="تفسير ابن كثير">تفسير ابن كثير</ion-select-option>
+              <ion-select-option value="تفسير السعدي">تفسير السعدي</ion-select-option>
+            </ion-select> -->
           </ion-item>
-          <ion-item button @click="copyAyah(), showPopover = false">
-            <IonIcon class="pl-1" :icon="copyOutline" /> نسخ
+
+          <!-- ترجمة -->
+          <ion-item>
+            <ion-button fill="clear" @click="onOption('ترجمة', selectedTranslation)">
+              🌐 ترجمة
+            </ion-button>
+            <!-- سيتم صناعتها -->
+            <!-- <ion-select interface="popover" :value="selectedTranslation"
+              @ionChange="val => onTranslationChange(val.detail.value)">
+              <ion-select-option value="إنجليزي">إنجليزي</ion-select-option>
+              <ion-select-option value="فرنسي">فرنسي</ion-select-option>
+              <ion-select-option value="أوردو">أوردو</ion-select-option>
+            </ion-select> -->
+          </ion-item>
+
+          <!-- تلاوة -->
+          <ion-item>
+            <ion-button fill="clear"
+              @click="playAyahAudio(selectedSurahNumber, selectedAyahNumber, selectedRecitingWay)">
+              <IonIcon class="pl-1" :icon="isPlaying ? pauseOutline : playOutline" /> تلاوة
+            </ion-button>
+
+<!--             <ion-select interface="popover" :value="selectedRecitingWay"
+              @ionChange="val => playAyahAudio(selectedSurahNumber, selectedAyahNumber, val.detail.value)">
+              <ion-select-option value="الآية فقط">الآية فقط</ion-select-option>
+              <ion-select-option value="إلى ختم السورة">إلى ختم السورة</ion-select-option>
+              <ion-select-option value="إلى ختم القرآن الكريم">إلى ختم القرآن الكريم</ion-select-option>
+            </ion-select> -->
+          </ion-item>
+
+          <!-- نسخ -->
+          <ion-item>
+            <ion-button fill="clear" @click="copyAyah(copyAyahWithTashkeel), showPopover = false">
+              <IonIcon class="pl-1" :icon="copyOutline" /> نسخ
+            </ion-button>
+            <ion-select interface="popover" :value="copyAyahWithTashkeel"
+              @ionChange="val => copyAyah(val.detail.value)">
+              <ion-select-option :value="true">مع التشكيل</ion-select-option>
+              <ion-select-option :value="false">بدون تشكيل</ion-select-option>
+            </ion-select>
           </ion-item>
           <ion-item v-if="!isDesktop" button @click="shareAyahText, showPopover = false">
             <IonIcon class="pl-1" :icon="shareSocialOutline" /> مشاركة
@@ -161,10 +207,14 @@
 </template>
 
 <script setup>
-import { IonIcon } from '@ionic/vue'
+import { IonIcon, IonButton, IonSelectOption, IonSelect } from '@ionic/vue'
 import { shareSocialOutline, copyOutline, playOutline, pauseOutline } from 'ionicons/icons'
 import { onActivated } from "vue";
 
+const selectedTafsir = ref('تفسير الطبري')
+const selectedTranslation = ref('إنجليزي')
+const selectedRecitingWay = ref('الآية فقط')
+const copyAyahWithTashkeel = ref(true)
 onActivated(async () => {
   await handleRouteChange(route.params.number, route.params.scrollTo);
 });
@@ -178,7 +228,8 @@ function getAudioPath(surahNumber, ayahNumber) {
   return `assets/sounds/Sa3d_Alghamdy/${surahStr}/${surahStr}${ayahStr}.opus`;
 }
 
-async function playAyahAudio(surahNumber, ayahNumber) {
+async function playAyahAudio(surahNumber, ayahNumber, selectedRecitingWay) {
+
   // أوقف الصوت السابق إذا كان شغال
   if (currentAudio) {
     currentAudio.pause();
@@ -205,16 +256,20 @@ async function playAyahAudio(surahNumber, ayahNumber) {
     console.error('❌ فشل التشغيل:', err);
     isPlaying.value = false;
   }
+
+  showPopover.value = false;
 }
 
 
-function copyAyah() {
-  const ayahText = surah.value?.ayahs.find(a => a.numberInSurah === selectedAyahNumber.value)?.text;
+function copyAyah(copyAyahWithTashkeel) {
+  const ayah = surah.value?.ayahs.find(a => a.numberInSurah === selectedAyahNumber.value)
+  const ayahText = "﷽ ﴿" + ayah[copyAyahWithTashkeel ? 'text' : 'no_Tashkeel_text'] + "﴾";
   if (ayahText) {
     navigator.clipboard.writeText(ayahText)
       .then(() => console.log('✅ تم نسخ الآية!'))
       .catch(() => console.log('❌ فشل النسخ.'));
   }
+  showPopover.value = false;
 }
 
 import basicMeaning from '@/assets/meanings_nested.js';
