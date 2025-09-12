@@ -29,8 +29,8 @@
             <!-- اسم السورة مع الزخرفة -->
             <div class="flex w-full SurahInfo" :style="{ transform: `scaleY(${scaleYSurahInfo}) scaleX(1.4)` }"
               v-if="!upperSurahNameShown || OnlyOnOrientationLandscape">
-              <SurahInfo @click="!OnlyOnOrientationLandscape.value ? upperSurahNameShown = true: null" :SurahName="surah.name" :fontFamily="fontFamily"
-                :pageNumber="Page" :isDark="isDark" :JuzNumber="Juz" />
+              <SurahInfo @click="!OnlyOnOrientationLandscape.value ? upperSurahNameShown = true : null"
+                :SurahName="surah.name" :fontFamily="fontFamily" :pageNumber="Page" :isDark="isDark" :JuzNumber="Juz" />
             </div>
 
             <!-- البسملة -->
@@ -54,8 +54,7 @@
               }" @touchstart="startLongPress($event, surah.number, ayah.numberInSurah)"
                 @click="basicMeaning[surah.number - 1][ayah.numberInSurah - 1][index]?.length > 0 && setMaany(surah, ayah, index)"
                 @touchend="stopLongPress" @touchmove="stopLongPress"
-                @contextmenu.prevent="startLongPress($event, surah.number, ayah.numberInSurah, 0)"
-                class="relative">
+                @contextmenu.prevent="startLongPress($event, surah.number, ayah.numberInSurah, 0)" class="relative">
                 {{ word }}<span class="!w-2 !max-w-2 !min-w-2 flex" :style="{
                   backgroundColor: surahVariables[surah.number]?.longPressedAyahNumber === ayah.numberInSurah ? 'green' : !isDark ? 'white' : 'black',
                 }" v-if="index !== ayah.text.split(' ').length - 1"></span>
@@ -137,30 +136,17 @@
         <ion-list>
           <ion-item button @click="onOption('تفسير')">📖 تفسير</ion-item>
           <ion-item button @click="onOption('ترجمة')">🌐 ترجمة</ion-item>
+          <ion-item button @click="playAyahAudio(selectedSurahNumber, selectedAyahNumber)">
+            <IonIcon class="pl-1" :icon="isPlaying ? pauseOutline : playOutline" /> تلاوة
+          </ion-item>
+          <ion-item button @click="copyAyah(), showPopover = false">
+            <IonIcon class="pl-1" :icon="copyOutline" /> نسخ
+          </ion-item>
+          <ion-item v-if="!isDesktop" button @click="shareAyahText, showPopover = false">
+            <IonIcon class="pl-1" :icon="shareSocialOutline" /> مشاركة
+          </ion-item>
           <ion-item button @click="onOption()">❌ إلغاء</ion-item>
         </ion-list>
-
-        <!-- الأزرار الدائرية -->
-        <!-- الأزرار الدائرية -->
-        <div class="flex justify-around p-4 pt-2 border-t border-gray-300 dark:border-gray-700">
-
-          <!-- زر التشغيل/الإيقاف -->
-          <button @click="playAyahAudio(selectedSurahNumber, selectedAyahNumber)"
-            class="w-12 h-12 rounded-full bg-blue-500 text-white flex items-center justify-center shadow-md hover:bg-blue-600 transition">
-            <IonIcon :icon="isPlaying ? pauseOutline : playOutline" />
-          </button>
-
-          <!-- زر النسخ -->
-          <button @click="copyAyah"
-            class="w-12 h-12 rounded-full bg-blue-500 text-white flex items-center justify-center shadow-md hover:bg-blue-600 transition">
-            <IonIcon :icon="copyOutline" />
-          </button>
-          <!-- زر المشاركة -->
-          <button @click="shareAyahText"
-            class="w-12 h-12 rounded-full bg-blue-500 text-white flex items-center justify-center shadow-md hover:bg-blue-600 transition">
-            <IonIcon :icon="shareSocialOutline" />
-          </button>
-        </div>
 
       </IonPopover>
 
@@ -626,8 +612,17 @@ provide('isDark', isDark)
 
 
 const OnlyOnOrientationLandscape = ref(false);
+const isDesktop = ref(false);
 
 function checkOrientation() {
+  const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+
+  // تحقق إذا كان المتصفح على كمبيوتر (ويندوز أو ماك)
+  if (/Windows|Macintosh/i.test(userAgent)) {
+    isDesktop.value = true;
+  } else {
+    isDesktop.value = false;
+  }
   OnlyOnOrientationLandscape.value = window.innerWidth > window.innerHeight;
 }
 
