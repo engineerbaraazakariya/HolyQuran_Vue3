@@ -266,6 +266,7 @@ async function waitForSurah() {
 
 
 async function playAyahAudio(surahNumber, ayahNumber, selectedRecitingWay) {
+  await handleScrollTo(ayahNumber.toString(), surahNumber);
 
   const path = getAudioPath(surahNumber, ayahNumber);
   currentAudio = new Audio(path);
