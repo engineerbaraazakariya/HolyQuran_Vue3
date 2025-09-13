@@ -7,13 +7,14 @@ const routes: Array<RouteRecordRaw> = [
     redirect: '/list'
   },
   {
-    path: '/surah/:number/:scrollTo?',
+    path: '/surah/:number/:scrollTo?/:isReciting?',
     name: 'SurahDetail',
     meta: { keepAlive: true },
     component: () => import('@/views/SurahDetail.vue'),
     props: route => ({
       number: Number(route.params.number),
-      scrollTo: Number(route.params.scrollTo)
+      scrollTo: Number(route.params.scrollTo),
+      isReciting: route.params.isReciting
     })
   },
   {

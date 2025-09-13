@@ -130,8 +130,7 @@
       </IonPopover>
 
 
-      <IonPopover :is-open="showPopover" :event="popoverEvent"
-        @didDismiss="surahVariables[selectedSurahNumber].longPressedAyahNumber = null; showPopover = false">
+      <IonPopover :is-open="showPopover" :event="popoverEvent" @didDismiss="showPopover = false">
 
         <ion-list>
           <!-- تفسير -->
@@ -165,16 +164,17 @@
           <!-- تلاوة -->
           <ion-item>
             <ion-button fill="clear"
-              @click="playAyahAudio(selectedSurahNumber, selectedAyahNumber, selectedRecitingWay)">
-              <IonIcon class="pl-1" :icon="isPlaying ? pauseOutline : playOutline" /> تلاوة
+              @click="isPlaying ? stopAyahAudio() : playAyahAudio(selectedSurahNumber, selectedAyahNumber, selectedRecitingWay)">
+              <IonIcon class="pl-1" :icon="isPlaying ? pauseOutline : playOutline" /> {{ isPlaying ? 'ايقاف' : 'تلاوة'
+              }}
             </ion-button>
 
-<!--             <ion-select interface="popover" :value="selectedRecitingWay"
+            <ion-select interface="popover" :value="selectedRecitingWay"
               @ionChange="val => playAyahAudio(selectedSurahNumber, selectedAyahNumber, val.detail.value)">
               <ion-select-option value="الآية فقط">الآية فقط</ion-select-option>
               <ion-select-option value="إلى ختم السورة">إلى ختم السورة</ion-select-option>
               <ion-select-option value="إلى ختم القرآن الكريم">إلى ختم القرآن الكريم</ion-select-option>
-            </ion-select> -->
+            </ion-select>
           </ion-item>
 
           <!-- نسخ -->
@@ -228,19 +228,93 @@ function getAudioPath(surahNumber, ayahNumber) {
   return `assets/sounds/Sa3d_Alghamdy/${surahStr}/${surahStr}${ayahStr}.opus`;
 }
 
-async function playAyahAudio(surahNumber, ayahNumber, selectedRecitingWay) {
+
+
+function stopAyahAudio() {
 
   // أوقف الصوت السابق إذا كان شغال
   if (currentAudio) {
-    currentAudio.pause();
-    currentAudio = null;
-    isPlaying.value = false;
+    currentAudio.onended = () => {
+      currentAudio.pause();
+      currentAudio = null;
+      isPlaying.value = false;
+      surahVariables.value[surah.value.number].longPressedAyahNumber = null;
+      return;
+    }
   }
+}
+
+const goToSurah = (surahNumber) => {
+  localStorage.setItem('lastSurah', surahNumber.toString())
+  router.replace({ name: 'SurahDetail', params: { number: surahNumber.toString(), scrollTo: 0.0, isReciting: true } })
+}
+
+
+async function waitForSurah() {
+  // محاكاة عملية غير متزامنة، مثل استرجاع البيانات من API أو غيرها
+  await new Promise((resolve) => {
+    const interval = setInterval(() => {
+      if (surah.value !== null) {
+        clearInterval(interval);
+        resolve();
+      }
+    }, 100); // تحقق كل 100 ملي ثانية إذا صار المتغير غير null
+  });
+
+  console.log("تم تحميل السورة: ", surah.value);
+}
+
+
+async function playAyahAudio(surahNumber, ayahNumber, selectedRecitingWay) {
 
   const path = getAudioPath(surahNumber, ayahNumber);
   currentAudio = new Audio(path);
 
-  currentAudio.onended = () => {
+  currentAudio.onended = async () => {
+
+    if (selectedRecitingWay === 'الآية فقط') {
+      // الوضع الحالي بدون تعديل
+    }
+    else if (selectedRecitingWay === 'إلى ختم السورة') {
+      // عندما يكون يوجد آية إضافية بعد الاية الحالية عينها كآية مختارة وابدأ من جديد
+      if (ayahNumber < surah.value.ayahs.length) {
+        ayahNumber++;
+        surahVariables.value[surahNumber].longPressedAyahNumber = ayahNumber;
+        // selectedSurahNumber.value = surahNumber;
+        selectedAyahNumber.value = ayahNumber;
+        playAyahAudio(surahNumber, ayahNumber, selectedRecitingWay)
+      } else {
+        surahVariables.value[surah.value.number].longPressedAyahNumber = null;
+
+      }
+    }
+    else if (selectedRecitingWay === 'إلى ختم القرآن الكريم') {
+      // عندما يكون يوجد آية إضافية بعد الاية الحالية عينها كآية مختارة وابدأ من جديد
+      if (ayahNumber < surah.value.ayahs.length) {
+        ayahNumber++;
+        surahVariables.value[surahNumber].longPressedAyahNumber = ayahNumber;
+        // selectedSurahNumber.value = surahNumber;
+        selectedAyahNumber.value = ayahNumber;
+        playAyahAudio(surahNumber, ayahNumber, selectedRecitingWay)
+      } else {
+        if (surah.value.number === 114) {
+          stopAyahAudio();
+          return;
+        }
+        const newSurahNumber = surah.value.number + 1;
+        surah.value = null;
+        goToSurah(newSurahNumber);
+        await waitForSurah();
+        ayahNumber = 1;
+        surahVariables.value[surahNumber].longPressedAyahNumber = ayahNumber;
+        selectedSurahNumber.value = surahNumber;
+        selectedAyahNumber.value = ayahNumber;
+        playAyahAudio(surahNumber, ayahNumber, selectedRecitingWay)
+        // surahVariables.value[surah.value.number].longPressedAyahNumber = null;
+      }
+
+    }
+
     isPlaying.value = false;
   };
 
@@ -524,11 +598,8 @@ onMounted(async () => {
     surahVariables.value = JSON.parse(stored);
   }
 
-
-  // loadBasicMaany();
-
   // التعامل مع الحالة الأولية
-  await handleRouteChange(route.params.number, route.params.scrollTo);
+  await handleRouteChange(route.params.number, route.params.scrollTo, route.params.isReciting);
 });
 
 async function handleScrollTo(scrollTo, surahNumber) {
@@ -615,7 +686,7 @@ function updateSelectedAyah(surahNumber, ayahNumber) {
 }
 
 
-async function handleRouteChange(surahNumberParam, scrollToParam) {
+async function handleRouteChange(surahNumberParam, scrollToParam, isRecitingParam) {
   const surahNumber = parseInt(surahNumberParam);
 
   // إعادة تعيين حالة السورة
@@ -639,6 +710,15 @@ async function handleRouteChange(surahNumberParam, scrollToParam) {
 
   if (scrollToParam) {
     await handleScrollTo(scrollToParam, surahNumber);
+  }
+
+  if (isRecitingParam) {
+    if (!surahVariables.value[surahNumber]) {
+      surahVariables.value[surahNumber] = { longPressedAyahNumber: 1, bookmarkedAyahNumber: null, scrollPosition: null };
+    }
+    selectedSurahNumber.value = surahNumber;
+    selectedAyahNumber.value = 1;
+    playAyahAudio(surahNumber, selectedAyahNumber.value, "إلى ختم القرآن الكريم")
   }
 }
 // إعدادات المستخدم
