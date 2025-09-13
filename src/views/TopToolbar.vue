@@ -5,22 +5,22 @@
     <div v-if="vertical" class="vertical-buttons z-50 flex flex-wrap gap-2">
       <ion-back-button v-if="showBack" defaultHref="/"></ion-back-button>
 
-      <ion-button v-if="showFontSizeButtons" @click="increaseFontSize" title="تكبير الخط">
-        <ion-icon :icon="addCircle" />
-      </ion-button>
-      <ion-button v-if="showFontSizeButtons" @click="decreaseFontSize" title="تصغير الخط">
-        <ion-icon :icon="removeCircle" />
-      </ion-button>
-      <ion-button v-if="showThemeToggle" @click="toggleTheme" title="الوضع الليلي">
-        <ion-icon :icon="isDark ? moon : sunny" />
-      </ion-button>
-      <ion-button v-if="showFontSelector" @click="openFontPopover($event)" title="تغيير الخط">
-        <ion-icon :icon="colorPalette" />
-      </ion-button>
-      <ion-button v-if="showSearch" router-link="/search">
+      <ion-button class="max-w-10" v-if="showSearch" router-link="/search">
         <ion-icon slot="icon-only" :icon="searchOutline" />
       </ion-button>
-      <ion-button v-if="showRibbon" @click="toggleUpperSurahInfo">
+      <ion-button class="max-w-10" v-if="showFontSizeButtons" @click="increaseFontSize" title="تكبير الخط">
+        <ion-icon slot="icon-only" :icon="addCircle" />
+      </ion-button>
+      <ion-button class="max-w-10" v-if="showFontSizeButtons" @click="decreaseFontSize" title="تصغير الخط">
+        <ion-icon slot="icon-only" :icon="removeCircle" />
+      </ion-button>
+      <ion-button class="max-w-10" v-if="showThemeToggle" @click="toggleTheme" title="الوضع الليلي">
+        <ion-icon slot="icon-only" :icon="isDark ? moon : sunny" />
+      </ion-button>
+      <ion-button class="max-w-10" v-if="showFontSelector" @click="openFontPopover($event)" title="تغيير الخط">
+        <ion-icon slot="icon-only" :icon="colorPalette" />
+      </ion-button>
+      <ion-button class="max-w-10" v-if="showRibbon" @click="toggleUpperSurahInfo">
         <ion-icon :icon="ribbon" />
       </ion-button>
     </div>
