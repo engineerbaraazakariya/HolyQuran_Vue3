@@ -131,45 +131,27 @@
 
 
       <IonPopover :is-open="showPopover" :event="popoverEvent" @didDismiss="showPopover = false">
-
         <ion-list>
+
           <!-- تفسير -->
-          <ion-item>
-            <ion-button fill="clear" @click="onOption('تفسير', selectedTafsir)">
-              📖 تفسير
-            </ion-button>
-            <!-- سيتم صناعتها -->
-            <!-- <ion-select interface="popover" :value="selectedTafsir"
-              @ionChange="val => onTafsirChange(val.detail.value)">
-              <ion-select-option value="تفسير الطبري">تفسير الطبري</ion-select-option>
-              <ion-select-option value="تفسير ابن كثير">تفسير ابن كثير</ion-select-option>
-              <ion-select-option value="تفسير السعدي">تفسير السعدي</ion-select-option>
-            </ion-select> -->
+          <ion-item button lines="full" @click="onOption('تفسير', selectedTafsir)">
+            <ion-icon slot="start" :icon="bookOutline" />
+            <ion-label>تفسير</ion-label>
           </ion-item>
 
           <!-- ترجمة -->
-          <ion-item>
-            <ion-button fill="clear" @click="onOption('ترجمة', selectedTranslation)">
-              🌐 ترجمة
-            </ion-button>
-            <!-- سيتم صناعتها -->
-            <!-- <ion-select interface="popover" :value="selectedTranslation"
-              @ionChange="val => onTranslationChange(val.detail.value)">
-              <ion-select-option value="إنجليزي">إنجليزي</ion-select-option>
-              <ion-select-option value="فرنسي">فرنسي</ion-select-option>
-              <ion-select-option value="أوردو">أوردو</ion-select-option>
-            </ion-select> -->
+          <ion-item button lines="full" @click="onOption('ترجمة', selectedTranslation)">
+            <ion-icon slot="start" :icon="globeOutline" />
+            <ion-label>ترجمة</ion-label>
           </ion-item>
 
           <!-- تلاوة -->
-          <ion-item>
-            <ion-button fill="clear"
-              @click="isPlaying ? stopAyahAudio() : playAyahAudio(selectedSurahNumber, selectedAyahNumber, selectedRecitingWay)">
-              <IonIcon class="pl-1" :icon="isPlaying ? pauseOutline : playOutline" /> {{ isPlaying ? 'ايقاف' : 'تلاوة'
-              }}
-            </ion-button>
+          <ion-item button lines="full"
+            @click="isPlaying ? stopAyahAudio() : playAyahAudio(selectedSurahNumber, selectedAyahNumber, selectedRecitingWay)">
+            <ion-icon slot="start" :icon="isPlaying ? pauseOutline : playOutline" />
+            <ion-label>{{ isPlaying ? 'ايقاف' : 'تلاوة' }}</ion-label>
 
-            <ion-select interface="popover" :value="selectedRecitingWay"
+            <ion-select interface="popover" :value="selectedRecitingWay" @click.stop
               @ionChange="val => playAyahAudio(selectedSurahNumber, selectedAyahNumber, val.detail.value)">
               <ion-select-option value="الآية فقط">الآية فقط</ion-select-option>
               <ion-select-option value="إلى ختم السورة">إلى ختم السورة</ion-select-option>
@@ -178,24 +160,25 @@
           </ion-item>
 
           <!-- نسخ -->
-          <ion-item>
-            <ion-button fill="clear" @click="copyAyah(copyAyahWithTashkeel), showPopover = false">
-              <IonIcon class="pl-1" :icon="copyOutline" /> نسخ
-            </ion-button>
-            <ion-select interface="popover" :value="copyAyahWithTashkeel"
+          <ion-item button lines="full" @click="copyAyah(copyAyahWithTashkeel); showPopover = false">
+            <ion-icon slot="start" :icon="copyOutline" />
+            <ion-label>نسخ</ion-label>
+
+            <ion-select interface="popover" :value="copyAyahWithTashkeel" @click.stop
               @ionChange="val => copyAyah(val.detail.value)">
               <ion-select-option :value="true">مع التشكيل</ion-select-option>
               <ion-select-option :value="false">بدون تشكيل</ion-select-option>
             </ion-select>
           </ion-item>
-          <ion-item v-if="!isDesktop" button @click="shareAyahText, showPopover = false">
-            <IonIcon class="pl-1" :icon="shareSocialOutline" /> مشاركة
+
+          <!-- مشاركة -->
+          <ion-item v-if="!isDesktop" button lines="full" @click="shareAyahText(); showPopover = false">
+            <ion-icon slot="start" :icon="shareSocialOutline" />
+            <ion-label>مشاركة</ion-label>
           </ion-item>
-          <ion-item button @click="onOption()">❌ إلغاء</ion-item>
+
         </ion-list>
-
       </IonPopover>
-
 
 
 
@@ -208,7 +191,10 @@
 
 <script setup>
 import { IonIcon, IonButton, IonSelectOption, IonSelect } from '@ionic/vue'
-import { shareSocialOutline, copyOutline, playOutline, pauseOutline } from 'ionicons/icons'
+import {
+  shareSocialOutline, copyOutline, playOutline, pauseOutline, bookOutline
+  , globeOutline
+} from 'ionicons/icons'
 import { onActivated } from "vue";
 
 const selectedTafsir = ref('تفسير الطبري')
