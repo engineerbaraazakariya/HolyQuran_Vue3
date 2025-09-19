@@ -88,7 +88,7 @@
 
       <div v-if="showCurrentMaany.length > 0" class="fixed inset-0 flex items-center justify-center bg-black/50 z-[1]"
         @click="showCurrentMaany = ''">
-        <div class="w-max h-max max-w-[75vw] overflow-scroll opacity-100 rounded-xl shadow-lg p-6 relative"
+        <div class="w-max h-max max-w-[75vw] overflow-scroll opacity-100 rounded-xl shadow-lg p-6 relative no-scrollbar"
           :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
 
           <!-- زر الإغلاق -->
