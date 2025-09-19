@@ -133,17 +133,34 @@
       <IonPopover :is-open="showPopover" :event="popoverEvent" @didDismiss="showPopover = false">
         <ion-list>
 
-          <!-- تفسير -->
+          <!-- تفسير - مع اختيار -->
           <ion-item button lines="full" @click="onOption('تفسير', selectedTafsir)">
             <ion-icon slot="start" :icon="bookOutline" />
             <ion-label>تفسير</ion-label>
+
+            <ion-select interface="popover" :value="selectedTafsir" @click.stop
+              @ionChange="val => { selectedTafsir = val.detail.value; onOption('تفسير', selectedTafsir); }">
+              <ion-select-option v-for="(option, index) in tafsirOptions" :key="option" :value="option">
+                {{ languageDisplay[option] }}
+              </ion-select-option>
+            </ion-select>
           </ion-item>
 
-          <!-- ترجمة -->
+          <!-- ترجمة - مع اختيار -->
           <ion-item button lines="full" @click="onOption('ترجمة', selectedTranslation)">
             <ion-icon slot="start" :icon="globeOutline" />
             <ion-label>ترجمة</ion-label>
+
+            <ion-select interface="popover" :value="selectedTranslation" @click.stop
+              @ionChange="val => { selectedTranslation = val.detail.value; onOption('ترجمة', selectedTranslation); }">
+              <ion-select-option :selected="index === 0" v-for="(option, index) in translationOptions" :key="option"
+                :value="option">
+                {{ languageDisplay[option] }}
+              </ion-select-option>
+            </ion-select>
           </ion-item>
+
+
 
           <!-- تلاوة -->
           <ion-item button lines="full"
@@ -184,21 +201,22 @@
 
     </ion-content>
     <TafsirModal v-if="surah" :is-open="modalOpen" :surah-number="selectedSurah" :ayah-number="selectedAyah"
-      :type="modalType" @close="modalOpen = false" />
+      :type="modalType" :selected-file="modalType === 'tafsir' ? selectedTafsir : selectedTranslation"
+      @close="modalOpen = false" />
 
   </ion-page>
 </template>
 
 <script setup>
-import { IonIcon, IonButton, IonSelectOption, IonSelect } from '@ionic/vue'
+import { IonIcon, IonLabel, IonSelectOption, IonSelect } from '@ionic/vue'
 import {
   shareSocialOutline, copyOutline, playOutline, pauseOutline, bookOutline
   , globeOutline
 } from 'ionicons/icons'
 import { onActivated } from "vue";
 
-const selectedTafsir = ref('تفسير الطبري')
-const selectedTranslation = ref('إنجليزي')
+const selectedTafsir = ref('qortoby.json')
+const selectedTranslation = ref('en_tafheem.json')
 const selectedRecitingWay = ref('الآية فقط')
 const copyAyahWithTashkeel = ref(true)
 onActivated(async () => {
@@ -353,7 +371,7 @@ const shareAyahText = async () => {
 
 import TafsirModal from './TafsirModal.vue'
 import SurahInfo from './SurahInfo.vue';
-import { fonts } from '@/composables/fonts.ts'
+import { fonts, languageDisplay, tafsirOptions, translationOptions } from '@/composables/fonts.ts'
 
 const modalOpen = ref(false)
 const upperSurahNameShown = ref(true)
