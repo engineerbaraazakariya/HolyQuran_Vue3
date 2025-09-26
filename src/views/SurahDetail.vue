@@ -91,12 +91,6 @@
         <div class="w-max h-max max-w-[75vw] overflow-scroll opacity-100 rounded-xl shadow-lg p-6 relative no-scrollbar"
           :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
 
-          <!-- زر الإغلاق -->
-          <button class="absolute top-1 right-1  text-xl font-bold"
-            :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
-            ×
-          </button>
-
           <!-- النص -->
           <div :class="{ 'dark-theme': isDark, 'white-theme': !isDark }" class="overflow-scroll no-scrollbar" :style="{
             fontSize: fontSize * .7 + 'px',
