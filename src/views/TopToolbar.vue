@@ -90,6 +90,7 @@ const props = defineProps({
   showThemeToggle: Boolean,
   showSearch: Boolean,
   showRibbon: Boolean,
+  selectedFile: String,
 });
 
 // جلب القيم من provide
@@ -100,7 +101,27 @@ const openFontPopover = inject('openFontPopover')
 const toggleUpperSurahInfo = inject('toggleUpperSurahInfo')
 const isDark = inject('isDark')
 
-const selectedFile = inject('selectedFile', null)
+
+import { computed, watch } from 'vue'
+
+
+const emit = defineEmits(['update:selectedFile'])
+
+const selectedFile = computed({
+  get: () => props.selectedFile,
+  set: (value) => emit('update:selectedFile', value)
+})
+
+const localStorageKey = computed(() => 'your-key') // عدّل حسب الحاجة
+
+watch(selectedFile, (newFile) => {
+  console.log('Selected file changed:', newFile)
+  if (newFile) {
+    localStorage.setItem(localStorageKey.value, newFile)
+  }
+})
+
+
 const availableOptions = inject('availableOptions', [])
 const languageDisplay = inject('languageDisplay', [])
 

@@ -12,8 +12,8 @@
 
       <!-- أزرار تكبير الخط، تصغير الخط، الوضع الليلي، تغيير الخط -->
 
-      <TopToolbar :showBack="false" :showFontSizeButtons="true" :showFontSelector="true" :showSearch="false"
-        :showLanguageSelect="true" />
+      <TopToolbar v-model:selectedFile="selectedFile" :showBack="false" :showFontSizeButtons="true"
+        :showFontSelector="true" :showSearch="false" :showLanguageSelect="true" />
     </ion-header>
     <ion-content class="ion-padding" :style="{ fontSize: fontSize + 'px', fontFamily: fontFamily }">
       <div v-if="isLoading">جارٍ التحميل...</div>
@@ -74,14 +74,8 @@ watch(() => props.type, () => {
   selectedFile.value = saved || (props.type === 'tafsir' ? DEFAULT_TAFSIR : DEFAULT_TRANSLATION)
 })
 
-watch(() => props.selectedFile, (newVal) => {
-  if (newVal) {
-    localStorage.setItem(localStorageKey.value, newVal)
-  }
-})
 
-
-const emit = defineEmits(['close'])
+const emit = defineEmits(['close', 'update:selectedFile'])
 
 const availableOptions = computed(() =>
   props.type === 'tafsir' ? tafsirOptions : translationOptions
@@ -109,11 +103,13 @@ onMounted(() => {
   }
 
 });
-const selectedFile = computed(() => props.selectedFile)
+let selectedFile = ref(props.selectedFile || (props.type === 'tafsir' ? DEFAULT_TAFSIR : DEFAULT_TRANSLATION));
+
 
 // حفظ الملف المختار تلقائياً عند تغييره
 watch(selectedFile, (newFile) => {
   console.log('Selected file changed:', newFile)
+  loadFileContent(props.surahNumber, props.ayahNumber, props.isOpen, newFile);
   if (newFile) {
     localStorage.setItem(localStorageKey.value, newFile)
   }
@@ -137,10 +133,16 @@ const contentClass = computed(() => {
 
 
 watch(() => [props.surahNumber, props.ayahNumber, props.isOpen, props.selectedFile], async ([sura, aya, open, file]) => {
+  await loadFileContent(sura, aya, open, file);
+})
+
+
+const loadFileContent = async (sura, aya, open, file) => {
   if (open && sura && aya && file) {
     isLoading.value = true
     const folder = props.type === 'tafsir' ? 'tafasir' : 'tarajem'
     try {
+      console.log('loading content for', `assets/${folder}/${file}`)
       const res = await fetch(`assets/${folder}/${file}`)
       if (!res.ok) {
         throw new Error('حدث خطأ في تحميل البيانات')
@@ -155,14 +157,14 @@ watch(() => [props.surahNumber, props.ayahNumber, props.isOpen, props.selectedFi
       isLoading.value = false
     }
   }
-})
+}
 
 watch(() => props.selectedFile, (newVal) => {
+  console.log('selectedFile changed in modal:', newVal)
   if (newVal) {
     localStorage.setItem(localStorageKey.value, newVal)
   }
 })
-
 // تم تكرار الكود الخاص بالأزرار هنا
 const isDark = ref(true);
 const fontSize = ref(22);

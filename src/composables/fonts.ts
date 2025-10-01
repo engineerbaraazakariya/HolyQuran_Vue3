@@ -46,7 +46,6 @@ export const languageDisplay = {
 
   // أسماء التفاسير بالعربية
   'ar_muyassar.json': 'التفسير الميسر',
-  'ar_ma3any.json': 'تفسير المعاني',
   'baghawy.json': 'تفسير البغوي',
   'qortoby.json': 'تفسير القرطبي',
   'e3rab.json': 'إعراب القرآن',
@@ -57,7 +56,7 @@ export const languageDisplay = {
   'tabary.json': 'تفسير الطبري'
 }
 export const tafsirOptions = [
-  'ar_muyassar.json', 'ar_ma3any.json', 'baghawy.json', 'qortoby.json', 'e3rab.json',
+  'ar_muyassar.json', 'baghawy.json', 'qortoby.json', 'e3rab.json',
   'tanweer.json', 'sa3dy.json',
   'waseet.json', 'katheer.json', 'tabary.json'
 ]
