@@ -102,6 +102,8 @@ onMounted(() => {
     selectedFile.value = (props.type === 'tafsir' ? DEFAULT_TAFSIR : DEFAULT_TRANSLATION)
   }
 
+  loadFileContent(props.surahNumber, props.ayahNumber, props.isOpen, selectedFile.value);
+
 });
 let selectedFile = ref(props.selectedFile || (props.type === 'tafsir' ? DEFAULT_TAFSIR : DEFAULT_TRANSLATION));
 
