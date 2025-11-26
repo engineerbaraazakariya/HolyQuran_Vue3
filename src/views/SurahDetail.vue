@@ -336,7 +336,7 @@ async function playAyahAudio(surahNumber, ayahNumber, selectedRecitingWay) {
 
 function copyAyah(copyAyahWithTashkeel) {
   const ayah = surah.value?.ayahs.find(a => a.numberInSurah === selectedAyahNumber.value)
-  const ayahText = "﷽ ﴿" + ayah[copyAyahWithTashkeel ? 'text' : 'no_Tashkeel_text'] + "﴾";
+  const ayahText = "﷽ ﴿ " + ayah[copyAyahWithTashkeel ? 'text' : 'no_Tashkeel_text'] + " ﴾";
   if (ayahText) {
     navigator.clipboard.writeText(ayahText)
       .then(() => console.log('✅ تم نسخ الآية!'))

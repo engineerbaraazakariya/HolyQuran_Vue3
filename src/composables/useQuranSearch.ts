@@ -39,6 +39,7 @@ export function useQuranSearch() {
             surahNumber: surah.number,
             ayahNumber: ayah.numberInSurah,
             text: ayah.text,
+            no_Tashkeel_text: ayah.no_Tashkeel_text,
           })
           foundCount++
 

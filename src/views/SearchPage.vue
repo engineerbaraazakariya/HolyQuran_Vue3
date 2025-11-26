@@ -5,7 +5,7 @@
         <ion-title>البحث في القرآن الكريم</ion-title>
       </ion-toolbar>
       <ion-toolbar :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
-        <ion-searchbar v-model="searchTerm" @ionInput="handleSearch" placeholder="أدخل كلمة للبحث"
+        <ion-searchbar class="searchbar" v-model="searchTerm" @ionInput="handleSearch" placeholder="أدخل كلمة للبحث"
           :class="{ 'dark-theme': isDark, 'white-theme': !isDark }" />
       </ion-toolbar>
     </ion-header>
@@ -16,7 +16,7 @@
         <ion-item v-for="(result, index) in results" :key="index"
           :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
           <!-- الحاوي الكامل -->
-          <div class="flex items-center justify-between w-full" @click="goToSurah(result)">
+          <div class="flex justify-between w-full" @click="goToSurah(result)">
             <!-- نصّ النتيجة -->
             <ion-label class="flex-1 truncate" :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
               <h3 class="truncate">
@@ -24,7 +24,7 @@
               </h3>
 
               <p class="truncate" v-html="highlightSearchTerm(result.text, result.no_Tashkeel_text)" />
-              <div class="flex px-2" @click.stop>
+              <div class="flex px-2 !items-center" @click.stop>
                 <ion-button size="small" fill="clear"
                   class="rounded-full h-6 min-h-[1.5rem] px-2 text-white text-[0.65rem] font-semibold bg-gradient-to-r from-blue-500 to-blue-700"
                   @click="openTafsir(result)">
@@ -36,13 +36,13 @@
                   @click="openTranslation(result)">
                   🌐 ترجمة
                 </ion-button>
-
-                <ion-button size="small" fill="clear"
-                  class="rounded-full h-6 min-h-[1.5rem] px-2 text-white text-[0.65rem] font-semibold bg-gradient-to-r from-blue-500 to-blue-700"
-                  @click="copyAyah(result.text)">
-                  📋 نسخ
-                </ion-button>
-
+                <div
+                  class="cursor-pointer flex justify-between items-center rounded-full h-6 min-h-[1.5rem] px-2 text-white text-[0.65rem] font-semibold bg-gradient-to-r from-blue-500 to-blue-700 !min-w-20">
+                  <span @click="copyAyah(result); showPopover = false">📋 نسخ</span>
+                  <span @click="showPopover = true; currentAyah = result;"
+                    class="flex justify-center text-white text-[0.85rem] font-semibold items-center gap-1">| <ion-icon
+                      slot="start" :icon="cogOutline" /></span>
+                </div>
                 <ion-button size="small" fill="clear"
                   class="rounded-full h-6 min-h-[1.5rem] px-2 text-white text-[0.65rem] font-semibold transition"
                   :class="currentAudio == null
@@ -76,7 +76,10 @@
           loading-text="جاري تحميل المزيد..."></ion-infinite-scroll-content>
       </ion-infinite-scroll>
     </ion-content>
-
+    <IonPopover :is-open="showPopover" :event="popoverEvent" @didDismiss="showPopover = false" class="cursor-pointer">
+      <ion-item @click="copyAyah(currentAyah); showPopover = false" :value="true">مع التشكيل</ion-item>
+      <ion-item @click="copyAyah(currentAyah, false); showPopover = false" :value="false">بدون تشكيل</ion-item>
+    </IonPopover>
 
     <TafsirModal v-if="modalOpen" :is-open="modalOpen" :surah-number="selectedSurah" :ayah-number="selectedAyah"
       :type="modalType" @close="modalOpen = false" />
@@ -86,7 +89,10 @@
 
 <script setup lang="ts">
 import TafsirModal from './TafsirModal.vue'
-import { onMounted, ref } from 'vue'
+import { IonIcon } from '@ionic/vue'
+import { cogOutline } from 'ionicons/icons'
+import { IonPopover } from '@ionic/vue'
+import { nextTick, onMounted, ref, toRaw } from 'vue'
 import { useQuranSearch } from '@/composables/useQuranSearch'
 import { useRouter } from 'vue-router'
 import { IonButton, IonContent, IonHeader, IonPage, IonItem, IonTitle, IonToolbar, IonText, IonList, IonLabel, IonSearchbar, IonInfiniteScrollContent, IonInfiniteScroll } from "@ionic/vue";
@@ -94,6 +100,9 @@ import { IonButton, IonContent, IonHeader, IonPage, IonItem, IonTitle, IonToolba
 import debounce from 'lodash.debounce'
 
 let currentAudio = ref<HTMLAudioElement | null>(null);
+const currentAyah = ref({ text: '', no_Tashkeel_text: '' })
+const showPopover = ref(false)
+const popoverEvent = ref(null)
 
 function getAudioPath(surahNumber: number, ayahNumber: number) {
   const surahStr = String(surahNumber).padStart(3, '0');
@@ -131,12 +140,12 @@ async function playAyahAudio(surahNumber: number, ayahNumber: number) {
 }
 
 
-function copyAyah(ayahText: string) {
-  if (ayahText) {
-    navigator.clipboard.writeText(ayahText)
-      .then(() => console.log('✅ تم نسخ الآية!'))
-      .catch(() => console.log('❌ فشل النسخ.'));
-  }
+function copyAyah(ayah: { text: string, no_Tashkeel_text: string }, withTashkeel = true) {
+  const ayahText = withTashkeel ? ayah.text : ayah.no_Tashkeel_text;
+  const toBeCopied = "﷽ ﴿ " + ayahText + " ﴾";
+  navigator.clipboard.writeText(toBeCopied)
+    .then(() => console.log('✅ تم نسخ الآية!'))
+    .catch(() => console.log('❌ فشل النسخ.'));
 }
 
 import { Share } from '@capacitor/share';
@@ -226,9 +235,16 @@ function loadMoreResults(event: any) {
 
 const router = useRouter()
 
-
 onMounted(() => {
   isDark.value = localStorage.getItem('isDark') === 'true'
+  // set focus to searchbar input field
+  setTimeout(() => {
+    
+    const searchbar = document.querySelectorAll('input.searchbar-input')[0] as HTMLElement
+    searchbar.autofocus = true;
+    searchbar.focus();
+
+  }, 0);
 })
 
 function goToSurah(result: any) {

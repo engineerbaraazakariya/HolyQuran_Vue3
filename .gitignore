@@ -13,3 +13,7 @@ keystore/keystore.properties
 keystore/release-key.keystore
 keystore/upload_certificate.pem
 keystore/my-release-key.jks
+keystore/.ssh/id_ed25519
+keystore/.ssh/id_ed25519.pub
+keystore/.ssh/known_hosts
+keystore/.ssh/known_hosts.old
