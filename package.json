@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc && vite build --mode mobile",
-    "buildweb": "vue-tsc && vite build --mode web",
+    "buildweb": "vue-tsc && vite build --mode web && cp -r ./dist/* ~/SoftwareCompanyWebsite/HolyQuran && cd ~/SoftwareCompanyWebsite/HolyQuran && git add * && git commit -m 'feat: sync with Holy Quran Repository' && git push -v && ~/HolyQuran",
     "preview": "vite preview",
     "test:e2e": "cypress run",
     "test:unit": "vitest",
