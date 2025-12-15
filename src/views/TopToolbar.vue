@@ -2,74 +2,80 @@
   <ion-toolbar :class="[{ 'dark-theme': isDark, 'white-theme': !isDark, 'vertical-toolbar': vertical }]">
     <ion-title v-if="title">{{ title }}</ion-title>
 
+    <!-- النسخة العمودية -->
     <div v-if="vertical" class="vertical-buttons z-50 flex flex-wrap gap-2">
       <ion-back-button v-if="showBack" defaultHref="/"></ion-back-button>
 
       <ion-button class="max-w-10" v-if="showSearch" router-link="/search">
         <ion-icon slot="icon-only" :icon="searchOutline" />
       </ion-button>
+
       <ion-button class="max-w-10" v-if="showFontSizeButtons" @click="increaseFontSize" title="تكبير الخط">
         <ion-icon slot="icon-only" :icon="addCircle" />
       </ion-button>
       <ion-button class="max-w-10" v-if="showFontSizeButtons" @click="decreaseFontSize" title="تصغير الخط">
         <ion-icon slot="icon-only" :icon="removeCircle" />
       </ion-button>
+
       <ion-button class="max-w-10" v-if="showThemeToggle" @click="toggleTheme" title="الوضع الليلي">
         <ion-icon slot="icon-only" :icon="isDark ? moon : sunny" />
       </ion-button>
+
       <ion-button class="max-w-10" v-if="showFontSelector" @click="openFontPopover($event)" title="تغيير الخط">
         <ion-icon slot="icon-only" :icon="colorPalette" />
       </ion-button>
+
       <ion-button class="max-w-10" v-if="showRibbon" @click="toggleUpperSurahInfo">
         <ion-icon :icon="ribbon" />
       </ion-button>
     </div>
 
-    <!-- النسخة العادية (أفقية) -->
+    <!-- النسخة الأفقية -->
     <div v-else class="flex justify-between px-2 horizonal-buttons">
       <ion-buttons slot="start" v-if="showBack">
         <ion-back-button defaultHref="/"></ion-back-button>
       </ion-buttons>
 
       <ion-buttons slot="end">
-        <!-- نفس الأزرار -->
         <ion-button v-if="showFontSizeButtons" @click="increaseFontSize" title="تكبير الخط">
           <ion-icon :icon="addCircle" />
         </ion-button>
         <ion-button v-if="showFontSizeButtons" @click="decreaseFontSize" title="تصغير الخط">
           <ion-icon :icon="removeCircle" />
         </ion-button>
+
         <ion-button v-if="showThemeToggle" @click="toggleTheme" title="الوضع الليلي">
-          <ion-icon :icon="isDark ? moon : sunny" />
+          <ion-icon :icon="!isDark ? moon : sunny" />
         </ion-button>
+
         <ion-button v-if="showFontSelector" @click="openFontPopover($event)" title="تغيير الخط">
           <ion-icon :icon="colorPalette" />
         </ion-button>
+
         <ion-button v-if="showSearch" router-link="/search">
           <ion-icon slot="icon-only" :icon="searchOutline" />
         </ion-button>
+
         <ion-button v-if="showRibbon" @click="toggleUpperSurahInfo">
           <ion-icon :icon="ribbon" />
         </ion-button>
       </ion-buttons>
     </div>
 
-    <!-- ✅ عنصر اختيار اللغة -->
-    <ion-select v-if="showLanguageSelect" v-model="selectedFile" interface="popover" placeholder="اختر ملف">
-      <ion-select-option v-for="file in availableOptions" :key="file" :value="file">
+    <!-- قائمة اختيار اللغة -->
+    <select v-show="showLanguageSelect" v-model="selectedFile" interface="popover"
+      placeholder="اختر ملف">
+      <option v-for="file in availableOptions" :key="file" :value="file">
         {{ languageDisplay[file] || file.replace('.json', '') }}
-      </ion-select-option>
-    </ion-select>
+      </option>
+    </select>
   </ion-toolbar>
 </template>
-
 
 <script setup>
 import {
   IonToolbar,
   IonButtons,
-  IonSelect,
-  IonSelectOption,
   IonButton,
   IonIcon,
   IonBackButton,
@@ -77,8 +83,8 @@ import {
 } from '@ionic/vue';
 
 import { addCircle, removeCircle, ribbon, moon, sunny, colorPalette, searchOutline } from 'ionicons/icons'
+import { inject, computed, watch } from 'vue';
 
-import { inject } from 'vue'
 const props = defineProps({
   title: String,
   isDark: Boolean,
@@ -90,39 +96,34 @@ const props = defineProps({
   showThemeToggle: Boolean,
   showSearch: Boolean,
   showRibbon: Boolean,
-  selectedFile: String,
+  selectedFile: String
 });
 
-// جلب القيم من provide
+const emit = defineEmits(['update:selectedFile'])
+
+// Injected functions and values
 const increaseFontSize = inject('increaseFontSize')
 const decreaseFontSize = inject('decreaseFontSize')
 const toggleTheme = inject('toggleTheme')
 const openFontPopover = inject('openFontPopover')
 const toggleUpperSurahInfo = inject('toggleUpperSurahInfo')
 const isDark = inject('isDark')
+const availableOptions = inject('availableOptions', [])
+const languageDisplay = inject('languageDisplay', [])
 
+// LocalStorage key
+const localStorageKey = 'your-key'
 
-import { computed, watch } from 'vue'
-
-
-const emit = defineEmits(['update:selectedFile'])
-
+// v-model computed
 const selectedFile = computed({
   get: () => props.selectedFile,
   set: (value) => emit('update:selectedFile', value)
 })
 
-const localStorageKey = computed(() => 'your-key') // عدّل حسب الحاجة
-
+// Watch for saving to localStorage only
 watch(selectedFile, (newFile) => {
-  console.log('Selected file changed:', newFile)
-  if (newFile) {
-    localStorage.setItem(localStorageKey.value, newFile)
-  }
-})
-
-
-const availableOptions = inject('availableOptions', [])
-const languageDisplay = inject('languageDisplay', [])
-
+  console.log('WTCH', newFile, selectedFile.value)
+  if (!newFile) return
+  localStorage.setItem(localStorageKey, newFile)
+}, { immediate: true })
 </script>

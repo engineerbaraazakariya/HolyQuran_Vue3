@@ -11,7 +11,7 @@
 
         </div>
       </ion-toolbar>
-      <TopToolbar v-if="!upperSurahNameShown" :isDark="isDark" title="" :showBack="true" :showFontSizeButtons="true"
+      <TopToolbar v-show="!upperSurahNameShown" :isDark="isDark" v-model:selectedFile="selectedFile" title="" :showBack="true" :showFontSizeButtons="true"
         :showThemeToggle="true" :showFontSelector="true" :showSearch="true" :showRibbon="true" />
     </ion-header>
 
@@ -140,6 +140,11 @@
             </ion-select>
           </ion-item>
 
+          <!-- إعراب -->
+          <ion-item button lines="full" @click="goToI3raab(); showPopover = false">
+            <ion-icon slot="start" :icon="bookOutline" />
+            <ion-label>إعراب</ion-label>
+          </ion-item>
           <!-- ترجمة - مع اختيار -->
           <ion-item button lines="full" @click="onOption('ترجمة', selectedTranslation)">
             <ion-icon slot="start" :icon="globeOutline" />
@@ -195,7 +200,8 @@
 
     </ion-content>
     <TafsirModal v-if="surah" :is-open="modalOpen" :surah-number="selectedSurah" :ayah-number="selectedAyah"
-      :type="modalType" :selected-file="modalType === 'tafsir' ? selectedTafsir : selectedTranslation"
+      :type="modalType" :selectedFile="modalType === 'tafsir' ? selectedTafsir : selectedTranslation"
+
       @close="modalOpen = false" />
 
   </ion-page>
@@ -209,13 +215,37 @@ import {
 } from 'ionicons/icons'
 import { onActivated } from "vue";
 
-const selectedTafsir = ref('qortoby.json')
-const selectedTranslation = ref('en_tafheem.json')
-const selectedRecitingWay = ref('الآية فقط')
-const copyAyahWithTashkeel = ref(true)
+let selectedTafsir = ref('qortoby.json')
+let selectedTranslation = ref('en_tafheem.json')
+let selectedRecitingWay = ref('الآية فقط')
+let copyAyahWithTashkeel = ref(true)
 onActivated(async () => {
   await handleRouteChange(route.params.number, route.params.scrollTo);
 });
+
+const modalType = ref('tafsir') // أو 'translation'
+
+
+const emit = defineEmits(['update:selectedFile'])
+let selectedFile = computed({
+  get: () => modalType.value === 'tafsir' ? selectedTafsir.value : selectedTranslation.value,
+  set: (value) => {
+    if (modalType.value === 'tafsir') selectedTafsir.value = value
+    else selectedTranslation.value = value
+    emit('update:selectedFile', value)
+  }
+})
+const localStorageKey = 'your-key'
+
+watch(selectedFile, (newFile) => {
+  console.log('PARENT Selected file changed:', newFile)
+  if (newFile) {
+    localStorage.setItem(localStorageKey, newFile)
+  }
+})
+
+import { computed, watch } from 'vue'
+
 
 const isPlaying = ref(false)
 let currentAudio = null;
@@ -333,10 +363,14 @@ async function playAyahAudio(surahNumber, ayahNumber, selectedRecitingWay) {
   showPopover.value = false;
 }
 
-
-function copyAyah(copyAyahWithTashkeel) {
+function getAyahText(copyAyahWithTashkeel = true){
   const ayah = surah.value?.ayahs.find(a => a.numberInSurah === selectedAyahNumber.value)
   const ayahText = "﷽ ﴿ " + ayah[copyAyahWithTashkeel ? 'text' : 'no_Tashkeel_text'] + " ﴾";
+  return ayahText;
+}
+
+function copyAyah(copyAyahWithTashkeel) {
+  const ayahText = getAyahText(copyAyahWithTashkeel);
   if (ayahText) {
     navigator.clipboard.writeText(ayahText)
       .then(() => console.log('✅ تم نسخ الآية!'))
@@ -347,8 +381,12 @@ function copyAyah(copyAyahWithTashkeel) {
 
 import basicMeaning from '@/assets/meanings_nested.js';
 
+
+import { Share } from '@capacitor/share';
+ 
 const shareAyahText = async () => {
-  const ayahText = surah.value?.ayahs.find(a => a.numberInSurah === selectedAyahNumber.value)?.text;
+  const copyAyahWithTashkeel = true; // لجلب النص مع تشكيل
+  const ayahText = getAyahText(copyAyahWithTashkeel);
   if (ayahText) {
     try {
       await Share.share({
@@ -400,7 +438,18 @@ function setFont(font) {
 }
 
 
-function onOption(choice) {
+function goToI3raab() {
+  showPopover.value = false;
+  selectedSurah.value = selectedSurahNumber.value;
+  selectedAyah.value = selectedAyahNumber.value;
+  modalType.value = 'tafsir';
+  selectedTafsir.value = 'e3rab.json'; // ← اسم ملف الإعراب عندك
+  modalOpen.value = true;
+}
+
+
+function onOption(choice, file) {
+  console.log('choice, file', choice, file)
   // إغلاق الـ popover
   showPopover.value = false;
 
@@ -410,16 +459,17 @@ function onOption(choice) {
   }
 
   // إذا كانت الآية محددة، افتح الـ popover تلقائيًا
-  if (choice === 'تفسير' || choice === 'ترجمة') {
-    selectedSurah.value = selectedSurahNumber.value;
-    selectedAyah.value = selectedAyahNumber.value;
-    modalType.value = choice === 'تفسير' ? 'tafsir' : 'translation';
-    modalOpen.value = true;
+  selectedSurah.value = selectedSurahNumber.value;
+  selectedAyah.value = selectedAyahNumber.value;
+  modalType.value = choice === 'تفسير' ? 'tafsir' : 'translation';
+  modalOpen.value = true;
+  if (choice === 'تفسير') {
+    selectedTafsir.value = file;
+  } else if (choice === 'ترجمة') {
+    selectedTranslation.value = file;
   }
+  selectedFile = file;
 }
-
-
-const modalType = ref('tafsir') // أو 'translation'
 
 import { ref, onMounted, nextTick, onBeforeUnmount } from 'vue'
 import { useRoute } from 'vue-router'

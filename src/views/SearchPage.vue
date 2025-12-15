@@ -92,7 +92,7 @@ import TafsirModal from './TafsirModal.vue'
 import { IonIcon } from '@ionic/vue'
 import { cogOutline } from 'ionicons/icons'
 import { IonPopover } from '@ionic/vue'
-import { nextTick, onMounted, ref, toRaw } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useQuranSearch } from '@/composables/useQuranSearch'
 import { useRouter } from 'vue-router'
 import { IonButton, IonContent, IonHeader, IonPage, IonItem, IonTitle, IonToolbar, IonText, IonList, IonLabel, IonSearchbar, IonInfiniteScrollContent, IonInfiniteScroll } from "@ionic/vue";

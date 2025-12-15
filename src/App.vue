@@ -1,8 +1,8 @@
 <template>
   <ion-app class="!mt-8">
     <router-view v-slot="{ Component, route }">
-      <keep-alive :max="3">
-        <component :is="Component" :key="route.path.includes('/surah/') ? route.fullPath : route.path" />
+      <keep-alive :max="10">
+        <component :is="Component" :key="route.path.includes('/surah/') ? route.path : route.path" />
       </keep-alive>
     </router-view>
   </ion-app>

@@ -12,7 +12,7 @@
 
       <!-- أزرار تكبير الخط، تصغير الخط، الوضع الليلي، تغيير الخط -->
 
-      <TopToolbar v-model:selectedFile="selectedFile" :showBack="false" :showFontSizeButtons="true"
+      <TopToolbar v-model:selectedFile="selectedFile" :showBack="false" :showThemeToggle="true" :showFontSizeButtons="true"
         :showFontSelector="true" :showSearch="false" :showLanguageSelect="true" />
     </ion-header>
     <ion-content class="ion-padding" :style="{ fontSize: fontSize + 'px', fontFamily: fontFamily }">
@@ -89,6 +89,25 @@ const localStorageKey = computed(() =>
 const localStorageKeyFontSize = 'TafsirFontSize';
 const localStorageKeyFontFamily = 'TafsirFontFamily';
 
+
+const selectedFileLocal = ref(props.selectedFile)
+
+const selectedFile = ref(props.selectedFile || localStorage.getItem(localStorageKey.value) || (props.type === 'tafsir' ? DEFAULT_TAFSIR : DEFAULT_TRANSLATION))
+
+// تحديث القيمة فقط عند تغيير props.selectedFile خارجيًا
+watch(() => props.selectedFile, (newVal) => {
+  if (newVal && newVal !== selectedFile.value) {
+    selectedFile.value = newVal
+  }
+})
+
+watch(selectedFile, (newFile) => {
+  console.log('Selected file changed:', newFile)
+  loadFileContent(props.surahNumber, props.ayahNumber, props.isOpen, newFile)
+  if (newFile) localStorage.setItem(localStorageKey.value, newFile)
+})
+
+
 onMounted(() => {
   // استرجاع الإعدادات المحفوظة من localStorage
   fontSize.value = JSON.parse(localStorage.getItem(localStorageKeyFontSize)) || 22;
@@ -105,7 +124,6 @@ onMounted(() => {
   loadFileContent(props.surahNumber, props.ayahNumber, props.isOpen, selectedFile.value);
 
 });
-let selectedFile = ref(props.selectedFile || (props.type === 'tafsir' ? DEFAULT_TAFSIR : DEFAULT_TRANSLATION));
 
 
 // حفظ الملف المختار تلقائياً عند تغييره
@@ -203,10 +221,14 @@ function openFontPopover(event) {
 
 
 import { IonPopover } from '@ionic/vue'
-
+const toggleTheme = () => {
+  isDark.value = !isDark.value
+  localStorage.setItem('isDark', isDark.value)
+}
 // توفيرهم للمكون الفرعي
 provide('selectedFile', selectedFile)
 provide('setFont', setFont)
+provide('toggleTheme', toggleTheme)
 provide('availableOptions', availableOptions)
 provide('languageDisplay', languageDisplay)
 provide('increaseFontSize', increaseFontSize)
