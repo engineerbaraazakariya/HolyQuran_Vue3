@@ -28,11 +28,11 @@
     <ion-content ref="mainScrollContainer" scroll-events=" true" @ionScroll="saveMainScrollPosition"
       :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
       <ion-list v-if="surahs.length" :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
-        <ion-item v-for="surah in surahs" :key="surah.number"
+        <ion-item class="cursor-pointer" v-for="surah in surahs" :key="surah.number"
           :style="{ fontSize: fontSize + 'px', fontFamily: fontFamily }" @click="goToSurah(surah)"
           :id="'surah-' + surah.number"
           :class="{ 'last-opened': lastSurah === surah.number, 'dark-theme': isDark, 'white-theme': !isDark }">
-          {{ surah.name }}
+          <span class="hover:text-orange-500">{{ surah.name }}</span>
         </ion-item>
       </ion-list>
       <ion-toast :is-open="toastIsOpen" :message="toastMessage" :duration="2000"
