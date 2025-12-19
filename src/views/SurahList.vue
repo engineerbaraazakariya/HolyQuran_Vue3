@@ -32,7 +32,7 @@
           :style="{ fontSize: fontSize + 'px', fontFamily: fontFamily }" @click="goToSurah(surah)"
           :id="'surah-' + surah.number"
           :class="{ 'last-opened': lastSurah === surah.number, 'dark-theme': isDark, 'white-theme': !isDark }">
-          <span class="hover:text-orange-500">{{ surah.name }}</span>
+          <span class="hover:text-blue-500">{{ surah.name }}</span>
         </ion-item>
       </ion-list>
       <ion-toast :is-open="toastIsOpen" :message="toastMessage" :duration="2000"

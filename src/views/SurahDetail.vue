@@ -11,8 +11,9 @@
 
         </div>
       </ion-toolbar>
-      <TopToolbar v-show="!upperSurahNameShown" :isDark="isDark" v-model:selectedFile="selectedFile" title="" :showBack="true" :showFontSizeButtons="true"
-        :showThemeToggle="true" :showFontSelector="true" :showSearch="true" :showRibbon="true" />
+      <TopToolbar v-show="!upperSurahNameShown" :isDark="isDark" v-model:selectedFile="selectedFile" title=""
+        :showBack="true" :showFontSizeButtons="true" :showThemeToggle="true" :showFontSelector="true" :showSearch="true"
+        :showRibbon="true" />
     </ion-header>
 
     <ion-content :class="{ 'dark-theme': isDark, 'white-theme': !isDark }" @ionScroll="saveScrollPosition"
@@ -99,7 +100,12 @@
           }">
             {{ showCurrentMaany }}
           </div>
-
+          <div class="flex justify-between pt-6">
+            <div class="cursor-pointer text-blue-500 hover:text-blue-500"
+              @click="onOption('تفسير', selectedTafsir, false)">
+              تفسير الآية</div>
+            <div class="cursor-pointer text-blue-500 hover:text-blue-500" @click="goToI3raab();">إعراب الآية</div>
+          </div>
         </div>
       </div>
 
@@ -201,7 +207,6 @@
     </ion-content>
     <TafsirModal v-if="surah" :is-open="modalOpen" :surah-number="selectedSurah" :ayah-number="selectedAyah"
       :type="modalType" :selectedFile="modalType === 'tafsir' ? selectedTafsir : selectedTranslation"
-
       @close="modalOpen = false" />
 
   </ion-page>
@@ -363,7 +368,7 @@ async function playAyahAudio(surahNumber, ayahNumber, selectedRecitingWay) {
   showPopover.value = false;
 }
 
-function getAyahText(copyAyahWithTashkeel = true){
+function getAyahText(copyAyahWithTashkeel = true) {
   const ayah = surah.value?.ayahs.find(a => a.numberInSurah === selectedAyahNumber.value)
   const ayahText = "﷽ ﴿ " + ayah[copyAyahWithTashkeel ? 'text' : 'no_Tashkeel_text'] + " ﴾";
   return ayahText;
@@ -383,7 +388,7 @@ import basicMeaning from '@/assets/meanings_nested.js';
 
 
 import { Share } from '@capacitor/share';
- 
+
 const shareAyahText = async () => {
   const copyAyahWithTashkeel = true; // لجلب النص مع تشكيل
   const ayahText = getAyahText(copyAyahWithTashkeel);
@@ -448,8 +453,8 @@ function goToI3raab() {
 }
 
 
-function onOption(choice, file) {
-  console.log('choice, file', choice, file)
+function onOption(choice, file, keepOld = false) {
+
   // إغلاق الـ popover
   showPopover.value = false;
 
@@ -468,7 +473,9 @@ function onOption(choice, file) {
   } else if (choice === 'ترجمة') {
     selectedTranslation.value = file;
   }
-  selectedFile = file;
+  if (!keepOld) {
+    selectedFile = file;
+  }
 }
 
 import { ref, onMounted, nextTick, onBeforeUnmount } from 'vue'
@@ -622,9 +629,13 @@ function toggleAyah(surahNumber, ayahNumber) {
   localStorage.setItem('surahVariables', JSON.stringify(surahVariables.value));
 }
 
-let showCurrentMaany = ref('')
+let showCurrentMaany = ref('');
+let currentMaanyAyah = ref('');
 function setMaany(surah, ayah, index) {
-  showCurrentMaany.value = basicMeaning[surah.number - 1][ayah.numberInSurah - 1][index][0]
+  selectedSurahNumber.value = surah.number;
+  selectedAyahNumber.value = ayah.numberInSurah;
+  currentMaanyAyah.value = ayah;
+  showCurrentMaany.value = basicMeaning[surah.number - 1][ayah.numberInSurah - 1][index][0];
 }
 
 
