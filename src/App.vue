@@ -1,5 +1,5 @@
 <template>
-  <ion-app class="!mt-8">
+  <ion-app :class="{ 'isApp': isApp }">
     <router-view v-slot="{ Component, route }">
       <keep-alive :max="10">
         <component :is="Component" :key="route.path.includes('/surah/') ? route.path : route.path" />
@@ -9,12 +9,15 @@
 </template>
 
 <script setup lang="ts">
-import { IonApp, IonRouterOutlet } from '@ionic/vue';
+import { IonApp } from '@ionic/vue';
 import { onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
+let isApp = false;
 onMounted(() => {
+  isApp = document.getElementsByTagName('html')[0].classList.contains('plt-mobile');
+  // !document.URL.startsWith('http') || document.URL.startsWith('http://localhost');
   const lastSurah = localStorage.getItem('lastSurah')
   const stored = JSON.parse(localStorage.getItem('surahVariables') + '');
   if (stored && lastSurah && stored[Number(lastSurah)]) {
@@ -121,12 +124,21 @@ onMounted(() => {
 
 /* Hide scrollbar for Chrome, Safari and Opera */
 .no-scrollbar::-webkit-scrollbar {
-    display: none;
+  display: none;
 }
 
 /* Hide scrollbar for IE, Edge and Firefox */
 .no-scrollbar {
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
+}
+
+.plt-mobile {
+  margin-top: 2rem !important;
+}
+.plt-mobile body {
+  max-height: calc(100vh - 2rem) !important;
 }
 </style>
