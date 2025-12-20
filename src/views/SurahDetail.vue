@@ -24,7 +24,18 @@
           <TopToolbar :vertical="true" :isDark="isDark" title="" :showBack="true" :showFontSizeButtons="true"
             :showThemeToggle="true" :showFontSelector="true" :showSearch="true" :showRibbon="false" />
         </div>
+        <div ref="ayahContainer" class="relative">
+          <svg v-if="svgRect" class="opacity-50 z-[1]" :style="{
+            position: 'absolute',
+            left: svgRect.left + 'px',
+            top: svgRect.top + 'px',
+            pointerEvents: 'none'
+          }" :width="svgRect.width" :height="svgRect.height">
+            <rect v-for="(r, i) in wordRects" :key="i" :x="r.x" :y="r.y" :width="r.width" :height="r.height" rx="4"
+              ry="4" fill="currentColor" class="text-blue-500" />
+          </svg>
 
+        </div>
         <span class="flex flex-wrap justify-around px-2">
           <template v-if="surah">
             <!-- اسم السورة مع الزخرفة -->
@@ -44,18 +55,19 @@
               ﷽
             </div>
             <template v-for="ayah in surah.ayahs" :key="ayah.numberInSurah">
-              <span v-for="(word, index) in ayah.text.split(' ')" :key="index" :style="{
-                fontSize: fontSize + 'px',
-                fontFamily: fontFamily,
-                color: basicMeaning[surah.number - 1][ayah.numberInSurah - 1][index]?.length > 0 ? '#6363f9' : isDark ? 'white' : 'black',
-                wordSpacing: '0.25em',
-                backgroundColor: surahVariables[surah.number]?.longPressedAyahNumber === ayah.numberInSurah ? 'green' : !isDark ? 'white' : 'black',
-                cursor: 'default',
-                backgroundColor: surahVariables[surah.number]?.longPressedAyahNumber === ayah.numberInSurah ? 'green' : !isDark ? 'white' : 'black',
-              }" @touchstart="startLongPress($event, surah.number, ayah.numberInSurah)"
+              <span v-for="(word, index) in ayah.text.split(' ')" :data-ayah-group="ayah.numberInSurah" :key="index"
+                :style="{
+                  fontSize: fontSize + 'px',
+                  fontFamily: fontFamily,
+                  color: basicMeaning[surah.number - 1][ayah.numberInSurah - 1][index]?.length > 0 ? '#6363f9' : isDark ? 'white' : 'black',
+                  wordSpacing: '0.25em',
+                  backgroundColor: !isDark ? 'white' : 'black',
+                  cursor: 'default',
+                }" @touchstart="startLongPress($event, surah.number, ayah.numberInSurah)"
                 @click="basicMeaning[surah.number - 1][ayah.numberInSurah - 1][index]?.length > 0 && setMaany(surah, ayah, index)"
                 @touchend="stopLongPress" @touchmove="stopLongPress"
-                @contextmenu.prevent="startLongPress($event, surah.number, ayah.numberInSurah, 0)" class="relative">
+                @contextmenu.prevent="startLongPress($event, surah.number, ayah.numberInSurah, 0)"
+                class="relative inline-block">
                 {{ word }}<span class="!w-2 !max-w-2 !min-w-2 flex" :style="{
                   backgroundColor: surahVariables[surah.number]?.longPressedAyahNumber === ayah.numberInSurah ? 'green' : !isDark ? 'white' : 'black',
                 }" v-if="index !== ayah.text.split(' ').length - 1"></span>
@@ -84,6 +96,7 @@
             <p class="ion-padding">جارٍ تحميل السورة...</p>
           </template>
         </span>
+
       </div>
       <!-- start of dialog -->
 
@@ -218,7 +231,95 @@ import {
   shareSocialOutline, copyOutline, playOutline, pauseOutline, bookOutline
   , globeOutline
 } from 'ionicons/icons'
-import { onActivated } from "vue";
+import { onActivated, unref } from "vue";
+const svgRect = ref(null);
+const wordRects = ref(null);
+
+const ayahContainer = ref(null);
+
+function highlightAyah(ayahNumber) {
+  nextTick(() => {
+    const spans = document.querySelectorAll(
+      `[data-ayah-group="${ayahNumber}"]`
+    );
+    if (!spans.length || !ayahContainer.value) return;
+
+    const containerRect =
+      ayahContainer.value.getBoundingClientRect();
+
+    // rect لكل كلمة
+    const rects = [...spans].map(el => {
+      const r = el.getBoundingClientRect();
+      return {
+        left: r.left - containerRect.left,
+        top: r.top - containerRect.top,
+        width: r.width,
+        height: r.height
+      };
+    });
+
+    // ===============================
+    // دمج الكلمات في نفس السطر
+    // ===============================
+    const tolerance = 5;
+    const lineRects = [];
+
+    rects.forEach(r => {
+      // هل يوجد سطر قريب؟
+      let line = lineRects.find(l =>
+        Math.abs(l.top - r.top) <= tolerance
+      );
+
+      if (!line) {
+        // سطر جديد
+        lineRects.push({
+          left: r.left,
+          top: r.top,
+          right: r.left + r.width,
+          bottom: r.top + r.height
+        });
+      } else {
+        // توسعة السطر الحالي
+        line.left = Math.min(line.left, r.left);
+        line.right = Math.max(line.right, r.left + r.width);
+        line.top = Math.min(line.top, r.top);
+        line.bottom = Math.max(line.bottom, r.top + r.height);
+      }
+    });
+
+    // تحويل إلى rects نهائية
+    const mergedRects = lineRects.map(l => ({
+      left: l.left,
+      top: l.top,
+      width: l.right - l.left,
+      height: l.bottom - l.top
+    }));
+
+    // ===============================
+    // حساب حجم SVG
+    // ===============================
+    const minX = Math.min(...mergedRects.map(r => r.left));
+    const minY = Math.min(...mergedRects.map(r => r.top));
+    const maxX = Math.max(...mergedRects.map(r => r.left + r.width));
+    const maxY = Math.max(...mergedRects.map(r => r.top + r.height));
+
+    svgRect.value = {
+      left: minX,
+      top: minY,
+      width: maxX - minX,
+      height: maxY - minY
+    };
+
+    // rects داخل الـ SVG
+    wordRects.value = mergedRects.map(r => ({
+      x: r.left - minX,
+      y: r.top - minY,
+      width: r.width,
+      height: r.height
+    }));
+  });
+}
+
 
 let selectedTafsir = ref('qortoby.json')
 let selectedTranslation = ref('en_tafheem.json')
@@ -521,6 +622,7 @@ function startLongPress(event, surahNumber, ayahNumber, forceTime = null) {
       }
 
       // تعيين قيمة longPressedAyahNumber
+      highlightAyah(ayahNumber);
       surahVariables.value[surahNumber].longPressedAyahNumber = ayahNumber;
 
       selectedSurahNumber.value = surahNumber;
@@ -610,8 +712,11 @@ async function saveScrollPosition() {
   }
 }
 function toggleAyah(surahNumber, ayahNumber) {
+  console.log('toggleAyah')
   // إذا كانت الآية محددة بالفعل، قم بإلغاء التحديد
   const current = surahVariables.value[surahNumber]?.selectedAyahNumber || null;
+
+  highlightAyah(ayahNumber);
 
   if (!surahVariables.value[surahNumber]) {
     surahVariables.value[surahNumber] = { selectedAyahNumber: null, scrollPosition: null };
@@ -721,6 +826,7 @@ const autoSelectAyah = (ayahNumber) => {
 };
 
 const showPopoverForAyah = (ayahNumber) => {
+  console.log('showPopoverForAyah')
   const element = document.getElementById(`ayah-${ayahNumber}`);
   if (element) {
     // إنشاء حدث وهمي لتمريره إلى البوبوفر
