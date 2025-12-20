@@ -25,7 +25,7 @@
             :showThemeToggle="true" :showFontSelector="true" :showSearch="true" :showRibbon="false" />
         </div>
         <div ref="ayahContainer" class="relative">
-          <svg v-if="svgRect" class="opacity-50 z-[1]" :style="{
+          <svg v-if="svgRect" class="opacity-60 z-[0]" :style="{
             position: 'absolute',
             left: svgRect.left + 'px',
             top: svgRect.top + 'px',
@@ -61,7 +61,6 @@
                   fontFamily: fontFamily,
                   color: basicMeaning[surah.number - 1][ayah.numberInSurah - 1][index]?.length > 0 ? '#6363f9' : isDark ? 'white' : 'black',
                   wordSpacing: '0.25em',
-                  backgroundColor: !isDark ? 'white' : 'black',
                   cursor: 'default',
                 }" @touchstart="startLongPress($event, surah.number, ayah.numberInSurah)"
                 @click="basicMeaning[surah.number - 1][ayah.numberInSurah - 1][index]?.length > 0 && setMaany(surah, ayah, index)"
@@ -417,6 +416,7 @@ async function playAyahAudio(surahNumber, ayahNumber, selectedRecitingWay) {
         surahVariables.value[surahNumber].longPressedAyahNumber = ayahNumber;
         // selectedSurahNumber.value = surahNumber;
         selectedAyahNumber.value = ayahNumber;
+        highlightAyah(ayahNumber);
         playAyahAudio(surahNumber, ayahNumber, selectedRecitingWay)
       } else {
         surahVariables.value[surah.value.number].longPressedAyahNumber = null;
@@ -430,6 +430,7 @@ async function playAyahAudio(surahNumber, ayahNumber, selectedRecitingWay) {
         surahVariables.value[surahNumber].longPressedAyahNumber = ayahNumber;
         // selectedSurahNumber.value = surahNumber;
         selectedAyahNumber.value = ayahNumber;
+        highlightAyah(ayahNumber);
         playAyahAudio(surahNumber, ayahNumber, selectedRecitingWay)
       } else {
         if (surah.value.number === 114) {
@@ -444,6 +445,7 @@ async function playAyahAudio(surahNumber, ayahNumber, selectedRecitingWay) {
         surahVariables.value[surahNumber].longPressedAyahNumber = ayahNumber;
         selectedSurahNumber.value = surahNumber;
         selectedAyahNumber.value = ayahNumber;
+        highlightAyah(ayahNumber);
         playAyahAudio(surahNumber, ayahNumber, selectedRecitingWay)
         // surahVariables.value[surah.value.number].longPressedAyahNumber = null;
       }
