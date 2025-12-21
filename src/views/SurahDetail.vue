@@ -853,7 +853,6 @@ function updateSelectedAyah(surahNumber, ayahNumber) {
   localStorage.setItem('surahVariables', JSON.stringify(surahVariables.value));
 }
 
-
 async function handleRouteChange(surahNumberParam, scrollToParam, isRecitingParam) {
   const surahNumber = parseInt(surahNumberParam);
 
@@ -861,34 +860,46 @@ async function handleRouteChange(surahNumberParam, scrollToParam, isRecitingPara
   surah.value = null;
   await nextTick();
 
-  // تحميل البيانات
-  const res = await fetch('assets/quran.json');
-  const allSurahs = await res.json();
-  surah.value = allSurahs.find(s => s.number === surahNumber);
-  if (surah.value) {
-    Juz.value = surah.value.ayahs[0].juz;
-    Page.value = surah.value.ayahs[0].page;
-    Hizb.value = surah.value.ayahs[0].hizb;
-  }
+  try {
+    // تحميل ملف السورة المناسب
+    const res = await fetch(`assets/surahs/surah_${surahNumber}.json`);
+    if (!res.ok) throw new Error('Failed to load surah file');
 
-  upperSurahNameShown.value = true;
+    surah.value = await res.json();
 
-  // الانتظار حتى يتم تحديث DOM
-  await nextTick();
-
-  if (scrollToParam) {
-    await handleScrollTo(scrollToParam, surahNumber);
-  }
-
-  if (isRecitingParam) {
-    if (!surahVariables.value[surahNumber]) {
-      surahVariables.value[surahNumber] = { longPressedAyahNumber: 1, bookmarkedAyahNumber: null, scrollPosition: null };
+    if (surah.value) {
+      Juz.value = surah.value.ayahs[0].juz;
+      Page.value = surah.value.ayahs[0].page;
+      Hizb.value = surah.value.ayahs[0].hizbQuarter; // تأكد من الاسم الصحيح
     }
-    selectedSurahNumber.value = surahNumber;
-    selectedAyahNumber.value = 1;
-    playAyahAudio(surahNumber, selectedAyahNumber.value, "إلى ختم القرآن الكريم")
+
+    upperSurahNameShown.value = true;
+
+    // الانتظار حتى يتم تحديث DOM
+    await nextTick();
+
+    if (scrollToParam) {
+      await handleScrollTo(scrollToParam, surahNumber);
+    }
+
+    if (isRecitingParam) {
+      if (!surahVariables.value[surahNumber]) {
+        surahVariables.value[surahNumber] = {
+          longPressedAyahNumber: 1,
+          bookmarkedAyahNumber: null,
+          scrollPosition: null
+        };
+      }
+      selectedSurahNumber.value = surahNumber;
+      selectedAyahNumber.value = 1;
+      playAyahAudio(surahNumber, selectedAyahNumber.value, "إلى ختم القرآن الكريم");
+    }
+
+  } catch (error) {
+    console.error("Error loading surah:", error);
   }
 }
+
 // إعدادات المستخدم
 const increaseFontSize = () => {
   fontSize.value += 2

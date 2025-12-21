@@ -1,0 +1,141 @@
+{
+  "number": 100,
+  "name": "سُورَةُ العَادِيَاتِ",
+  "englishName": "Al-Aadiyaat",
+  "englishNameTranslation": "The Chargers",
+  "revelationType": "Meccan",
+  "ayahs": [
+    {
+      "number": 6147,
+      "text": "وَالعـٰدِيـٰتِ ضَبحًا",
+      "numberInSurah": 1,
+      "juz": 30,
+      "manzil": 7,
+      "page": 599,
+      "ruku": 542,
+      "hizbQuarter": 239,
+      "sajda": false,
+      "no_Tashkeel_text": "بسم الله الرحمن الرحيم والعاديات ضبحا"
+    },
+    {
+      "number": 6148,
+      "text": "فَالمورِيـٰتِ قَدحًا",
+      "numberInSurah": 2,
+      "juz": 30,
+      "manzil": 7,
+      "page": 599,
+      "ruku": 542,
+      "hizbQuarter": 239,
+      "sajda": false,
+      "no_Tashkeel_text": "فالموريات قدحا"
+    },
+    {
+      "number": 6149,
+      "text": "فَالمُغيرٰتِ صُبحًا",
+      "numberInSurah": 3,
+      "juz": 30,
+      "manzil": 7,
+      "page": 599,
+      "ruku": 542,
+      "hizbQuarter": 239,
+      "sajda": false,
+      "no_Tashkeel_text": "فالمغيرات صبحا"
+    },
+    {
+      "number": 6150,
+      "text": "فَأَثَرنَ بِهِ نَقعًا",
+      "numberInSurah": 4,
+      "juz": 30,
+      "manzil": 7,
+      "page": 599,
+      "ruku": 542,
+      "hizbQuarter": 239,
+      "sajda": false,
+      "no_Tashkeel_text": "فأثرن به نقعا"
+    },
+    {
+      "number": 6151,
+      "text": "فَوَسَطنَ بِهِ جَمعًا",
+      "numberInSurah": 5,
+      "juz": 30,
+      "manzil": 7,
+      "page": 599,
+      "ruku": 542,
+      "hizbQuarter": 239,
+      "sajda": false,
+      "no_Tashkeel_text": "فوسطن به جمعا"
+    },
+    {
+      "number": 6152,
+      "text": "إِنَّ الإِنسـٰنَ لِرَبِّهِ لَكَنودٌ",
+      "numberInSurah": 6,
+      "juz": 30,
+      "manzil": 7,
+      "page": 599,
+      "ruku": 542,
+      "hizbQuarter": 239,
+      "sajda": false,
+      "no_Tashkeel_text": "إن الإنسان لربه لكنود"
+    },
+    {
+      "number": 6153,
+      "text": "وَإِنَّهُ عَلىٰ ذٰلِكَ لَشَهيدٌ",
+      "numberInSurah": 7,
+      "juz": 30,
+      "manzil": 7,
+      "page": 599,
+      "ruku": 542,
+      "hizbQuarter": 239,
+      "sajda": false,
+      "no_Tashkeel_text": "وإنه على ذلك لشهيد"
+    },
+    {
+      "number": 6154,
+      "text": "وَإِنَّهُ لِحُبِّ الخَيرِ لَشَديدٌ",
+      "numberInSurah": 8,
+      "juz": 30,
+      "manzil": 7,
+      "page": 599,
+      "ruku": 542,
+      "hizbQuarter": 239,
+      "sajda": false,
+      "no_Tashkeel_text": "وإنه لحب الخير لشديد"
+    },
+    {
+      "number": 6155,
+      "text": "۞ أَفَلا يَعلَمُ إِذا بُعثِرَ ما فِى القُبورِ",
+      "numberInSurah": 9,
+      "juz": 30,
+      "manzil": 7,
+      "page": 599,
+      "ruku": 542,
+      "hizbQuarter": 240,
+      "sajda": false,
+      "no_Tashkeel_text": "أفلا يعلم إذا بعثر ما في القبور"
+    },
+    {
+      "number": 6156,
+      "text": "وَحُصِّلَ ما فِى الصُّدورِ",
+      "numberInSurah": 10,
+      "juz": 30,
+      "manzil": 7,
+      "page": 600,
+      "ruku": 542,
+      "hizbQuarter": 240,
+      "sajda": false,
+      "no_Tashkeel_text": "وحصل ما في الصدور"
+    },
+    {
+      "number": 6157,
+      "text": "إِنَّ رَبَّهُم بِهِم يَومَئِذٍ لَخَبيرٌ",
+      "numberInSurah": 11,
+      "juz": 30,
+      "manzil": 7,
+      "page": 600,
+      "ruku": 542,
+      "hizbQuarter": 240,
+      "sajda": false,
+      "no_Tashkeel_text": "إن ربهم بهم يومئذ لخبير"
+    }
+  ]
+}
