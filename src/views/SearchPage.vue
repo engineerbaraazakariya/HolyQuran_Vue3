@@ -14,7 +14,7 @@
       :scroll-events="true">
       <ion-list v-if="results.length" :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
         <ion-item v-for="(result, index) in results" :key="index"
-          :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
+          :class="{ 'dark-theme': isDark, 'white-theme': !isDark }" class="cursor-pointer">
           <!-- الحاوي الكامل -->
           <div class="flex justify-between w-full" @click="goToSurah(result)">
             <!-- نصّ النتيجة -->
@@ -314,7 +314,7 @@ function highlightSearchTerm(text: string, noTashkeelText?: string) {
   const escapedTerm = escapeRegExp(term);
   const re = new RegExp(`(${escapedTerm})`, 'gi');
 
-  return snippet.replace(re, '<strong>$1</strong>');
+  return snippet.replace(re, '<strong class=\'text-blue-500\'>$1</strong>');
 }
 
 

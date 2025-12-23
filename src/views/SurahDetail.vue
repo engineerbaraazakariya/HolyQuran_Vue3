@@ -801,6 +801,7 @@ async function scrollToAyah(ayahNumber, surahNumber, attempt = 0) {
 
   if (element) {
     element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    highlightAyah(ayahNumber);
     updateSelectedAyah(surahNumber, ayahNumber);
   } else if (attempt < maxAttempts) {
     await new Promise(resolve => setTimeout(resolve, 200 * (attempt + 1)));
