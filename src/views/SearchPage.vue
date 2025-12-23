@@ -24,40 +24,61 @@
               </h3>
 
               <p class="truncate" v-html="highlightSearchTerm(result.text, result.no_Tashkeel_text)" />
-              <div class="flex px-2 !items-center" @click.stop>
+              <div class="flex !items-center" @click.stop>
                 <ion-button size="small" fill="clear"
-                  class="rounded-full h-6 min-h-[1.5rem] px-2 text-white text-[0.65rem] font-semibold bg-gradient-to-r from-blue-500 to-blue-700"
+                  class="rounded-full h-8 min-h-[1.5rem] px-2 text-white text-[0.65rem] font-semibold bg-gradient-to-r from-blue-500 to-blue-700"
                   @click="openTafsir(result)">
-                  📖 تفسير
+
+                  <div class="flex flex-col justify-between h-6">
+                    <div>📖 </div>
+                    <div>تفسير</div>
+                  </div>
                 </ion-button>
 
                 <ion-button size="small" fill="clear"
-                  class="rounded-full h-6 min-h-[1.5rem] px-2 text-white text-[0.65rem] font-semibold bg-gradient-to-r from-blue-500 to-blue-700"
+                  class="rounded-full h-8 min-h-[1.5rem] px-2 text-white text-[0.65rem] font-semibold bg-gradient-to-r from-blue-500 to-blue-700"
                   @click="openTranslation(result)">
-                  🌐 ترجمة
+
+                  <div class="flex flex-col justify-between h-6">
+                    <div>🌐</div>
+                    <div>ترجمة</div>
+                  </div>
+
+
                 </ion-button>
                 <div
-                  class="cursor-pointer flex justify-between items-center rounded-full h-6 min-h-[1.5rem] px-2 text-white text-[0.65rem] font-semibold bg-gradient-to-r from-blue-500 to-blue-700 !min-w-20">
-                  <span @click="copyAyah(result); showPopover = false">📋 نسخ</span>
-                  <span @click="showPopover = true; currentAyah = result;"
-                    class="flex justify-center text-white text-[0.85rem] font-semibold items-center gap-1">| <ion-icon
-                      slot="start" :icon="cogOutline" /></span>
+                  class="md button button-small button-clear ion-activatable ion-focusable hydrated rounded-full h-8 min-h-[1.5rem] px-2 text-white text-[0.65rem] font-semibold transition bg-gradient-to-r from-blue-500 to-blue-700 cursor-pointer relative min-w-14 flex justify-center items-center">
+                  <div class="absolute float-left flex flex-col justify-between h-full gap-0 p-0 m-0"
+                    @click="copyAyah(result); showPopover = false">
+                    <div>📋</div>
+                    <div>نسخ</div>
+                  </div>
+                  <div class="hover:text-blue-500 absolute left-1 float-left h-full flex items-center"
+                    @click="showPopover = true; currentAyah = result;">
+                    ◀
+                  </div>
                 </div>
                 <ion-button size="small" fill="clear"
-                  class="rounded-full h-6 min-h-[1.5rem] px-2 text-white text-[0.65rem] font-semibold transition"
+                  class="rounded-full h-8 min-h-[1.5rem] px-2 text-white text-[0.65rem] font-semibold transition"
                   :class="currentAudio == null
                     ? 'bg-gradient-to-r from-blue-500 to-blue-700 cursor-pointer'
                     : 'bg-gray-400 opacity-50 cursor-not-allowed'"
                   @click=" playAyahAudio(result.surahNumber, result.ayahNumber)">
-                  {{ isPlaying ? "⏸️" : "▶️" }} تلاوة
+                  <div class="flex flex-col justify-between h-6">
+                    <div>{{ isPlaying ? "⏸️" : "▶️" }}</div>
+                    <div>تلاوة</div>
+                  </div>
                 </ion-button>
 
 
 
                 <ion-button size="small" fill="clear"
-                  class="rounded-full h-6 min-h-[1.5rem] px-2 text-white text-[0.65rem] font-semibold bg-gradient-to-r from-blue-500 to-blue-700"
+                  class="rounded-full h-8 min-h-[1.5rem] px-2 text-white text-[0.65rem] font-semibold bg-gradient-to-r from-blue-500 to-blue-700"
                   @click="shareAyahText(result.text, result.surahName)">
-                  📤 مشاركة
+                  <div class="flex flex-col justify-between h-6">
+                    <div>📤</div>
+                    <div>مشاركة</div>
+                  </div>
                 </ion-button>
 
               </div>
@@ -239,7 +260,7 @@ onMounted(() => {
   isDark.value = localStorage.getItem('isDark') === 'true'
   // set focus to searchbar input field
   setTimeout(() => {
-    
+
     const searchbar = document.querySelectorAll('input.searchbar-input')[0] as HTMLElement
     searchbar.autofocus = true;
     searchbar.focus();

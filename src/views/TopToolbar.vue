@@ -122,7 +122,6 @@ const selectedFile = computed({
 
 // Watch for saving to localStorage only
 watch(selectedFile, (newFile) => {
-  console.log('WTCH', newFile, selectedFile.value)
   if (!newFile) return
   localStorage.setItem(localStorageKey, newFile)
 }, { immediate: true })
