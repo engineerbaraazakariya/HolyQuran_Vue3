@@ -66,7 +66,7 @@
                 @click="basicMeaning[surah.number - 1][ayah.numberInSurah - 1][index]?.length > 0 && setMaany(surah, ayah, index)"
                 @touchend="stopLongPress" @touchmove="stopLongPress"
                 @contextmenu.prevent="startLongPress($event, surah.number, ayah.numberInSurah, 0)"
-                class="relative inline-block">
+                class="relative inline-block mx-1">
                 {{ word }}<span class="!w-2 !max-w-2 !min-w-2 flex" :style="{
                   backgroundColor: surahVariables[surah.number]?.longPressedAyahNumber === ayah.numberInSurah ? 'green' : !isDark ? 'white' : 'black',
                 }" v-if="index !== ayah.text.split(' ').length - 1"></span>
@@ -867,7 +867,7 @@ async function handleRouteChange(surahNumberParam, scrollToParam, isRecitingPara
     if (!res.ok) throw new Error('Failed to load surah file');
 
     surah.value = await res.json();
-
+    document.title = `الْقُرْآنُ الْكَرِيمُ - ${surah.value.name}`;
     if (surah.value) {
       Juz.value = surah.value.ayahs[0].juz;
       Page.value = surah.value.ayahs[0].page;
