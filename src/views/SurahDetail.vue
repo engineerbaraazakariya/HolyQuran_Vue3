@@ -236,46 +236,33 @@ const wordRects = ref(null);
 
 const ayahContainer = ref(null);
 function highlightAyah(ayahNumber) {
-  const isFirstAyahOfSurah = ayahNumber === 1;
-
   nextTick(() => {
-    const spans = document.querySelectorAll(
-      `[data-ayah-group="${ayahNumber}"]`
-    );
+    const spans = document.querySelectorAll(`[data-ayah-group="${ayahNumber}"]`);
     if (!spans.length || !ayahContainer.value) return;
 
     const containerRect = ayahContainer.value.getBoundingClientRect();
 
-    const rects = [...spans].map(el => {
-      const r = el.getBoundingClientRect();
-      return {
-        left: r.left - containerRect.left,
-        top: r.top - containerRect.top,
-        width: r.width,
-        height: r.height
-      };
-    });
-
     const tolerance = 5;
     const lineRects = [];
 
-    rects.forEach(r => {
-      let line = lineRects.find(l =>
-        Math.abs(l.top - r.top) <= tolerance
-      );
+    // دمج كل كلمات نفس الآية على نفس السطر
+    [...spans].forEach(el => {
+      const r = el.getBoundingClientRect();
+      const rect = {
+        left: r.left - containerRect.left,
+        top: r.top - containerRect.top,
+        right: r.left - containerRect.left + r.width,
+        bottom: r.top - containerRect.top + r.height
+      };
 
+      let line = lineRects.find(l => Math.abs(l.top - rect.top) <= tolerance);
       if (!line) {
-        lineRects.push({
-          left: r.left,
-          top: r.top,
-          right: r.left + r.width,
-          bottom: r.top + r.height
-        });
+        lineRects.push({ ...rect });
       } else {
-        line.left = Math.min(line.left, r.left);
-        line.right = Math.max(line.right, r.left + r.width);
-        line.top = Math.min(line.top, r.top);
-        line.bottom = Math.max(line.bottom, r.top + r.height);
+        line.left = Math.min(line.left, rect.left);
+        line.right = Math.max(line.right, rect.right);
+        line.top = Math.min(line.top, rect.top);
+        line.bottom = Math.max(line.bottom, rect.bottom);
       }
     });
 
@@ -288,11 +275,8 @@ function highlightAyah(ayahNumber) {
         height: l.bottom - l.top
       }));
 
-    // 🔴 مرجع البسملة للسطر الأوسط
-    const basmalaDiv = document.querySelector(
-      'div.text-center.mb-4.flex.justify-center.items-center'
-    );
-
+    // 🔴 مرجع البسملة
+    const basmalaDiv = document.querySelector('div.text-center.mb-4.flex.justify-center.items-center');
     if (!basmalaDiv) return;
     const basmalaRect = basmalaDiv.getBoundingClientRect();
     const referenceRect = {
@@ -301,56 +285,35 @@ function highlightAyah(ayahNumber) {
     };
     const rightMiddle = referenceRect.left + referenceRect.width;
 
+    // ===== ضبط أول وآخر مستطيل فقط إذا كانت الآية على أكثر من سطر =====
+    if (mergedRects.length > 1) {
+      const firstLine = mergedRects[0];
+      const lastLine = mergedRects[mergedRects.length - 1];
+
+      // ضبط أول مستطيل
+      const diffLeftFirst = firstLine.left - referenceRect.left;
+      firstLine.width += diffLeftFirst;
+      firstLine.left = referenceRect.left;
+
+      // ضبط آخر مستطيل
+      const diffRightLast = rightMiddle - (lastLine.left + lastLine.width);
+      lastLine.width += diffRightLast;
+    }
+
+    // ===== ضبط borderRadius لكل مستطيل =====
     const lastIndex = mergedRects.length - 1;
-
-    // ======== ضبط عرض السطر الأول والسطر الأخير قبل تعديل left/right ========
-    const firstLine = mergedRects[0];
-    const diffLeftFirst = firstLine.left - referenceRect.left;
-    firstLine.width += diffLeftFirst;
-    firstLine.left = referenceRect.left;
-
-    const lastLine = mergedRects[lastIndex];
-    const diffRightLast = rightMiddle - (lastLine.left + lastLine.width);
-    lastLine.width += diffRightLast;
-
-    // ======== ضبط left لكل سطر ========
-    mergedRects = mergedRects.map((r, index) => {
-      // السطر الأول
-      if (index === 0) {
-        return {
-          ...r,
-          borderRadius: { topLeft: 4, topRight: 4, bottomLeft: 0, bottomRight: 0 }
-        };
-      }
-
-      // السطر الأوسط
-      if (index > 0 && index < lastIndex) {
-        return {
-          left: referenceRect.left,
-          top: r.top,
-          width: referenceRect.width,
-          height: r.height,
-          borderRadius: { topLeft: 0, topRight: 0, bottomLeft: 0, bottomRight: 0 }
-        };
-      }
-
-      // السطر الأخير
-      if (index === lastIndex) {
-        return {
-          ...r,
-          left: rightMiddle - r.width,
-          borderRadius: { topLeft: 0, topRight: 0, bottomLeft: 4, bottomRight: 4 }
-        };
-      }
-
-      return r;
+    const wordRectsResult = mergedRects.map((r, index) => {
+      let borderRadius = { topLeft: 0, topRight: 0, bottomLeft: 0, bottomRight: 0 };
+      if (index === 0) borderRadius.topLeft = borderRadius.topRight = 4;
+      if (index === lastIndex) borderRadius.bottomLeft = borderRadius.bottomRight = 4;
+      return { ...r, borderRadius };
     });
 
-    // حساب حجم SVG
-    const minX = Math.min(...mergedRects.map(r => r.left));
-    const minY = Math.min(...mergedRects.map(r => r.top));
-    const maxX = Math.max(...mergedRects.map(r => r.left + r.width));
-    const maxY = Math.max(...mergedRects.map(r => r.top + r.height));
+    // ===== حساب حجم SVG =====
+    const minX = Math.min(...wordRectsResult.map(r => r.left));
+    const minY = Math.min(...wordRectsResult.map(r => r.top));
+    const maxX = Math.max(...wordRectsResult.map(r => r.left + r.width));
+    const maxY = Math.max(...wordRectsResult.map(r => r.top + r.height));
 
     svgRect.value = {
       left: minX,
@@ -359,7 +322,7 @@ function highlightAyah(ayahNumber) {
       height: maxY - minY
     };
 
-    wordRects.value = mergedRects.map(r => ({
+    wordRects.value = wordRectsResult.map(r => ({
       x: r.left - minX,
       y: r.top - minY,
       width: r.width,
@@ -368,6 +331,7 @@ function highlightAyah(ayahNumber) {
     }));
   });
 }
+
 
 
 let selectedTafsir = ref('qortoby.json')
