@@ -235,18 +235,17 @@ const svgRect = ref(null);
 const wordRects = ref(null);
 
 const ayahContainer = ref(null);
-
 function highlightAyah(ayahNumber) {
+  const isFirstAyahOfSurah = ayahNumber === 1;
+
   nextTick(() => {
     const spans = document.querySelectorAll(
       `[data-ayah-group="${ayahNumber}"]`
     );
     if (!spans.length || !ayahContainer.value) return;
 
-    const containerRect =
-      ayahContainer.value.getBoundingClientRect();
+    const containerRect = ayahContainer.value.getBoundingClientRect();
 
-    // rect لكل كلمة
     const rects = [...spans].map(el => {
       const r = el.getBoundingClientRect();
       return {
@@ -257,20 +256,15 @@ function highlightAyah(ayahNumber) {
       };
     });
 
-    // ===============================
-    // دمج الكلمات في نفس السطر
-    // ===============================
     const tolerance = 5;
     const lineRects = [];
 
     rects.forEach(r => {
-      // هل يوجد سطر قريب؟
       let line = lineRects.find(l =>
         Math.abs(l.top - r.top) <= tolerance
       );
 
       if (!line) {
-        // سطر جديد
         lineRects.push({
           left: r.left,
           top: r.top,
@@ -278,7 +272,6 @@ function highlightAyah(ayahNumber) {
           bottom: r.top + r.height
         });
       } else {
-        // توسعة السطر الحالي
         line.left = Math.min(line.left, r.left);
         line.right = Math.max(line.right, r.left + r.width);
         line.top = Math.min(line.top, r.top);
@@ -286,17 +279,74 @@ function highlightAyah(ayahNumber) {
       }
     });
 
-    // تحويل إلى rects نهائية
-    const mergedRects = lineRects.map(l => ({
-      left: l.left,
-      top: l.top,
-      width: l.right - l.left,
-      height: l.bottom - l.top
-    }));
+    let mergedRects = lineRects
+      .sort((a, b) => a.top - b.top)
+      .map(l => ({
+        left: l.left,
+        top: l.top,
+        width: l.right - l.left,
+        height: l.bottom - l.top
+      }));
 
-    // ===============================
+    // 🔴 مرجع البسملة للسطر الأوسط
+    const basmalaDiv = document.querySelector(
+      'div.text-center.mb-4.flex.justify-center.items-center'
+    );
+
+    if (!basmalaDiv) return;
+    const basmalaRect = basmalaDiv.getBoundingClientRect();
+    const referenceRect = {
+      left: basmalaRect.left - containerRect.left,
+      width: basmalaRect.width
+    };
+    const rightMiddle = referenceRect.left + referenceRect.width;
+
+    const lastIndex = mergedRects.length - 1;
+
+    // ======== ضبط عرض السطر الأول والسطر الأخير قبل تعديل left/right ========
+    const firstLine = mergedRects[0];
+    const diffLeftFirst = firstLine.left - referenceRect.left;
+    firstLine.width += diffLeftFirst;
+    firstLine.left = referenceRect.left;
+
+    const lastLine = mergedRects[lastIndex];
+    const diffRightLast = rightMiddle - (lastLine.left + lastLine.width);
+    lastLine.width += diffRightLast;
+
+    // ======== ضبط left لكل سطر ========
+    mergedRects = mergedRects.map((r, index) => {
+      // السطر الأول
+      if (index === 0) {
+        return {
+          ...r,
+          borderRadius: { topLeft: 4, topRight: 4, bottomLeft: 0, bottomRight: 0 }
+        };
+      }
+
+      // السطر الأوسط
+      if (index > 0 && index < lastIndex) {
+        return {
+          left: referenceRect.left,
+          top: r.top,
+          width: referenceRect.width,
+          height: r.height,
+          borderRadius: { topLeft: 0, topRight: 0, bottomLeft: 0, bottomRight: 0 }
+        };
+      }
+
+      // السطر الأخير
+      if (index === lastIndex) {
+        return {
+          ...r,
+          left: rightMiddle - r.width,
+          borderRadius: { topLeft: 0, topRight: 0, bottomLeft: 4, bottomRight: 4 }
+        };
+      }
+
+      return r;
+    });
+
     // حساب حجم SVG
-    // ===============================
     const minX = Math.min(...mergedRects.map(r => r.left));
     const minY = Math.min(...mergedRects.map(r => r.top));
     const maxX = Math.max(...mergedRects.map(r => r.left + r.width));
@@ -309,12 +359,12 @@ function highlightAyah(ayahNumber) {
       height: maxY - minY
     };
 
-    // rects داخل الـ SVG
     wordRects.value = mergedRects.map(r => ({
       x: r.left - minX,
       y: r.top - minY,
       width: r.width,
-      height: r.height
+      height: r.height,
+      borderRadius: r.borderRadius
     }));
   });
 }
