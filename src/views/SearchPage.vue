@@ -415,7 +415,7 @@ function getResultTitle(result: SearchResult) {
   if (result.type === 'surah') {
     return `${result.surahName}`;
   }
-  return `سُورَةُ ${result.surahName} - آية ${result.ayahNumber}`;
+  return `${result.surahName} - آية ${result.ayahNumber}`;
 }
 
 
