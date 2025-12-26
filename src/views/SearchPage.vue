@@ -16,11 +16,12 @@
         <ion-item v-for="(result, index) in results" :key="index"
           :class="{ 'dark-theme': isDark, 'white-theme': !isDark }" class="cursor-pointer">
           <!-- الحاوي الكامل -->
-          <div class="flex justify-between w-full" @click="goToSurah(result)">
+          <div class="flex justify-between w-full" @click="handleResultClick(result)">
+
             <!-- نصّ النتيجة -->
             <ion-label class="flex-1 truncate" :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
               <h3 class="truncate">
-                {{ result.surahName }} - آية {{ result.ayahNumber }}
+                {{ getResultTitle(result) }}
               </h3>
 
               <p class="truncate" v-html="highlightSearchTerm(result.text, result.no_Tashkeel_text)" />
@@ -109,12 +110,38 @@
 </template>
 
 <script setup lang="ts">
+interface BaseResult {
+  type: 'ayah' | 'surah';
+}
+
+interface AyahResult extends BaseResult {
+  type: 'ayah';
+  text: string;
+  no_Tashkeel_text: string;
+  surahNumber: number;
+  ayahNumber: number;
+  surahName: string;
+}
+
+interface SurahResult extends BaseResult {
+  type: 'surah';
+  surahNumber: number;
+  surahName: string;
+  firstAyahText: string;
+  firstAyahNoTashkeelText: string;
+  ayahNumber?: number; // يمكن إضافة الآية الأولى إذا حبيت
+}
+
+type SearchResult = AyahResult | SurahResult;
+
 import TafsirModal from './TafsirModal.vue'
-import { IonIcon } from '@ionic/vue'
-import { cogOutline } from 'ionicons/icons'
+
+
 import { IonPopover } from '@ionic/vue'
 import { onMounted, ref } from 'vue'
 import { useQuranSearch } from '@/composables/useQuranSearch'
+
+
 import { useRouter } from 'vue-router'
 import { IonButton, IonContent, IonHeader, IonPage, IonItem, IonTitle, IonToolbar, IonText, IonList, IonLabel, IonSearchbar, IonInfiniteScrollContent, IonInfiniteScroll } from "@ionic/vue";
 
@@ -161,13 +188,37 @@ async function playAyahAudio(surahNumber: number, ayahNumber: number) {
 }
 
 
-function copyAyah(ayah: { text: string, no_Tashkeel_text: string }, withTashkeel = true) {
-  const ayahText = withTashkeel ? ayah.text : ayah.no_Tashkeel_text;
-  const toBeCopied = "﷽ ﴿ " + ayahText + " ﴾";
-  navigator.clipboard.writeText(toBeCopied)
+function copyAyah(result: any, withTashkeel = true) {
+  let ayahText = '';
+
+  // 🔹 نتيجة آية
+  if (result.text) {
+    ayahText = withTashkeel
+      ? result.text
+      : result.no_Tashkeel_text;
+  }
+
+  // 🔹 نتيجة سورة → ننسخ الآية الأولى (موجودة في result.text)
+  else if (result.type === 'surah' && result.firstAyah) {
+    ayahText = withTashkeel
+      ? result.firstAyah.text
+      : result.firstAyah.no_Tashkeel_text;
+  }
+
+  if (!ayahText) {
+    console.warn('❗ لا يوجد نص للنسخ', result);
+    return;
+  }
+
+  const toBeCopied = `﷽ ﴿ ${ayahText} ﴾`;
+
+  navigator.clipboard
+    .writeText(toBeCopied)
     .then(() => console.log('✅ تم نسخ الآية!'))
     .catch(() => console.log('❌ فشل النسخ.'));
 }
+
+
 
 import { Share } from '@capacitor/share';
 
@@ -209,23 +260,32 @@ const selectedAyah = ref<number | null>(null);
 const modalType = ref<'tafsir' | 'translation'>('tafsir');
 
 const isDark = ref(true)
-const { search, lastSurahNumber, lastAyahNumber } = useQuranSearch()
+const { search, searchSurahs, lastSurahNumber, lastAyahNumber } = useQuranSearch()
 const searchTerm = ref('')
 const results = ref<any[]>([])  // لتخزين النتائج الحالية
 const isLoading = ref(false)  // لتتبع حالة التحميل
 const noMoreResults = ref(false)  // لتتبع حالة التحميل
 // الدالة التي يتم تفعيلها بعد كل كتابة (debounced)
 const handleSearch = debounce(() => {
-  if (searchTerm.value.trim().length >= 2) {
-    results.value = []  // إفراغ النتائج السابقة
-    noMoreResults.value = false;
-    lastSurahNumber.value = 1;
-    lastAyahNumber.value = 1;
-    loadResults()  // تحميل أول 20 نتيجة
-  } else {
-    results.value = []  // إفراغ النتائج إذا لم يتم إدخال كلمة بحث
-  }
-}, 500)  // تأخير البحث نصف ثانية
+  const term = searchTerm.value.trim();
+
+  results.value = [];
+  noMoreResults.value = false;
+
+  if (term.length < 2) return;
+
+  // 🔹 أولًا: نتائج السور
+  const surahResults = searchSurahs(term);
+
+  // نضيفها أعلى النتائج
+  results.value.push(...surahResults);
+
+  // 🔹 ثانيًا: نتائج الآيات
+  lastSurahNumber.value = 1;
+  lastAyahNumber.value = 1;
+  loadResults();
+}, 500);
+
 
 // دالة لتحميل النتائج
 async function loadResults() {
@@ -281,16 +341,19 @@ function escapeRegExp(str: string) {
   return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
-function getContextSnippet(text: string, term: string, contextWordsBefore = 5, contextWordsAfter = 5) {
-  // تقسيم النص لكلمات (نستخدم فراغ كفاصل)
+function getContextSnippet(
+  text: string | undefined,
+  term: string,
+  contextWordsBefore = 5,
+  contextWordsAfter = 5
+) {
+  if (!text || !term) return '';
+
   const words = text.split(/\s+/);
 
-  // البحث عن أول ظهور للكلمة (تجاهل حالة الحروف)
   const lowerWords = words.map(w => w.toLowerCase());
   const lowerTerm = term.toLowerCase();
 
-  // إيجاد موضع أول تطابق للكلمة (يمكن تعديل لتطابق كلمة كاملة أو جزء)
-  // هنا نبحث عن كلمة تحتوي term كجزء (مثل "النور" و "نور")
   let index = -1;
   for (let i = 0; i < lowerWords.length; i++) {
     if (lowerWords[i].includes(lowerTerm)) {
@@ -299,23 +362,19 @@ function getContextSnippet(text: string, term: string, contextWordsBefore = 5, c
     }
   }
 
-  if (index === -1) {
-    // الكلمة غير موجودة، نرجع النص كامل
-    return text;
-  }
+  if (index === -1) return text;
 
-  // حساب حدود القطعة المراد عرضها
   const start = Math.max(0, index - contextWordsBefore);
   const end = Math.min(words.length - 1, index + contextWordsAfter);
 
-  // تجميع الكلمات المختارة مع ...
   const snippetWords = words.slice(start, end + 1);
 
-  let prefix = start > 0 ? '... ' : '';
-  let suffix = end < words.length - 1 ? ' ...' : '';
+  const prefix = start > 0 ? '... ' : '';
+  const suffix = end < words.length - 1 ? ' ...' : '';
 
   return prefix + snippetWords.join(' ') + suffix;
 }
+
 
 import { useBackButton } from '@ionic/vue';
 useBackButton(10, () => {
@@ -336,6 +395,27 @@ function highlightSearchTerm(text: string, noTashkeelText?: string) {
   const re = new RegExp(`(${escapedTerm})`, 'gi');
 
   return snippet.replace(re, '<strong class=\'text-blue-500\'>$1</strong>');
+}
+
+function handleResultClick(result: SearchResult) {
+  if (result.type === 'surah') {
+    router.push({
+      name: 'SurahDetail',
+      params: {
+        number: result.surahNumber,
+        scrollTo: 1
+      }
+    });
+  } else {
+    goToSurah(result);
+  }
+}
+
+function getResultTitle(result: SearchResult) {
+  if (result.type === 'surah') {
+    return `${result.surahName}`;
+  }
+  return `سُورَةُ ${result.surahName} - آية ${result.ayahNumber}`;
 }
 
 
