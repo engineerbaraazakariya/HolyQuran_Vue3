@@ -43,12 +43,12 @@ onMounted(() => {
 
 @font-face {
   font-family: "AlQalam_Quran";
-  src: url("@@/assets/fonts_new_collection/Al Qalam Quran.ttf") format("truetype");
+  src: url("@@/assets/fonts/Al Qalam Quran.ttf") format("truetype");
 }
 
 @font-face {
   font-family: "Mushaf_Font_7";
-  src: url("@@/assets/fonts_new_collection/خط المصحف(7).ttf") format("truetype");
+  src: url("@@/assets/fonts/خط المصحف(7).ttf") format("truetype");
 }
 
 
