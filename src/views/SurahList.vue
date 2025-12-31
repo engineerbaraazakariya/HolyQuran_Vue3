@@ -2,7 +2,8 @@
   <ion-page :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
     <ion-header>
       <TopToolbar :isDark="isDark" title="القرآن الكريم" :showBack="false" :showFontSizeButtons="true"
-        :showThemeToggle="true" :showFontSelector="true" :showSearch="true" :showRibbon="false" />
+        :showThemeToggle="true" :showFontSelector="true" :showScrollUpButton="true" :showScrollDownButton="true"
+        :showSearch="true" :showRibbon="false" />
 
       <IonPopover :is-open="showFontPopover" :event="fontPopoverEvent" @didDismiss="showFontPopover = false"
         style="--backdrop-background: transparent; max-height: 80vh;">

@@ -1,19 +1,30 @@
 <template>
   <ion-page :key="$route.fullPath" :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
-    <ion-header>
-      <ion-toolbar @click="upperSurahNameShown = false" v-show="upperSurahNameShown"
-        :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
-        <!-- اسم السورة مع الزخرفة -->
-        <div class="SurahInfo flex w-full overflow-hidden "
-          :style="{ transform: `scaleY(${scaleYSurahInfo}) scaleX(1.4)` }">
-          <SurahInfo v-if="surah" :fontSize="fontSize" :SurahName="surah.name" :isDark="isDark" :fontFamily="fontFamily"
-            :pageNumber="Page" :JuzNumber="Juz" />
+    <ion-header class="header-root">
+      <div class="header-clip">
+        <div ref="headerRef" class="header-wrapper" :style="{
+          transform: `translateX(${headerTranslateX}px)`,
+          transition: isAnimating ? 'transform 0.3s ease' : 'none'
+        }">
+          <!-- نرسم العناصر ديناميكيًا من مصفوفة items -->
+          <div v-for="(item, index) in items" :key="item.id" class="header-panel"
+            :style="{ minWidth: PANEL_WIDTH + 'px' }">
+            <!-- شريط الأدوات المركزي -->
+            <TopToolbar v-if="item.type === 'toolbar'" :isDark="isDark" v-model:selectedFile="selectedFile" title=""
+              :showBack="true" :showScrollUpButton="true" :showScrollDownButton="true" :showFontSizeButtons="true"
+              :showThemeToggle="true" :showFontSelector="true" :showSearch="true" :showRibbon="true" />
 
+            <!-- زخرفة -->
+            <ion-toolbar v-else :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
+              <div class="SurahInfo flex w-full overflow-hidden"
+                :style="{ transform: `scaleY(${scaleYSurahInfo}) scaleX(1.4)` }">
+                <SurahInfo v-if="surah" :fontSize="fontSize" :SurahName="surah.name" :isDark="isDark"
+                  :fontFamily="fontFamily" :pageNumber="Page" :JuzNumber="Juz" />
+              </div>
+            </ion-toolbar>
+          </div>
         </div>
-      </ion-toolbar>
-      <TopToolbar v-show="!upperSurahNameShown" :isDark="isDark" v-model:selectedFile="selectedFile" title=""
-        :showBack="true" :showFontSizeButtons="true" :showThemeToggle="true" :showFontSelector="true" :showSearch="true"
-        :showRibbon="true" />
+      </div>
     </ion-header>
 
     <ion-content :class="{ 'dark-theme': isDark, 'white-theme': !isDark }" @ionScroll="saveScrollPosition"
@@ -21,8 +32,9 @@
       <div class="flex flex-row justify-between">
 
         <div v-if="OnlyOnOrientationLandscape" class="flex !w-16 !min-w-16">
-          <TopToolbar :vertical="true" :isDark="isDark" title="" :showBack="true" :showFontSizeButtons="true"
-            :showThemeToggle="true" :showFontSelector="true" :showSearch="true" :showRibbon="false" />
+          <TopToolbar :showScrollUpButton="true" :showScrollDownButton="true" :vertical="true" :isDark="isDark" title=""
+            :showBack="true" :showFontSizeButtons="true" :showThemeToggle="true" :showFontSelector="true"
+            :showSearch="true" :showRibbon="false" />
         </div>
         <div ref="ayahContainer" class="relative">
           <svg v-if="svgRect" class="opacity-60 z-[0]" :style="{
@@ -52,10 +64,10 @@
                 ? 'opacity-0 h-0 pointer-events-none'
                 : 'opacity-100 h-auto'
             ]" :style="{
-    fontSize: fontSize + 'px',
-    fontFamily: fontFamily,
-    color: isDark ? 'white' : 'black'
-  }">
+              fontSize: fontSize + 'px',
+              fontFamily: fontFamily,
+              color: isDark ? 'white' : 'black'
+            }">
               {{ [1, 9].includes(surah.number) ? '\u00A0' : '﷽' }}
             </div>
 
@@ -230,12 +242,84 @@
 </template>
 
 <script setup>
-import { IonIcon, IonLabel, IonSelectOption, IonSelect } from '@ionic/vue'
+
+import basicMeaning from '@/assets/meanings_nested.js'
+
+// Ionic Vue components
 import {
-  shareSocialOutline, copyOutline, playOutline, pauseOutline, bookOutline
-  , globeOutline
+  IonIcon,
+  IonLabel,
+  IonSelect,
+  IonSelectOption,
+  IonPopover,
+  IonContent,
+  IonHeader,
+  IonPage,
+  IonToolbar,
+  IonList,
+  IonItem
+} from '@ionic/vue'
+
+// Ionic utilities
+import { createGesture, useBackButton } from '@ionic/vue'
+
+// Icons
+import {
+  shareSocialOutline,
+  copyOutline,
+  playOutline,
+  pauseOutline,
+  bookOutline,
+  globeOutline
 } from 'ionicons/icons'
-import { onActivated, unref } from "vue";
+
+// Vue
+import {
+  ref,
+  computed,
+  watch,
+  provide,
+  onMounted,
+  reactive,
+  onBeforeUnmount,
+  onActivated,
+  nextTick
+} from 'vue'
+
+// Router
+import { useRoute } from 'vue-router'
+import router from '@/router'
+
+// Capacitor
+import { Share } from '@capacitor/share'
+
+// Components
+import TafsirModal from './TafsirModal.vue'
+import SurahInfo from './SurahInfo.vue'
+import TopToolbar from './TopToolbar.vue'
+
+// Composables
+import {
+  fonts,
+  languageDisplay,
+  tafsirOptions,
+  translationOptions
+} from '@/composables/fonts.ts'
+
+const headerRef = ref(null)
+let gesture = null
+
+// const PANEL_WIDTH = window.innerWidth
+let currentX = 0
+let startX = 0
+let dragging = false
+
+onBeforeUnmount(() => {
+  gesture?.destroy()
+})
+
+
+
 const svgRect = ref(null);
 const wordRects = ref(null);
 
@@ -386,13 +470,10 @@ let selectedFile = computed({
 const localStorageKey = 'your-key'
 
 watch(selectedFile, (newFile) => {
-  console.log('PARENT Selected file changed:', newFile)
   if (newFile) {
     localStorage.setItem(localStorageKey, newFile)
   }
 })
-
-import { computed, watch } from 'vue'
 
 
 const isPlaying = ref(false)
@@ -530,11 +611,6 @@ function copyAyah(copyAyahWithTashkeel) {
   showPopover.value = false;
 }
 
-import basicMeaning from '@/assets/meanings_nested.js';
-
-
-import { Share } from '@capacitor/share';
-
 const shareAyahText = async () => {
   const copyAyahWithTashkeel = true; // لجلب النص مع تشكيل
   const ayahText = getAyahText(copyAyahWithTashkeel);
@@ -550,19 +626,10 @@ const shareAyahText = async () => {
     }
   }
 }
-
-
-import TafsirModal from './TafsirModal.vue'
-import SurahInfo from './SurahInfo.vue';
-import { fonts, languageDisplay, tafsirOptions, translationOptions } from '@/composables/fonts.ts'
-
 const modalOpen = ref(false)
 const upperSurahNameShown = ref(true)
 const selectedSurah = ref(null)
 const selectedAyah = ref(null)
-
-
-import { IonPopover } from '@ionic/vue'
 const showPopover = ref(false)
 const popoverEvent = ref(null)  // لتخزين حدث النقر لتموضع النافذة
 const selectedSurahNumber = ref(null)
@@ -624,11 +691,6 @@ function onOption(choice, file, keepOld = false) {
   }
 }
 
-import { ref, onMounted, nextTick, onBeforeUnmount } from 'vue'
-import { useRoute } from 'vue-router'
-import { IonContent, IonHeader, IonPage, IonToolbar, IonList, IonItem } from "@ionic/vue";
-import TopToolbar from './TopToolbar.vue'
-import { provide } from 'vue'
 const route = useRoute()
 const surahVariables = ref({}) // { '1': {numberInSurah:5, scrollPosition:100}, '2': {numberInSurah:10, scrollPosition:200} }
 
@@ -639,10 +701,6 @@ const isDark = ref(true)
 const scaleYSurahInfo = ref(1.2)
 const scrollContainer = ref(null)
 
-
-
-import { useBackButton } from '@ionic/vue';
-import router from '@/router';
 useBackButton(10, () => {
   router.replace('/');
 });
@@ -756,8 +814,8 @@ async function saveScrollPosition() {
     localStorage.setItem('surahVariables', JSON.stringify(surahVariables.value))
   }
 }
+
 function toggleAyah(surahNumber, ayahNumber) {
-  console.log('toggleAyah')
   // إذا كانت الآية محددة بالفعل، قم بإلغاء التحديد
   const current = surahVariables.value[surahNumber]?.selectedAyahNumber || null;
 
@@ -788,13 +846,83 @@ function setMaany(surah, ayah, index) {
   showCurrentMaany.value = basicMeaning[surah.number - 1][ayah.numberInSurah - 1][index][0];
 }
 
-
-
 onBeforeUnmount(() => {
   window.removeEventListener("resize", checkOrientation);
 });
+const headerTranslateX = ref(0)
+const isAnimating = ref(false)
+const PANEL_WIDTH = 300;
+const items = reactive([]);
+let nextId = 3 // لتوليد id فريد للعناصر الجديدة
 
 onMounted(async () => {
+  const el = headerRef.value
+  if (!el) return
+  items.push({ type: 'decoration' }) // يسار
+  items.push({ type: 'toolbar' })    // مركز ظاهر
+  items.push({ type: 'decoration' }) // يمين
+
+  gesture = createGesture({
+    el,
+    gestureName: 'header-drag',
+    direction: 'x',
+    threshold: 0,
+
+    onStart: ev => {
+      dragging = true
+      startX = headerTranslateX.value // لا تبدأ دائمًا من 0
+    },
+
+    onMove: ev => {
+      if (!dragging) return
+      let nextX = startX + ev.deltaX
+
+      // حدود الحركة
+      const maxRight = PANEL_WIDTH
+      const maxLeft = -PANEL_WIDTH
+
+      nextX = Math.min(maxRight, Math.max(maxLeft, nextX))
+
+      headerTranslateX.value = nextX
+    },
+
+    onEnd: ev => {
+      dragging = false
+
+      const SWIPE_THRESHOLD = 20 // px، أقل من هيك يعتبر نقرة فقط
+      if (Math.abs(ev.deltaX) < SWIPE_THRESHOLD) {
+        // لم يحصل سحب حقيقي، فقط نقرة → تجاهل
+        return
+      }
+
+      const direction = ev.deltaX > 0 ? 1 : -1 // 1 يمين, -1 يسار
+      isAnimating.value = true
+
+      // تحريك العنصر إلى النهاية بشكل سلس
+      headerTranslateX.value = direction * PANEL_WIDTH
+
+      setTimeout(() => {
+        // بعد الانيميشن، حدّث المصفوفة
+        const currentMiddle = items[1]
+        if (direction === 1) {
+          items.pop()
+          items.unshift({ ...currentMiddle, id: nextId++ })
+        } else {
+          items.shift()
+          items.push({ ...currentMiddle, id: nextId++ })
+        }
+
+        // إعادة المركز بدون transition
+        isAnimating.value = false
+        headerTranslateX.value = 0
+
+        // التأكد من عدم تجاوز 3 عناصر
+        if (items.length > 3) items.splice(3)
+      }, 300) // مدة الانيميشن
+    }
+
+  })
+  gesture.enable()
   checkOrientation(); // أول مرة
   window.addEventListener("resize", checkOrientation);
 
@@ -872,7 +1000,6 @@ const autoSelectAyah = (ayahNumber) => {
 };
 
 const showPopoverForAyah = (ayahNumber) => {
-  console.log('showPopoverForAyah')
   const element = document.getElementById(`ayah-${ayahNumber}`);
   if (element) {
     // إنشاء حدث وهمي لتمريره إلى البوبوفر
@@ -1034,5 +1161,31 @@ function checkOrientation() {
     display: none !important;
   }
 
+}
+
+
+.header-root {
+  overflow: hidden;
+}
+
+.header-clip {
+  position: relative;
+  width: 100vw;
+  overflow: hidden;
+  /* يمنع الفراغ */
+}
+
+.header-wrapper {
+  display: flex;
+  width: 200vw;
+  position: relative;
+  will-change: transform;
+  overflow: visible;
+  /* بدل hidden */
+}
+
+.header-panel {
+  width: 100vw;
+  flex-shrink: 0;
 }
 </style>

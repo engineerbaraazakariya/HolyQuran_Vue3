@@ -28,6 +28,16 @@
       <ion-button class="max-w-10" v-if="showRibbon" @click="toggleUpperSurahInfo">
         <ion-icon :icon="ribbon" />
       </ion-button>
+
+      <ion-button class="max-w-10 !p-0" v-if="showScrollDownButton" @click="scrollToBottom" title="أدنى السورة">
+        <ion-icon slot="icon-only" :icon="arrowDownCircleOutline" style="width: 32px; height: 32px;" />
+      </ion-button>
+
+      <ion-button class="max-w-10 !p-0" v-if="showScrollUpButton" @click="scrollToTop" title="أول السورة">
+        <ion-icon slot="icon-only" :icon="arrowUpCircleOutline" style="width: 32px; height: 32px;" />
+      </ion-button>
+
+
     </div>
 
     <!-- النسخة الأفقية -->
@@ -37,9 +47,18 @@
       </ion-buttons>
 
       <ion-buttons slot="end">
+        <ion-button v-if="showScrollDownButton" @click="scrollToBottom" title="أدنى السورة">
+          <ion-icon :icon="arrowDownCircleOutline" />
+        </ion-button>
+
+        <ion-button v-if="showScrollUpButton" @click="scrollToTop" title="أول السورة">
+          <ion-icon :icon="arrowUpCircleOutline" />
+        </ion-button>
+
         <ion-button v-if="showFontSizeButtons" @click="increaseFontSize" title="تكبير الخط">
           <ion-icon :icon="addCircle" />
         </ion-button>
+
         <ion-button v-if="showFontSizeButtons" @click="decreaseFontSize" title="تصغير الخط">
           <ion-icon :icon="removeCircle" />
         </ion-button>
@@ -63,8 +82,7 @@
     </div>
 
     <!-- قائمة اختيار اللغة -->
-    <select v-show="showLanguageSelect" v-model="selectedFile" interface="popover"
-      placeholder="اختر ملف">
+    <select v-show="showLanguageSelect" v-model="selectedFile" interface="popover" placeholder="اختر ملف">
       <option v-for="file in availableOptions" :key="file" :value="file">
         {{ languageDisplay[file] || file.replace('.json', '') }}
       </option>
@@ -82,7 +100,10 @@ import {
   IonTitle,
 } from '@ionic/vue';
 
-import { addCircle, removeCircle, ribbon, moon, sunny, colorPalette, searchOutline } from 'ionicons/icons'
+import {
+  addCircle, arrowDownCircleOutline,
+  arrowUpCircleOutline, removeCircle, ribbon, moon, sunny, colorPalette, searchOutline
+} from 'ionicons/icons'
 import { inject, computed, watch } from 'vue';
 
 const props = defineProps({
@@ -91,6 +112,8 @@ const props = defineProps({
   vertical: Boolean,
   showLanguageSelect: Boolean,
   showBack: Boolean,
+  showScrollDownButton: Boolean,
+  showScrollUpButton: Boolean,
   showFontSizeButtons: Boolean,
   showFontSelector: Boolean,
   showThemeToggle: Boolean,
@@ -119,6 +142,28 @@ const selectedFile = computed({
   get: () => props.selectedFile,
   set: (value) => emit('update:selectedFile', value)
 })
+// Scroll to top
+const scrollToTop = () => {
+  const content = document.querySelector('ion-content')
+  if (content && content.scrollToTop) {
+    content.scrollToTop(500) // 500ms animation
+  } else {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+}
+
+// Scroll to bottom
+const scrollToBottom = () => {
+  const content = document.querySelector('ion-content')
+  if (content && content.scrollToBottom) {
+    content.scrollToBottom(500)
+  } else {
+    window.scrollTo({
+      top: document.body.scrollHeight,
+      behavior: 'smooth'
+    })
+  }
+}
 
 // Watch for saving to localStorage only
 watch(selectedFile, (newFile) => {
@@ -126,3 +171,19 @@ watch(selectedFile, (newFile) => {
   localStorage.setItem(localStorageKey, newFile)
 }, { immediate: true })
 </script>
+
+<style scoped>
+ion-toolbar {
+  /* تفعيل stacking context داخل transform */
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  z-index: 10;
+}
+
+.vertical-buttons,
+.horizonal-buttons {
+  /* تأكد أن كل العناصر فوقية وتظهر مع التحريك */
+  position: relative;
+  z-index: 20;
+}
+</style>
