@@ -88,8 +88,9 @@
                   backgroundColor: surahVariables[surah.number]?.longPressedAyahNumber === ayah.numberInSurah ? 'green' : !isDark ? 'white' : 'black',
                 }" v-if="index !== ayah.text.split(' ').length - 1"></span>
               </span>
-              <span :data-page="ayah.page" :data-hizbQuarter="ayah.hizbQuarter" :data-juz="ayah.juz"
-                :id='"ayah-" + ayah.numberInSurah' class="relative flex justify-center items-center" :style="{
+              <span :data-ayah-group="ayah.numberInSurah" :data-page="ayah.page" :data-hizbQuarter="ayah.hizbQuarter"
+                :data-juz="ayah.juz" :id='"ayah-" + ayah.numberInSurah'
+                class="relative flex justify-center items-center" :style="{
                   minHeight: fontSize / 1.012 + 'px',
                   minWidth: fontSize / 1.012 + 'px',
                   backgroundImage: `url(assets/${surahVariables[surah.number]?.selectedAyahNumber === ayah.numberInSurah ? 'bookmarked_ayah' : 'end_ayah'}.svg)`,
