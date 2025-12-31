@@ -29,13 +29,14 @@
         <ion-icon :icon="ribbon" />
       </ion-button>
 
+      <ion-button class="max-w-10 !p-0" v-if="showScrollUpButton" @click="scrollToTop" title="أول السورة">
+        <ion-icon slot="icon-only" :icon="arrowUpCircleOutline" style="width: 32px; height: 32px;" />
+      </ion-button>
+
       <ion-button class="max-w-10 !p-0" v-if="showScrollDownButton" @click="scrollToBottom" title="أدنى السورة">
         <ion-icon slot="icon-only" :icon="arrowDownCircleOutline" style="width: 32px; height: 32px;" />
       </ion-button>
 
-      <ion-button class="max-w-10 !p-0" v-if="showScrollUpButton" @click="scrollToTop" title="أول السورة">
-        <ion-icon slot="icon-only" :icon="arrowUpCircleOutline" style="width: 32px; height: 32px;" />
-      </ion-button>
 
 
     </div>
