@@ -137,7 +137,12 @@
           </div>
         </div>
       </div>
-
+      <div class="flex flex-col w-full justify-center items-center">
+        <img src="/assets/decoration.svg" />
+        <div class="flex justify-center items-center">
+          <TopToolbar :isDark="isDark" v-model:selectedFile="selectedFile" title="" :showScrollUpButton="true" />
+        </div>
+      </div>
       <IonPopover :is-open="showFontPopover" :event="fontPopoverEvent" @didDismiss="showFontPopover = false"
         style="--backdrop-background: transparent; max-height: 80vh;">
         <ion-content :scroll-y="true">
