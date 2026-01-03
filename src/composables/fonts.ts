@@ -1,6 +1,6 @@
 export const fonts = [
-  { value: "MUHAMMADI_QURANIC_FONT", label: "المحمدي القرآني" },
-  { value: "AlQalam_Quran", label: "القلم القرآني" },
+  { value: "uthmanic_hafs_v22", label: "رواية حفص عن عاصم" },
+  { value: "UthmanTSVer1", label: "UthmanTSVer1" },
   { value: "Mushaf_Font_7", label: "خط المصحف" },
 ];
 

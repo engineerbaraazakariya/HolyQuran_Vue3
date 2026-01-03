@@ -37,13 +37,13 @@ onMounted(() => {
 
 <style>
 @font-face {
-  font-family: "MUHAMMADI_QURANIC_FONT";
-  src: url("@@/assets/fonts/MUHAMMADI_QURANIC_FONT.ttf") format("truetype");
+  font-family: "UthmanicHafs_V22";
+  src: url("@@/assets/fonts/uthmanic_hafs_v22.ttf") format("truetype");
 }
 
 @font-face {
-  font-family: "AlQalam_Quran";
-  src: url("@@/assets/fonts/Al Qalam Quran.ttf") format("truetype");
+  font-family: "UthmanTSVer1";
+  src: url("@@/assets/fonts/UthmanTSVer1.ttf") format("truetype");
 }
 
 @font-face {

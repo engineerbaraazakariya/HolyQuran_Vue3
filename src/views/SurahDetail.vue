@@ -808,6 +808,9 @@ async function saveScrollPosition() {
     }
     surahVariables.value[surah.value.number].scrollPosition = scrollTop.toFixed(2).toString();
 
+
+    if (!getAyahAtScrollPosition(scrollTop.toFixed(2).toString())) return;
+
     // الحصول على البيانات من الدالة
     const { ayahNumber, hizb, juz, page } = getAyahAtScrollPosition(scrollTop.toFixed(2).toString());
 
