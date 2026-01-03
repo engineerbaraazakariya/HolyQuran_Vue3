@@ -836,6 +836,8 @@ async function saveScrollPosition() {
     }
     surahVariables.value[surah.value.number].scrollPosition = scrollTop.toFixed(2).toString();
 
+    if (!getAyahAtScrollPosition(scrollTop.toFixed(2).toString())) return;
+
     // الحصول على البيانات من الدالة
     const { ayahNumber, hizb, juz, page } = getAyahAtScrollPosition(scrollTop.toFixed(2).toString());
 
@@ -971,7 +973,7 @@ onMounted(async () => {
   }
 
   // التعامل مع الحالة الأولية
-  await handleRouteChange(route.params.number, route.params.scrollTo, route.params.isReciting);
+  // await handleRouteChange(route.params.number, route.params.scrollTo, route.params.isReciting);
 });
 
 async function handleScrollTo(scrollTo, surahNumber) {
