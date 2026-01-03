@@ -1,6 +1,6 @@
 export const fonts = [
-  { value: "uthmanic_hafs_v22", label: "رواية حفص عن عاصم" },
-  { value: "UthmanTSVer1", label: "الخط العثماني" },
+  { value: "UthmanTSVer1", label: "خط عثماني أول"  },
+  { value: "UthmanicHafs_V22", label: "خط عثماني ثانٍ" },
   { value: "Mushaf_Font_7", label: "خط المصحف" },
 ];
 

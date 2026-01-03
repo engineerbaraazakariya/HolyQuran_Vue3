@@ -71,11 +71,40 @@
               {{ [1, 9].includes(surah.number) ? '\u00A0' : '﷽' }}
             </div>
 
-            <template v-for="ayah in surah.ayahs" :key="ayah.numberInSurah">
+            <template v-for="(ayah, ayahIndex) in surah.ayahs" :key="ayah.numberInSurah">
+              <div v-if="ayah && surah.ayahs[ayahIndex - 1] && ayah.page !== surah.ayahs[ayahIndex - 1].page"
+                class="flex items-center w-full mb-8 select-none">
+                <!-- خط على اليسار -->
+                <div class="flex-1 h-px bg-gray-400 dark:bg-gray-600"></div>
+
+                <!-- المربع حول رقم الصفحة -->
+                <div
+                  class="relative px-3 mx-0 text-gray-700 dark:text-gray-300 text-sm font-semibold border-b border-gray-400 dark:border-gray-600 flex justify-center items-center h-6">
+                  <!-- حد يمين نصف فقط -->
+                  <div class="absolute right-0 top-1/2 border-r border-gray-400 dark:border-gray-600"
+                    style="height:50%"></div>
+
+                  <!-- حد يسار نصف فقط -->
+                  <div class="absolute left-0 top-1/2 border-l border-gray-400 dark:border-gray-600" style="height:50%">
+                  </div>
+
+                  <!-- الرقم نفسه -->
+                  <span class="relative z-10">صفحة {{ ayah.page - 1 }}</span>
+                </div>
+
+                <!-- خط على اليمين -->
+                <div class="flex-1 h-px bg-gray-400 dark:bg-gray-600"></div>
+              </div>
+
+
+
+
+
               <span v-for="(word, index) in ayah.text.split(' ')" :data-ayah-group="ayah.numberInSurah" :key="index"
                 :style="{
                   fontSize: fontSize + 'px',
                   fontFamily: fontFamily,
+
                   color: basicMeaning[surah.number - 1][ayah.numberInSurah - 1][index]?.length > 0 ? '#6363f9' : isDark ? 'white' : 'black',
                   wordSpacing: '0.25em',
                   cursor: 'default',
@@ -107,7 +136,11 @@
                   {{ ayah.numberInSurah }}
                 </span>
               </span>
+
+
             </template>
+
+
           </template>
           <template v-else>
             <p class="ion-padding">جارٍ تحميل السورة...</p>
@@ -125,7 +158,8 @@
           <!-- النص -->
           <div :class="{ 'dark-theme': isDark, 'white-theme': !isDark }" class="overflow-scroll no-scrollbar" :style="{
             fontSize: fontSize * .7 + 'px',
-            fontFamily: fontFamily,
+            fontFamily: getWordFontFamily(ayah.page),
+
             color: isDark ? 'white' : 'black'
           }">
             {{ showCurrentMaany }}
@@ -314,17 +348,11 @@ import {
 
 const headerRef = ref(null)
 let gesture = null
-
-// const PANEL_WIDTH = window.innerWidth
-let currentX = 0
 let startX = 0
 let dragging = false
-
 onBeforeUnmount(() => {
   gesture?.destroy()
 })
-
-
 
 const svgRect = ref(null);
 const wordRects = ref(null);
@@ -702,7 +730,7 @@ const surahVariables = ref({}) // { '1': {numberInSurah:5, scrollPosition:100}, 
 
 const surah = ref(null)
 const fontSize = ref(22)
-const fontFamily = ref('Uthmani')
+const fontFamily = ref('first')
 const isDark = ref(true)
 const scaleYSurahInfo = ref(1.2)
 const scrollContainer = ref(null)
@@ -807,9 +835,6 @@ async function saveScrollPosition() {
       surahVariables.value[surah.value.number] = { bookmarkedAyahNumber: null, scrollPosition: null }
     }
     surahVariables.value[surah.value.number].scrollPosition = scrollTop.toFixed(2).toString();
-
-
-    if (!getAyahAtScrollPosition(scrollTop.toFixed(2).toString())) return;
 
     // الحصول على البيانات من الدالة
     const { ayahNumber, hizb, juz, page } = getAyahAtScrollPosition(scrollTop.toFixed(2).toString());
@@ -938,7 +963,7 @@ onMounted(async () => {
   isDark.value = localStorage.getItem('isDark') === 'true';
   fontSize.value = parseFloat(localStorage.getItem('fontSize')) || 22;
   scaleYSurahInfo.value = parseFloat(localStorage.getItem('scaleYSurahInfo')) || 1;
-  fontFamily.value = localStorage.getItem('fontFamily') || 'Uthmani';
+  fontFamily.value = localStorage.getItem('fontFamily') || 'first';
 
   const stored = localStorage.getItem('surahVariables');
   if (stored) {
@@ -951,7 +976,6 @@ onMounted(async () => {
 
 async function handleScrollTo(scrollTo, surahNumber) {
   if (!scrollTo) return;
-
   try {
     if (scrollTo.includes('.')) {
       // التمرير إلى موضع معين
