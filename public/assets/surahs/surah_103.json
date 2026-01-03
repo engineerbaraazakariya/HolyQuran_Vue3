@@ -1,45 +1,45 @@
 {
-  "number": 103,
-  "name": "سُورَةُ العَصۡرِ",
-  "englishName": "Al-Asr",
-  "englishNameTranslation": "The Declining Day, Epoch",
-  "revelationType": "Meccan",
-  "ayahs": [
-    {
-      "number": 6177,
-      "text": "وَالعَصرِ",
-      "numberInSurah": 1,
-      "juz": 30,
-      "manzil": 7,
-      "page": 601,
-      "ruku": 545,
-      "hizbQuarter": 240,
-      "sajda": false,
-      "no_Tashkeel_text": "بسم الله الرحمن الرحيم والعصر"
-    },
-    {
-      "number": 6178,
-      "text": "إِنَّ الإِنسـٰنَ لَفى خُسرٍ",
-      "numberInSurah": 2,
-      "juz": 30,
-      "manzil": 7,
-      "page": 601,
-      "ruku": 545,
-      "hizbQuarter": 240,
-      "sajda": false,
-      "no_Tashkeel_text": "إن الإنسان لفي خسر"
-    },
-    {
-      "number": 6179,
-      "text": "إِلَّا الَّذينَ ءامَنوا وَعَمِلُوا الصّـٰلِحـٰتِ وَتَواصَوا بِالحَقِّ وَتَواصَوا بِالصَّبرِ",
-      "numberInSurah": 3,
-      "juz": 30,
-      "manzil": 7,
-      "page": 601,
-      "ruku": 545,
-      "hizbQuarter": 240,
-      "sajda": false,
-      "no_Tashkeel_text": "إلا الذين آمنوا وعملوا الصالحات وتواصوا بالحق وتواصوا بالصبر"
-    }
-  ]
+    "number": 103,
+    "name": "سُورَةُ العَصۡرِ",
+    "englishName": "Al-Asr",
+    "englishNameTranslation": "The Declining Day, Epoch",
+    "revelationType": "Meccan",
+    "ayahs": [
+        {
+            "number": 6177,
+            "text": "بِسۡمِ ٱللَّهِ ٱلرَّحۡمَٰنِ ٱلرَّحِيمِ",
+            "numberInSurah": 1,
+            "juz": 30,
+            "manzil": 7,
+            "page": 601,
+            "ruku": 545,
+            "hizbQuarter": 240,
+            "sajda": false,
+            "no_Tashkeel_text": "بسم الله الرحمن الرحيم والعصر"
+        },
+        {
+            "number": 6178,
+            "text": "ٱلۡحَمۡدُ لِلَّهِ رَبِّ ٱلۡعَٰلَمِينَ",
+            "numberInSurah": 2,
+            "juz": 30,
+            "manzil": 7,
+            "page": 601,
+            "ruku": 545,
+            "hizbQuarter": 240,
+            "sajda": false,
+            "no_Tashkeel_text": "إن الإنسان لفي خسر"
+        },
+        {
+            "number": 6179,
+            "text": "ٱلرَّحۡمَٰنِ ٱلرَّحِيمِ",
+            "numberInSurah": 3,
+            "juz": 30,
+            "manzil": 7,
+            "page": 601,
+            "ruku": 545,
+            "hizbQuarter": 240,
+            "sajda": false,
+            "no_Tashkeel_text": "إلا الذين آمنوا وعملوا الصالحات وتواصوا بالحق وتواصوا بالصبر"
+        }
+    ]
 }

@@ -1,81 +1,81 @@
 {
-  "number": 109,
-  "name": "سُورَةُ الكَافِرُونَ",
-  "englishName": "Al-Kaafiroon",
-  "englishNameTranslation": "The Disbelievers",
-  "revelationType": "Meccan",
-  "ayahs": [
-    {
-      "number": 6208,
-      "text": "قُل يـٰأَيُّهَا الكـٰفِرونَ",
-      "numberInSurah": 1,
-      "juz": 30,
-      "manzil": 7,
-      "page": 603,
-      "ruku": 551,
-      "hizbQuarter": 240,
-      "sajda": false,
-      "no_Tashkeel_text": "بسم الله الرحمن الرحيم قل يا أيها الكافرون"
-    },
-    {
-      "number": 6209,
-      "text": "لا أَعبُدُ ما تَعبُدونَ",
-      "numberInSurah": 2,
-      "juz": 30,
-      "manzil": 7,
-      "page": 603,
-      "ruku": 551,
-      "hizbQuarter": 240,
-      "sajda": false,
-      "no_Tashkeel_text": "لا أعبد ما تعبدون"
-    },
-    {
-      "number": 6210,
-      "text": "وَلا أَنتُم عـٰبِدونَ ما أَعبُدُ",
-      "numberInSurah": 3,
-      "juz": 30,
-      "manzil": 7,
-      "page": 603,
-      "ruku": 551,
-      "hizbQuarter": 240,
-      "sajda": false,
-      "no_Tashkeel_text": "ولا أنتم عابدون ما أعبد"
-    },
-    {
-      "number": 6211,
-      "text": "وَلا أَنا۠ عابِدٌ ما عَبَدتُم",
-      "numberInSurah": 4,
-      "juz": 30,
-      "manzil": 7,
-      "page": 603,
-      "ruku": 551,
-      "hizbQuarter": 240,
-      "sajda": false,
-      "no_Tashkeel_text": "ولا أنا عابد ما عبدتم"
-    },
-    {
-      "number": 6212,
-      "text": "وَلا أَنتُم عـٰبِدونَ ما أَعبُدُ",
-      "numberInSurah": 5,
-      "juz": 30,
-      "manzil": 7,
-      "page": 603,
-      "ruku": 551,
-      "hizbQuarter": 240,
-      "sajda": false,
-      "no_Tashkeel_text": "ولا أنتم عابدون ما أعبد"
-    },
-    {
-      "number": 6213,
-      "text": "لَكُم دينُكُم وَلِىَ دينِ",
-      "numberInSurah": 6,
-      "juz": 30,
-      "manzil": 7,
-      "page": 603,
-      "ruku": 551,
-      "hizbQuarter": 240,
-      "sajda": false,
-      "no_Tashkeel_text": "لكم دينكم ولي دين"
-    }
-  ]
+    "number": 109,
+    "name": "سُورَةُ الكَافِرُونَ",
+    "englishName": "Al-Kaafiroon",
+    "englishNameTranslation": "The Disbelievers",
+    "revelationType": "Meccan",
+    "ayahs": [
+        {
+            "number": 6208,
+            "text": "بِسۡمِ ٱللَّهِ ٱلرَّحۡمَٰنِ ٱلرَّحِيمِ",
+            "numberInSurah": 1,
+            "juz": 30,
+            "manzil": 7,
+            "page": 603,
+            "ruku": 551,
+            "hizbQuarter": 240,
+            "sajda": false,
+            "no_Tashkeel_text": "بسم الله الرحمن الرحيم قل يا أيها الكافرون"
+        },
+        {
+            "number": 6209,
+            "text": "ٱلۡحَمۡدُ لِلَّهِ رَبِّ ٱلۡعَٰلَمِينَ",
+            "numberInSurah": 2,
+            "juz": 30,
+            "manzil": 7,
+            "page": 603,
+            "ruku": 551,
+            "hizbQuarter": 240,
+            "sajda": false,
+            "no_Tashkeel_text": "لا أعبد ما تعبدون"
+        },
+        {
+            "number": 6210,
+            "text": "ٱلرَّحۡمَٰنِ ٱلرَّحِيمِ",
+            "numberInSurah": 3,
+            "juz": 30,
+            "manzil": 7,
+            "page": 603,
+            "ruku": 551,
+            "hizbQuarter": 240,
+            "sajda": false,
+            "no_Tashkeel_text": "ولا أنتم عابدون ما أعبد"
+        },
+        {
+            "number": 6211,
+            "text": "مَٰلِكِ يَوۡمِ ٱلدِّينِ",
+            "numberInSurah": 4,
+            "juz": 30,
+            "manzil": 7,
+            "page": 603,
+            "ruku": 551,
+            "hizbQuarter": 240,
+            "sajda": false,
+            "no_Tashkeel_text": "ولا أنا عابد ما عبدتم"
+        },
+        {
+            "number": 6212,
+            "text": "إِيَّاكَ نَعۡبُدُ وَإِيَّاكَ نَسۡتَعِينُ",
+            "numberInSurah": 5,
+            "juz": 30,
+            "manzil": 7,
+            "page": 603,
+            "ruku": 551,
+            "hizbQuarter": 240,
+            "sajda": false,
+            "no_Tashkeel_text": "ولا أنتم عابدون ما أعبد"
+        },
+        {
+            "number": 6213,
+            "text": "ٱهۡدِنَا ٱلصِّرَٰطَ ٱلۡمُسۡتَقِيمَ",
+            "numberInSurah": 6,
+            "juz": 30,
+            "manzil": 7,
+            "page": 603,
+            "ruku": 551,
+            "hizbQuarter": 240,
+            "sajda": false,
+            "no_Tashkeel_text": "لكم دينكم ولي دين"
+        }
+    ]
 }

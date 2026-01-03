@@ -1,57 +1,57 @@
 {
-  "number": 106,
-  "name": "سُورَةُ قُرَيۡشٍ",
-  "englishName": "Quraish",
-  "englishNameTranslation": "Quraysh",
-  "revelationType": "Meccan",
-  "ayahs": [
-    {
-      "number": 6194,
-      "text": "لِإيلـٰفِ قُرَيشٍ",
-      "numberInSurah": 1,
-      "juz": 30,
-      "manzil": 7,
-      "page": 602,
-      "ruku": 548,
-      "hizbQuarter": 240,
-      "sajda": false,
-      "no_Tashkeel_text": "بسم الله الرحمن الرحيم لإيلاف قريش"
-    },
-    {
-      "number": 6195,
-      "text": "إۦلـٰفِهِم رِحلَةَ الشِّتاءِ وَالصَّيفِ",
-      "numberInSurah": 2,
-      "juz": 30,
-      "manzil": 7,
-      "page": 602,
-      "ruku": 548,
-      "hizbQuarter": 240,
-      "sajda": false,
-      "no_Tashkeel_text": "إيلافهم رحلة الشتاء والصيف"
-    },
-    {
-      "number": 6196,
-      "text": "فَليَعبُدوا رَبَّ هـٰذَا البَيتِ",
-      "numberInSurah": 3,
-      "juz": 30,
-      "manzil": 7,
-      "page": 602,
-      "ruku": 548,
-      "hizbQuarter": 240,
-      "sajda": false,
-      "no_Tashkeel_text": "فليعبدوا رب هذا البيت"
-    },
-    {
-      "number": 6197,
-      "text": "الَّذى أَطعَمَهُم مِن جوعٍ وَءامَنَهُم مِن خَوفٍ",
-      "numberInSurah": 4,
-      "juz": 30,
-      "manzil": 7,
-      "page": 602,
-      "ruku": 548,
-      "hizbQuarter": 240,
-      "sajda": false,
-      "no_Tashkeel_text": "الذي أطعمهم من جوع وآمنهم من خوف"
-    }
-  ]
+    "number": 106,
+    "name": "سُورَةُ قُرَيۡشٍ",
+    "englishName": "Quraish",
+    "englishNameTranslation": "Quraysh",
+    "revelationType": "Meccan",
+    "ayahs": [
+        {
+            "number": 6194,
+            "text": "بِسۡمِ ٱللَّهِ ٱلرَّحۡمَٰنِ ٱلرَّحِيمِ",
+            "numberInSurah": 1,
+            "juz": 30,
+            "manzil": 7,
+            "page": 602,
+            "ruku": 548,
+            "hizbQuarter": 240,
+            "sajda": false,
+            "no_Tashkeel_text": "بسم الله الرحمن الرحيم لإيلاف قريش"
+        },
+        {
+            "number": 6195,
+            "text": "ٱلۡحَمۡدُ لِلَّهِ رَبِّ ٱلۡعَٰلَمِينَ",
+            "numberInSurah": 2,
+            "juz": 30,
+            "manzil": 7,
+            "page": 602,
+            "ruku": 548,
+            "hizbQuarter": 240,
+            "sajda": false,
+            "no_Tashkeel_text": "إيلافهم رحلة الشتاء والصيف"
+        },
+        {
+            "number": 6196,
+            "text": "ٱلرَّحۡمَٰنِ ٱلرَّحِيمِ",
+            "numberInSurah": 3,
+            "juz": 30,
+            "manzil": 7,
+            "page": 602,
+            "ruku": 548,
+            "hizbQuarter": 240,
+            "sajda": false,
+            "no_Tashkeel_text": "فليعبدوا رب هذا البيت"
+        },
+        {
+            "number": 6197,
+            "text": "مَٰلِكِ يَوۡمِ ٱلدِّينِ",
+            "numberInSurah": 4,
+            "juz": 30,
+            "manzil": 7,
+            "page": 602,
+            "ruku": 548,
+            "hizbQuarter": 240,
+            "sajda": false,
+            "no_Tashkeel_text": "الذي أطعمهم من جوع وآمنهم من خوف"
+        }
+    ]
 }

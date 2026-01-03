@@ -1,93 +1,93 @@
 {
-  "number": 1,
-  "name": "سُورَةُ ٱلْفَاتِحَةِ",
-  "englishName": "Al-Faatiha",
-  "englishNameTranslation": "The Opening",
-  "revelationType": "Meccan",
-  "ayahs": [
-    {
-      "number": 1,
-      "text": "بِسمِ اللَّهِ الرَّحمـٰنِ الرَّحيمِ",
-      "numberInSurah": 1,
-      "juz": 1,
-      "manzil": 1,
-      "page": 1,
-      "ruku": 1,
-      "hizbQuarter": 1,
-      "sajda": false,
-      "no_Tashkeel_text": "بسم الله الرحمن الرحيم"
-    },
-    {
-      "number": 2,
-      "text": "الحَمدُ لِلَّهِ رَبِّ العـٰلَمينَ",
-      "numberInSurah": 2,
-      "juz": 1,
-      "manzil": 1,
-      "page": 1,
-      "ruku": 1,
-      "hizbQuarter": 1,
-      "sajda": false,
-      "no_Tashkeel_text": "الحمد لله رب العالمين"
-    },
-    {
-      "number": 3,
-      "text": "الرَّحمـٰنِ الرَّحيمِ",
-      "numberInSurah": 3,
-      "juz": 1,
-      "manzil": 1,
-      "page": 1,
-      "ruku": 1,
-      "hizbQuarter": 1,
-      "sajda": false,
-      "no_Tashkeel_text": "الرحمن الرحيم"
-    },
-    {
-      "number": 4,
-      "text": "مـٰلِكِ يَومِ الدّينِ",
-      "numberInSurah": 4,
-      "juz": 1,
-      "manzil": 1,
-      "page": 1,
-      "ruku": 1,
-      "hizbQuarter": 1,
-      "sajda": false,
-      "no_Tashkeel_text": "مالك يوم الدين"
-    },
-    {
-      "number": 5,
-      "text": "إِيّاكَ نَعبُدُ وَإِيّاكَ نَستَعينُ",
-      "numberInSurah": 5,
-      "juz": 1,
-      "manzil": 1,
-      "page": 1,
-      "ruku": 1,
-      "hizbQuarter": 1,
-      "sajda": false,
-      "no_Tashkeel_text": "إياك نعبد وإياك نستعين"
-    },
-    {
-      "number": 6,
-      "text": "اهدِنَا الصِّرٰطَ المُستَقيمَ",
-      "numberInSurah": 6,
-      "juz": 1,
-      "manzil": 1,
-      "page": 1,
-      "ruku": 1,
-      "hizbQuarter": 1,
-      "sajda": false,
-      "no_Tashkeel_text": "اهدنا الصراط المستقيم"
-    },
-    {
-      "number": 7,
-      "text": "صِرٰطَ الَّذينَ أَنعَمتَ عَلَيهِم غَيرِ المَغضوبِ عَلَيهِم وَلَا الضّالّينَ",
-      "numberInSurah": 7,
-      "juz": 1,
-      "manzil": 1,
-      "page": 1,
-      "ruku": 1,
-      "hizbQuarter": 1,
-      "sajda": false,
-      "no_Tashkeel_text": "صراط الذين أنعمت عليهم غير المغضوب عليهم ولا الضالين"
-    }
-  ]
+    "number": 1,
+    "name": "سُورَةُ ٱلْفَاتِحَةِ",
+    "englishName": "Al-Faatiha",
+    "englishNameTranslation": "The Opening",
+    "revelationType": "Meccan",
+    "ayahs": [
+        {
+            "number": 1,
+            "text": "بِسۡمِ ٱللَّهِ ٱلرَّحۡمَٰنِ ٱلرَّحِيمِ",
+            "numberInSurah": 1,
+            "juz": 1,
+            "manzil": 1,
+            "page": 1,
+            "ruku": 1,
+            "hizbQuarter": 1,
+            "sajda": false,
+            "no_Tashkeel_text": "بسم الله الرحمن الرحيم"
+        },
+        {
+            "number": 2,
+            "text": "ٱلۡحَمۡدُ لِلَّهِ رَبِّ ٱلۡعَٰلَمِينَ",
+            "numberInSurah": 2,
+            "juz": 1,
+            "manzil": 1,
+            "page": 1,
+            "ruku": 1,
+            "hizbQuarter": 1,
+            "sajda": false,
+            "no_Tashkeel_text": "الحمد لله رب العالمين"
+        },
+        {
+            "number": 3,
+            "text": "ٱلرَّحۡمَٰنِ ٱلرَّحِيمِ",
+            "numberInSurah": 3,
+            "juz": 1,
+            "manzil": 1,
+            "page": 1,
+            "ruku": 1,
+            "hizbQuarter": 1,
+            "sajda": false,
+            "no_Tashkeel_text": "الرحمن الرحيم"
+        },
+        {
+            "number": 4,
+            "text": "مَٰلِكِ يَوۡمِ ٱلدِّينِ",
+            "numberInSurah": 4,
+            "juz": 1,
+            "manzil": 1,
+            "page": 1,
+            "ruku": 1,
+            "hizbQuarter": 1,
+            "sajda": false,
+            "no_Tashkeel_text": "مالك يوم الدين"
+        },
+        {
+            "number": 5,
+            "text": "إِيَّاكَ نَعۡبُدُ وَإِيَّاكَ نَسۡتَعِينُ",
+            "numberInSurah": 5,
+            "juz": 1,
+            "manzil": 1,
+            "page": 1,
+            "ruku": 1,
+            "hizbQuarter": 1,
+            "sajda": false,
+            "no_Tashkeel_text": "إياك نعبد وإياك نستعين"
+        },
+        {
+            "number": 6,
+            "text": "ٱهۡدِنَا ٱلصِّرَٰطَ ٱلۡمُسۡتَقِيمَ",
+            "numberInSurah": 6,
+            "juz": 1,
+            "manzil": 1,
+            "page": 1,
+            "ruku": 1,
+            "hizbQuarter": 1,
+            "sajda": false,
+            "no_Tashkeel_text": "اهدنا الصراط المستقيم"
+        },
+        {
+            "number": 7,
+            "text": "صِرَٰطَ ٱلَّذِينَ أَنۡعَمۡتَ عَلَيۡهِمۡ غَيۡرِ ٱلۡمَغۡضُوبِ عَلَيۡهِمۡ وَلَا ٱلضَّآلِّينَ",
+            "numberInSurah": 7,
+            "juz": 1,
+            "manzil": 1,
+            "page": 1,
+            "ruku": 1,
+            "hizbQuarter": 1,
+            "sajda": false,
+            "no_Tashkeel_text": "صراط الذين أنعمت عليهم غير المغضوب عليهم ولا الضالين"
+        }
+    ]
 }

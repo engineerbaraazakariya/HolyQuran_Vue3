@@ -1,105 +1,105 @@
 {
-  "number": 99,
-  "name": "سُورَةُ الزَّلۡزَلَةِ",
-  "englishName": "Az-Zalzala",
-  "englishNameTranslation": "The Earthquake",
-  "revelationType": "Medinan",
-  "ayahs": [
-    {
-      "number": 6139,
-      "text": "إِذا زُلزِلَتِ الأَرضُ زِلزالَها",
-      "numberInSurah": 1,
-      "juz": 30,
-      "manzil": 7,
-      "page": 599,
-      "ruku": 541,
-      "hizbQuarter": 239,
-      "sajda": false,
-      "no_Tashkeel_text": "بسم الله الرحمن الرحيم إذا زلزلت الأرض زلزالها"
-    },
-    {
-      "number": 6140,
-      "text": "وَأَخرَجَتِ الأَرضُ أَثقالَها",
-      "numberInSurah": 2,
-      "juz": 30,
-      "manzil": 7,
-      "page": 599,
-      "ruku": 541,
-      "hizbQuarter": 239,
-      "sajda": false,
-      "no_Tashkeel_text": "وأخرجت الأرض أثقالها"
-    },
-    {
-      "number": 6141,
-      "text": "وَقالَ الإِنسـٰنُ ما لَها",
-      "numberInSurah": 3,
-      "juz": 30,
-      "manzil": 7,
-      "page": 599,
-      "ruku": 541,
-      "hizbQuarter": 239,
-      "sajda": false,
-      "no_Tashkeel_text": "وقال الإنسان ما لها"
-    },
-    {
-      "number": 6142,
-      "text": "يَومَئِذٍ تُحَدِّثُ أَخبارَها",
-      "numberInSurah": 4,
-      "juz": 30,
-      "manzil": 7,
-      "page": 599,
-      "ruku": 541,
-      "hizbQuarter": 239,
-      "sajda": false,
-      "no_Tashkeel_text": "يومئذ تحدث أخبارها"
-    },
-    {
-      "number": 6143,
-      "text": "بِأَنَّ رَبَّكَ أَوحىٰ لَها",
-      "numberInSurah": 5,
-      "juz": 30,
-      "manzil": 7,
-      "page": 599,
-      "ruku": 541,
-      "hizbQuarter": 239,
-      "sajda": false,
-      "no_Tashkeel_text": "بأن ربك أوحى لها"
-    },
-    {
-      "number": 6144,
-      "text": "يَومَئِذٍ يَصدُرُ النّاسُ أَشتاتًا لِيُرَوا أَعمـٰلَهُم",
-      "numberInSurah": 6,
-      "juz": 30,
-      "manzil": 7,
-      "page": 599,
-      "ruku": 541,
-      "hizbQuarter": 239,
-      "sajda": false,
-      "no_Tashkeel_text": "يومئذ يصدر الناس أشتاتا ليروا أعمالهم"
-    },
-    {
-      "number": 6145,
-      "text": "فَمَن يَعمَل مِثقالَ ذَرَّةٍ خَيرًا يَرَهُ",
-      "numberInSurah": 7,
-      "juz": 30,
-      "manzil": 7,
-      "page": 599,
-      "ruku": 541,
-      "hizbQuarter": 239,
-      "sajda": false,
-      "no_Tashkeel_text": "فمن يعمل مثقال ذرة خيرا يره"
-    },
-    {
-      "number": 6146,
-      "text": "وَمَن يَعمَل مِثقالَ ذَرَّةٍ شَرًّا يَرَهُ",
-      "numberInSurah": 8,
-      "juz": 30,
-      "manzil": 7,
-      "page": 599,
-      "ruku": 541,
-      "hizbQuarter": 239,
-      "sajda": false,
-      "no_Tashkeel_text": "ومن يعمل مثقال ذرة شرا يره"
-    }
-  ]
+    "number": 99,
+    "name": "سُورَةُ الزَّلۡزَلَةِ",
+    "englishName": "Az-Zalzala",
+    "englishNameTranslation": "The Earthquake",
+    "revelationType": "Medinan",
+    "ayahs": [
+        {
+            "number": 6139,
+            "text": "بِسۡمِ ٱللَّهِ ٱلرَّحۡمَٰنِ ٱلرَّحِيمِ",
+            "numberInSurah": 1,
+            "juz": 30,
+            "manzil": 7,
+            "page": 599,
+            "ruku": 541,
+            "hizbQuarter": 239,
+            "sajda": false,
+            "no_Tashkeel_text": "بسم الله الرحمن الرحيم إذا زلزلت الأرض زلزالها"
+        },
+        {
+            "number": 6140,
+            "text": "ٱلۡحَمۡدُ لِلَّهِ رَبِّ ٱلۡعَٰلَمِينَ",
+            "numberInSurah": 2,
+            "juz": 30,
+            "manzil": 7,
+            "page": 599,
+            "ruku": 541,
+            "hizbQuarter": 239,
+            "sajda": false,
+            "no_Tashkeel_text": "وأخرجت الأرض أثقالها"
+        },
+        {
+            "number": 6141,
+            "text": "ٱلرَّحۡمَٰنِ ٱلرَّحِيمِ",
+            "numberInSurah": 3,
+            "juz": 30,
+            "manzil": 7,
+            "page": 599,
+            "ruku": 541,
+            "hizbQuarter": 239,
+            "sajda": false,
+            "no_Tashkeel_text": "وقال الإنسان ما لها"
+        },
+        {
+            "number": 6142,
+            "text": "مَٰلِكِ يَوۡمِ ٱلدِّينِ",
+            "numberInSurah": 4,
+            "juz": 30,
+            "manzil": 7,
+            "page": 599,
+            "ruku": 541,
+            "hizbQuarter": 239,
+            "sajda": false,
+            "no_Tashkeel_text": "يومئذ تحدث أخبارها"
+        },
+        {
+            "number": 6143,
+            "text": "إِيَّاكَ نَعۡبُدُ وَإِيَّاكَ نَسۡتَعِينُ",
+            "numberInSurah": 5,
+            "juz": 30,
+            "manzil": 7,
+            "page": 599,
+            "ruku": 541,
+            "hizbQuarter": 239,
+            "sajda": false,
+            "no_Tashkeel_text": "بأن ربك أوحى لها"
+        },
+        {
+            "number": 6144,
+            "text": "ٱهۡدِنَا ٱلصِّرَٰطَ ٱلۡمُسۡتَقِيمَ",
+            "numberInSurah": 6,
+            "juz": 30,
+            "manzil": 7,
+            "page": 599,
+            "ruku": 541,
+            "hizbQuarter": 239,
+            "sajda": false,
+            "no_Tashkeel_text": "يومئذ يصدر الناس أشتاتا ليروا أعمالهم"
+        },
+        {
+            "number": 6145,
+            "text": "صِرَٰطَ ٱلَّذِينَ أَنۡعَمۡتَ عَلَيۡهِمۡ غَيۡرِ ٱلۡمَغۡضُوبِ عَلَيۡهِمۡ وَلَا ٱلضَّآلِّينَ",
+            "numberInSurah": 7,
+            "juz": 30,
+            "manzil": 7,
+            "page": 599,
+            "ruku": 541,
+            "hizbQuarter": 239,
+            "sajda": false,
+            "no_Tashkeel_text": "فمن يعمل مثقال ذرة خيرا يره"
+        },
+        {
+            "number": 6146,
+            "text": "وَمَن يَعمَل مِثقالَ ذَرَّةٍ شَرًّا يَرَهُ",
+            "numberInSurah": 8,
+            "juz": 30,
+            "manzil": 7,
+            "page": 599,
+            "ruku": 541,
+            "hizbQuarter": 239,
+            "sajda": false,
+            "no_Tashkeel_text": "ومن يعمل مثقال ذرة شرا يره"
+        }
+    ]
 }

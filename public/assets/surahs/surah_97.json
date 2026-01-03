@@ -1,69 +1,69 @@
 {
-  "number": 97,
-  "name": "سُورَةُ القَدۡرِ",
-  "englishName": "Al-Qadr",
-  "englishNameTranslation": "The Power, Fate",
-  "revelationType": "Meccan",
-  "ayahs": [
-    {
-      "number": 6126,
-      "text": "إِنّا أَنزَلنـٰهُ فى لَيلَةِ القَدرِ",
-      "numberInSurah": 1,
-      "juz": 30,
-      "manzil": 7,
-      "page": 598,
-      "ruku": 539,
-      "hizbQuarter": 239,
-      "sajda": false,
-      "no_Tashkeel_text": "بسم الله الرحمن الرحيم إنا أنزلناه في ليلة القدر"
-    },
-    {
-      "number": 6127,
-      "text": "وَما أَدرىٰكَ ما لَيلَةُ القَدرِ",
-      "numberInSurah": 2,
-      "juz": 30,
-      "manzil": 7,
-      "page": 598,
-      "ruku": 539,
-      "hizbQuarter": 239,
-      "sajda": false,
-      "no_Tashkeel_text": "وما أدراك ما ليلة القدر"
-    },
-    {
-      "number": 6128,
-      "text": "لَيلَةُ القَدرِ خَيرٌ مِن أَلفِ شَهرٍ",
-      "numberInSurah": 3,
-      "juz": 30,
-      "manzil": 7,
-      "page": 598,
-      "ruku": 539,
-      "hizbQuarter": 239,
-      "sajda": false,
-      "no_Tashkeel_text": "ليلة القدر خير من ألف شهر"
-    },
-    {
-      "number": 6129,
-      "text": "تَنَزَّلُ المَلـٰئِكَةُ وَالرّوحُ فيها بِإِذنِ رَبِّهِم مِن كُلِّ أَمرٍ",
-      "numberInSurah": 4,
-      "juz": 30,
-      "manzil": 7,
-      "page": 598,
-      "ruku": 539,
-      "hizbQuarter": 239,
-      "sajda": false,
-      "no_Tashkeel_text": "تنزل الملائكة والروح فيها بإذن ربهم من كل أمر"
-    },
-    {
-      "number": 6130,
-      "text": "سَلـٰمٌ هِىَ حَتّىٰ مَطلَعِ الفَجرِ",
-      "numberInSurah": 5,
-      "juz": 30,
-      "manzil": 7,
-      "page": 598,
-      "ruku": 539,
-      "hizbQuarter": 239,
-      "sajda": false,
-      "no_Tashkeel_text": "سلام هي حتى مطلع الفجر"
-    }
-  ]
+    "number": 97,
+    "name": "سُورَةُ القَدۡرِ",
+    "englishName": "Al-Qadr",
+    "englishNameTranslation": "The Power, Fate",
+    "revelationType": "Meccan",
+    "ayahs": [
+        {
+            "number": 6126,
+            "text": "بِسۡمِ ٱللَّهِ ٱلرَّحۡمَٰنِ ٱلرَّحِيمِ",
+            "numberInSurah": 1,
+            "juz": 30,
+            "manzil": 7,
+            "page": 598,
+            "ruku": 539,
+            "hizbQuarter": 239,
+            "sajda": false,
+            "no_Tashkeel_text": "بسم الله الرحمن الرحيم إنا أنزلناه في ليلة القدر"
+        },
+        {
+            "number": 6127,
+            "text": "ٱلۡحَمۡدُ لِلَّهِ رَبِّ ٱلۡعَٰلَمِينَ",
+            "numberInSurah": 2,
+            "juz": 30,
+            "manzil": 7,
+            "page": 598,
+            "ruku": 539,
+            "hizbQuarter": 239,
+            "sajda": false,
+            "no_Tashkeel_text": "وما أدراك ما ليلة القدر"
+        },
+        {
+            "number": 6128,
+            "text": "ٱلرَّحۡمَٰنِ ٱلرَّحِيمِ",
+            "numberInSurah": 3,
+            "juz": 30,
+            "manzil": 7,
+            "page": 598,
+            "ruku": 539,
+            "hizbQuarter": 239,
+            "sajda": false,
+            "no_Tashkeel_text": "ليلة القدر خير من ألف شهر"
+        },
+        {
+            "number": 6129,
+            "text": "مَٰلِكِ يَوۡمِ ٱلدِّينِ",
+            "numberInSurah": 4,
+            "juz": 30,
+            "manzil": 7,
+            "page": 598,
+            "ruku": 539,
+            "hizbQuarter": 239,
+            "sajda": false,
+            "no_Tashkeel_text": "تنزل الملائكة والروح فيها بإذن ربهم من كل أمر"
+        },
+        {
+            "number": 6130,
+            "text": "إِيَّاكَ نَعۡبُدُ وَإِيَّاكَ نَسۡتَعِينُ",
+            "numberInSurah": 5,
+            "juz": 30,
+            "manzil": 7,
+            "page": 598,
+            "ruku": 539,
+            "hizbQuarter": 239,
+            "sajda": false,
+            "no_Tashkeel_text": "سلام هي حتى مطلع الفجر"
+        }
+    ]
 }
