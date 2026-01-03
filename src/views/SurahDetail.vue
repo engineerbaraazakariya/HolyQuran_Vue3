@@ -79,7 +79,7 @@
 
                 <!-- المربع حول رقم الصفحة -->
                 <div
-                  class="relative px-3 mx-0 text-gray-700 dark:text-gray-300 text-sm font-semibold border-b border-gray-400 dark:border-gray-600 flex justify-center items-center h-6">
+                  class="relative px-3 mx-0 text-gray-700 dark:text-gray-300 text-sm font-semibold border-b border-gray-400 dark:border-gray-600 flex justify-center items-center h-6 z-0">
                   <!-- حد يمين نصف فقط -->
                   <div class="absolute right-0 top-1/2 border-r border-gray-400 dark:border-gray-600"
                     style="height:50%"></div>
@@ -158,7 +158,7 @@
           <!-- النص -->
           <div :class="{ 'dark-theme': isDark, 'white-theme': !isDark }" class="overflow-scroll no-scrollbar" :style="{
             fontSize: fontSize * .7 + 'px',
-            fontFamily: getWordFontFamily(ayah.page),
+            fontFamily: fontFamily,
 
             color: isDark ? 'white' : 'black'
           }">
