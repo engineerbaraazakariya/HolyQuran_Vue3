@@ -17,19 +17,27 @@ const router = useRouter()
 let isApp = false;
 onMounted(() => {
   isApp = document.getElementsByTagName('html')[0].classList.contains('plt-mobile');
-  // !document.URL.startsWith('http') || document.URL.startsWith('http://localhost');
-  const lastSurah = localStorage.getItem('lastSurah')
+
+  const lastSurah = localStorage.getItem('lastSurah');
   const stored = JSON.parse(localStorage.getItem('surahVariables') + '');
   if (stored && lastSurah && stored[Number(lastSurah)]) {
+    const scrollPos = stored[Number(lastSurah)].scrollPosition || 0;
+
+    // بدل number → نحتاج pageNumber
+    const lastPage = localStorage.getItem('lastPage') || 1;
+
     router.replace({
-      name: 'SurahDetail',
+      name: 'SurahDetail',  // أو PageView إذا غيرت الاسم
       params: {
-        number: Number(lastSurah),
-        scrollTo: stored[Number(lastSurah)].scrollPosition,
+        pageNumber: Number(lastPage)
       },
-    })
+      query: {
+        surah: Number(lastSurah),
+        scrollTo: scrollPos
+      }
+    });
   }
-})
+});
 
 
 </script>

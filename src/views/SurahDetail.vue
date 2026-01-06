@@ -18,7 +18,7 @@
             <ion-toolbar v-else :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
               <div class="SurahInfo flex w-full overflow-hidden"
                 :style="{ transform: `scaleY(${scaleYSurahInfo}) scaleX(1.4)` }">
-                <SurahInfo v-if="surah" :fontSize="fontSize" :SurahName="surah.name" :isDark="isDark"
+                <SurahInfo v-if="surah" :fontSize="fontSize" :SurahName="surahName" :isDark="isDark"
                   :fontFamily="fontFamily" :pageNumber="Page" :JuzNumber="Juz" />
               </div>
             </ion-toolbar>
@@ -54,13 +54,13 @@
             <div class="flex w-full SurahInfo" :style="{ transform: `scaleY(${scaleYSurahInfo}) scaleX(1.4)` }"
               v-if="!upperSurahNameShown || OnlyOnOrientationLandscape">
               <SurahInfo @click="!OnlyOnOrientationLandscape.value ? upperSurahNameShown = true : null"
-                :SurahName="surah.name" :fontFamily="fontFamily" :pageNumber="Page" :isDark="isDark" :JuzNumber="Juz" />
+                :SurahName="surahName" :fontFamily="fontFamily" :pageNumber="Page" :isDark="isDark" :JuzNumber="Juz" />
             </div>
 
             <!-- البسملة -->
             <div :class="[
               'text-center mb-4 flex justify-center items-center w-full mt-2 overflow-hidden transition-all duration-200',
-              [1, 9].includes(surah.number)
+              [1, 9].includes(surahNumber)
                 ? 'opacity-0 h-0 pointer-events-none'
                 : 'opacity-100 h-auto'
             ]" :style="{
@@ -68,11 +68,11 @@
               fontFamily: fontFamily,
               color: isDark ? 'white' : 'black'
             }">
-              {{ [1, 9].includes(surah.number) ? '\u00A0' : '﷽' }}
+              {{ [1, 9].includes(surahNumber) ? '\u00A0' : '﷽' }}
             </div>
 
-            <template v-for="(ayah, ayahIndex) in surah.ayahs" :key="ayah.numberInSurah">
-              <div v-if="ayah && surah.ayahs[ayahIndex - 1] && ayah.page !== surah.ayahs[ayahIndex - 1].page"
+            <template v-for="(ayah, ayahIndex) in surah" :key="ayah.numberInSurah">
+              <div v-if="ayah && surah[ayahIndex - 1] && ayah.page !== surah[ayahIndex - 1].page"
                 class="flex items-center w-full mb-8 select-none">
                 <!-- خط على اليسار -->
                 <div class="flex-1 h-px bg-gray-400 dark:bg-gray-600"></div>
@@ -95,26 +95,20 @@
                 <!-- خط على اليمين -->
                 <div class="flex-1 h-px bg-gray-400 dark:bg-gray-600"></div>
               </div>
-
-
-
-
-
               <span v-for="(word, index) in ayah.text.split(' ')" :data-ayah-group="ayah.numberInSurah" :key="index"
                 :style="{
                   fontSize: fontSize + 'px',
                   fontFamily: fontFamily,
-
-                  color: basicMeaning[surah.number - 1][ayah.numberInSurah - 1][index]?.length > 0 ? '#6363f9' : isDark ? 'white' : 'black',
+                  color: basicMeaning[surahNumber - 1] && basicMeaning[surahNumber - 1][ayah.numberInSurah - 1] && basicMeaning[surahNumber - 1][ayah.numberInSurah - 1][index]?.length > 0 ? '#6363f9' : isDark ? 'white' : 'black',
                   wordSpacing: '0.25em',
                   cursor: 'default',
-                }" @touchstart="startLongPress($event, surah.number, ayah.numberInSurah)"
-                @click="basicMeaning[surah.number - 1][ayah.numberInSurah - 1][index]?.length > 0 && setMaany(surah, ayah, index)"
+                }" @touchstart="startLongPress($event, surahNumber, ayah.numberInSurah)"
+                @click="basicMeaning[surahNumber - 1][ayah.numberInSurah - 1][index]?.length > 0 && setMaany(surah, ayah, index)"
                 @touchend="stopLongPress" @touchmove="stopLongPress"
-                @contextmenu.prevent="startLongPress($event, surah.number, ayah.numberInSurah, 0)"
+                @contextmenu.prevent="startLongPress($event, surahNumber, ayah.numberInSurah, 0)"
                 class="relative inline-block mx-1">
                 {{ word }}<span class="!w-2 !max-w-2 !min-w-2 flex" :style="{
-                  backgroundColor: surahVariables[surah.number]?.longPressedAyahNumber === ayah.numberInSurah ? 'green' : !isDark ? 'white' : 'black',
+                  backgroundColor: surahVariables[surahNumber]?.longPressedAyahNumber === ayah.numberInSurah ? 'green' : !isDark ? 'white' : 'black',
                 }" v-if="index !== ayah.text.split(' ').length - 1"></span>
               </span>
               <span :data-ayah-group="ayah.numberInSurah" :data-page="ayah.page" :data-hizbQuarter="ayah.hizbQuarter"
@@ -122,7 +116,7 @@
                 class="relative flex justify-center items-center" :style="{
                   minHeight: fontSize / 1.012 + 'px',
                   minWidth: fontSize / 1.012 + 'px',
-                  backgroundImage: `url(assets/${surahVariables[surah.number]?.selectedAyahNumber === ayah.numberInSurah ? 'bookmarked_ayah' : 'end_ayah'}.svg)`,
+                  backgroundImage: `url(assets/${surahVariables[surahNumber]?.selectedAyahNumber === ayah.numberInSurah ? 'bookmarked_ayah' : 'end_ayah'}.svg)`,
                   backgroundSize: 'contain',
                   backgroundRepeat: 'no-repeat',
                   backgroundPosition: 'center',
@@ -130,8 +124,8 @@
                   width: fontSize / 1.2 + 'px',
                   fontWeight: 'bold',
                   color: 'black',
-                }" @click="toggleAyah(surah.number, ayah.numberInSurah)"
-                @contextmenu.prevent="toggleAyah(surah.number, ayah.numberInSurah)">
+                }" @click="toggleAyah(surahNumber, ayah.numberInSurah)"
+                @contextmenu.prevent="toggleAyah(surahNumber, ayah.numberInSurah)">
                 <span>
                   {{ ayah.numberInSurah }}
                 </span>
@@ -143,6 +137,7 @@
 
           </template>
           <template v-else>
+
             <p class="ion-padding">جارٍ تحميل السورة...</p>
           </template>
         </span>
@@ -485,9 +480,6 @@ let selectedTafsir = ref('qortoby.json')
 let selectedTranslation = ref('en_tafheem.json')
 let selectedRecitingWay = ref('الآية فقط')
 let copyAyahWithTashkeel = ref(true)
-onActivated(async () => {
-  await handleRouteChange(route.params.number, route.params.scrollTo);
-});
 
 const modalType = ref('tafsir') // أو 'translation'
 
@@ -529,7 +521,7 @@ function stopAyahAudio() {
       currentAudio.pause();
       currentAudio = null;
       isPlaying.value = false;
-      surahVariables.value[surah.value.number].longPressedAyahNumber = null;
+      surahVariables.value[surahNumber].longPressedAyahNumber = null;
       return;
     }
   }
@@ -569,7 +561,7 @@ async function playAyahAudio(surahNumber, ayahNumber, selectedRecitingWay) {
     }
     else if (selectedRecitingWay === 'إلى ختم السورة') {
       // عندما يكون يوجد آية إضافية بعد الاية الحالية عينها كآية مختارة وابدأ من جديد
-      if (ayahNumber < surah.value.ayahs.length) {
+      if (ayahNumber < surah.value.length) {
         ayahNumber++;
         surahVariables.value[surahNumber].longPressedAyahNumber = ayahNumber;
         // selectedSurahNumber.value = surahNumber;
@@ -577,13 +569,13 @@ async function playAyahAudio(surahNumber, ayahNumber, selectedRecitingWay) {
         highlightAyah(ayahNumber);
         playAyahAudio(surahNumber, ayahNumber, selectedRecitingWay)
       } else {
-        surahVariables.value[surah.value.number].longPressedAyahNumber = null;
+        surahVariables.value[surahNumber].longPressedAyahNumber = null;
 
       }
     }
     else if (selectedRecitingWay === 'إلى ختم القرآن الكريم') {
       // عندما يكون يوجد آية إضافية بعد الاية الحالية عينها كآية مختارة وابدأ من جديد
-      if (ayahNumber < surah.value.ayahs.length) {
+      if (ayahNumber < surah.value.length) {
         ayahNumber++;
         surahVariables.value[surahNumber].longPressedAyahNumber = ayahNumber;
         // selectedSurahNumber.value = surahNumber;
@@ -591,11 +583,11 @@ async function playAyahAudio(surahNumber, ayahNumber, selectedRecitingWay) {
         highlightAyah(ayahNumber);
         playAyahAudio(surahNumber, ayahNumber, selectedRecitingWay)
       } else {
-        if (surah.value.number === 114) {
+        if (surahNumber === 114) {
           stopAyahAudio();
           return;
         }
-        const newSurahNumber = surah.value.number + 1;
+        const newSurahNumber = surahNumber + 1;
         surah.value = null;
         goToSurah(newSurahNumber);
         await waitForSurah();
@@ -605,7 +597,6 @@ async function playAyahAudio(surahNumber, ayahNumber, selectedRecitingWay) {
         selectedAyahNumber.value = ayahNumber;
         highlightAyah(ayahNumber);
         playAyahAudio(surahNumber, ayahNumber, selectedRecitingWay)
-        // surahVariables.value[surah.value.number].longPressedAyahNumber = null;
       }
 
     }
@@ -630,7 +621,7 @@ async function playAyahAudio(surahNumber, ayahNumber, selectedRecitingWay) {
 }
 
 function getAyahText(copyAyahWithTashkeel = true) {
-  const ayah = surah.value?.ayahs.find(a => a.numberInSurah === selectedAyahNumber.value)
+  const ayah = surah.value?.find(a => a.numberInSurah === selectedAyahNumber.value)
   const ayahText = "﷽ ﴿ " + ayah[copyAyahWithTashkeel ? 'text' : 'no_Tashkeel_text'] + " ﴾";
   return ayahText;
 }
@@ -651,7 +642,7 @@ const shareAyahText = async () => {
   if (ayahText) {
     try {
       await Share.share({
-        title: `📖 ${surah.value.name}`,
+        title: `📖 ${surahName}`,
         text: ayahText,
         dialogTitle: 'مشاركة الآية'
       });
@@ -728,9 +719,11 @@ function onOption(choice, file, keepOld = false) {
 const route = useRoute()
 const surahVariables = ref({}) // { '1': {numberInSurah:5, scrollPosition:100}, '2': {numberInSurah:10, scrollPosition:200} }
 
-const surah = ref(null)
+const surah = ref(null);
+const surahName = ref(null);
 const fontSize = ref(22)
 const fontFamily = ref('first')
+const surahNumber = ref(null)
 const isDark = ref(true)
 const scaleYSurahInfo = ref(1.2)
 const scrollContainer = ref(null)
@@ -831,10 +824,10 @@ async function saveScrollPosition() {
   const scrollTop = scrollEl?.scrollTop || 0
 
   if (surah.value) {
-    if (surahVariables.value[surah.value.number] === undefined) {
-      surahVariables.value[surah.value.number] = { bookmarkedAyahNumber: null, scrollPosition: null }
+    if (surahVariables.value[surahNumber] === undefined) {
+      surahVariables.value[surahNumber] = { bookmarkedAyahNumber: null, scrollPosition: null }
     }
-    surahVariables.value[surah.value.number].scrollPosition = scrollTop.toFixed(2).toString();
+    surahVariables.value[surahNumber].scrollPosition = scrollTop.toFixed(2).toString();
 
     if (!getAyahAtScrollPosition(scrollTop.toFixed(2).toString())) return;
 
@@ -876,10 +869,10 @@ function toggleAyah(surahNumber, ayahNumber) {
 let showCurrentMaany = ref('');
 let currentMaanyAyah = ref('');
 function setMaany(surah, ayah, index) {
-  selectedSurahNumber.value = surah.number;
+  selectedSurahNumber.value = surahNumber.value;
   selectedAyahNumber.value = ayah.numberInSurah;
   currentMaanyAyah.value = ayah;
-  showCurrentMaany.value = basicMeaning[surah.number - 1][ayah.numberInSurah - 1][index][0];
+  showCurrentMaany.value = basicMeaning[surahNumber.value - 1][ayah.numberInSurah - 1][index][0];
 }
 
 onBeforeUnmount(() => {
@@ -971,9 +964,6 @@ onMounted(async () => {
   if (stored) {
     surahVariables.value = JSON.parse(stored);
   }
-
-  // التعامل مع الحالة الأولية
-  // await handleRouteChange(route.params.number, route.params.scrollTo, route.params.isReciting);
 });
 
 async function handleScrollTo(scrollTo, surahNumber) {
@@ -1017,8 +1007,8 @@ async function scrollToAyah(ayahNumber, surahNumber, attempt = 0) {
   }
 }
 const autoSelectAyah = (ayahNumber) => {
-  if (!surahVariables.value[surah.value.number]) {
-    surahVariables.value[surah.value.number] = {
+  if (!surahVariables.value[surahNumber]) {
+    surahVariables.value[surahNumber] = {
       selectedAyahNumber: null,
       longPressedAyahNumber: null,
       scrollPosition: null
@@ -1026,8 +1016,8 @@ const autoSelectAyah = (ayahNumber) => {
   }
 
   // تحديد الآية وكأنها مضغوطة ضغطة طويلة
-  surahVariables.value[surah.value.number].longPressedAyahNumber = ayahNumber;
-  selectedSurahNumber.value = surah.value.number;
+  surahVariables.value[surahNumber].longPressedAyahNumber = ayahNumber;
+  selectedSurahNumber.value = surahNumber;
   selectedAyahNumber.value = ayahNumber;
 
   // عرض قائمة الخيارات تلقائياً
@@ -1059,52 +1049,72 @@ function updateSelectedAyah(surahNumber, ayahNumber) {
   localStorage.setItem('surahVariables', JSON.stringify(surahVariables.value));
 }
 
-async function handleRouteChange(surahNumberParam, scrollToParam, isRecitingParam) {
-  const surahNumber = parseInt(surahNumberParam);
+import surahIndex from '@@/assets/pages/index.json'
 
-  // إعادة تعيين حالة السورة
+async function handleRouteChange(pageNumberParam, scrollToParam, isRecitingParam) {
+  const pageNumber = Number(pageNumberParam);
+  if (!pageNumber || pageNumber < 1 || pageNumber > 604) {
+    console.error('Invalid page number:', pageNumberParam);
+    return;
+  }
+
   surah.value = null;
   await nextTick();
 
   try {
-    // تحميل ملف السورة المناسب
-    const res = await fetch(`assets/surahs/surah_${surahNumber}.json`);
-    if (!res.ok) throw new Error('Failed to load surah file');
+    // تحميل ملف الصفحة
+    const res = await fetch(`assets/pages/page_${pageNumber}.json`);
+    if (!res.ok) throw new Error('Failed to load page file');
 
-    surah.value = await res.json();
-    document.title = `الْقُرْآنُ الْكَرِيمُ - ${surah.value.name}`;
-    if (surah.value) {
-      Juz.value = surah.value.ayahs[0].juz;
-      Page.value = surah.value.ayahs[0].page;
-      Hizb.value = surah.value.ayahs[0].hizbQuarter; // تأكد من الاسم الصحيح
+    const pageData = await res.json();
+    surah.value = pageData;
+
+    // إيجاد السورة التي تبدأ قبل أو عند هذه الصفحة
+    surahName.value = 'الْقُرْآنُ الْكَرِيمُ';
+    for (let i = surahIndex.length - 1; i >= 0; i--) {
+      if (pageNumber >= surahIndex[i].startPage) {
+        surahName.value = surahIndex[i].name;
+        break;
+      }
+    }
+
+    document.title = `الْقُرْآنُ الْكَرِيمُ - ${surahName.value}`;
+
+    // استخراج معلومات أول آية
+    const firstAyah = pageData[0];
+    if (firstAyah) {
+      Juz.value = firstAyah.juz;
+      Page.value = firstAyah.page;
+      Hizb.value = firstAyah.hizbQuarter;
+      selectedSurahNumber.value = surahIndex.find(s => s.startPage <= pageNumber).number;
+      selectedAyahNumber.value = firstAyah.numberInSurah;
     }
 
     upperSurahNameShown.value = true;
 
-    // الانتظار حتى يتم تحديث DOM
-    await nextTick();
-
+    // بعد تحميل الصفحة، التمرير إلى الموضع المطلوب
     if (scrollToParam) {
-      await handleScrollTo(scrollToParam, surahNumber);
+      await handleScrollTo(scrollToParam, pageNumber);
     }
 
     if (isRecitingParam) {
-      if (!surahVariables.value[surahNumber]) {
-        surahVariables.value[surahNumber] = {
-          longPressedAyahNumber: 1,
-          bookmarkedAyahNumber: null,
-          scrollPosition: null
-        };
-      }
-      selectedSurahNumber.value = surahNumber;
-      selectedAyahNumber.value = 1;
-      playAyahAudio(surahNumber, selectedAyahNumber.value, "إلى ختم القرآن الكريم");
+      playAyahAudio(selectedSurahNumber.value, selectedAyahNumber.value, "إلى ختم القرآن الكريم");
     }
 
   } catch (error) {
-    console.error("Error loading surah:", error);
+    console.error("Error loading page:", error);
   }
 }
+
+
+// onActivated
+onActivated(async () => {
+  console.log('route.params', route.params, route.query)
+  const pageNumber = Number(route.params.pageNumber);
+  surahNumber.value = Number(route.query.surahNumber);
+  await handleRouteChange(pageNumber);
+});
+
 
 // إعدادات المستخدم
 const increaseFontSize = () => {

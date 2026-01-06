@@ -87,10 +87,9 @@ const restoreScroll = async () => {
     }
   }, 300);
 }
+import surahIndex from '@@/assets/pages/index.json'
 const initData = async () => {
-  const res = await fetch('assets/quran_minimal.json');
-  const data = await res.json();
-  surahs.value = data;
+  surahs.value = surahIndex;
   fontSize.value = parseInt(localStorage.getItem('fontSize')) || 22;
   fontFamily.value = localStorage.getItem('fontFamily') || 'UthmaniFont';
   isDark.value = JSON.parse(localStorage.getItem('isDark')) || false;
@@ -140,12 +139,28 @@ onMounted(async () => {
   await restoreScroll();
 
 })
-
 const goToSurah = (surah) => {
-  lastSurah.value = surah.number
-  localStorage.setItem('lastSurah', surah.number.toString())
-  router.push({ name: 'SurahDetail', params: { number: surah.number } })
+  const surahNumber = surah.number
+  const surahStartPage = surah.startPage
+
+  lastSurah.value = surahNumber
+
+  localStorage.setItem('lastSurah', surahNumber.toString())
+  localStorage.setItem('lastAya', '1')
+  localStorage.setItem('lastPage', surahStartPage.toString())
+
+  router.push({
+    name: 'SurahDetail', // <--- الاسم الصحيح
+    params: {
+      pageNumber: surahStartPage
+    },
+    query: {
+      surahNumber: surahNumber
+    }
+  })
 }
+
+
 
 const increaseFontSize = () => {
   fontSize.value += 2
