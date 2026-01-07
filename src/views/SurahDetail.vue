@@ -715,11 +715,33 @@ function onOption(choice, file, keepOld = false) {
     selectedFile = file;
   }
 }
+const surahStartPage = ref(null);
+const surahEndPage = ref(null);
 
 const route = useRoute()
 const surahVariables = ref({}) // { '1': {numberInSurah:5, scrollPosition:100}, '2': {numberInSurah:10, scrollPosition:200} }
 
-const surah = ref(null);
+const surah = computed(() => {
+  // إذا ما في ولا صفحة محمّلة → Array فاضي
+  if (!loadedPages.value || Object.keys(loadedPages.value).length === 0) {
+    return [];
+  }
+
+  const start = surahStartPage.value;
+  const end = surahEndPage.value;
+
+  return Object.keys(loadedPages.value)
+    .map(Number)
+    // إذا النطاق لسه مو جاهز، خذ كل المحمّل مؤقتاً
+    .filter(p => {
+      if (start == null || end == null) return true;
+      return p >= start && p <= end;
+    })
+    .sort((a, b) => a - b)
+    .flatMap(p => loadedPages.value[p] || []);
+});
+
+
 const surahName = ref(null);
 const fontSize = ref(22)
 const fontFamily = ref('first')
@@ -817,33 +839,6 @@ const Hizb = ref(null);
 const Juz = ref(null);
 const Page = ref(null);
 
-
-async function saveScrollPosition() {
-  const el = scrollContainer.value?.$el || scrollContainer.value
-  const scrollEl = await el?.getScrollElement?.()
-  const scrollTop = scrollEl?.scrollTop || 0
-
-  if (surah.value) {
-    if (surahVariables.value[surahNumber] === undefined) {
-      surahVariables.value[surahNumber] = { bookmarkedAyahNumber: null, scrollPosition: null }
-    }
-    surahVariables.value[surahNumber].scrollPosition = scrollTop.toFixed(2).toString();
-
-    if (!getAyahAtScrollPosition(scrollTop.toFixed(2).toString())) return;
-
-    // الحصول على البيانات من الدالة
-    const { ayahNumber, hizb, juz, page } = getAyahAtScrollPosition(scrollTop.toFixed(2).toString());
-
-    // تحديث القيم باستخدام `value`
-    AyahNumber.value = ayahNumber;
-    Hizb.value = hizb;
-    Juz.value = juz;
-    Page.value = page;
-
-    localStorage.setItem('surahVariables', JSON.stringify(surahVariables.value))
-  }
-}
-
 function toggleAyah(surahNumber, ayahNumber) {
   // إذا كانت الآية محددة بالفعل، قم بإلغاء التحديد
   const current = surahVariables.value[surahNumber]?.selectedAyahNumber || null;
@@ -885,11 +880,31 @@ const items = reactive([]);
 let nextId = 3 // لتوليد id فريد للعناصر الجديدة
 
 onMounted(async () => {
-  const el = headerRef.value
-  if (!el) return
-  items.push({ type: 'decoration' }) // يسار
-  items.push({ type: 'toolbar' })    // مركز ظاهر
-  items.push({ type: 'decoration' }) // يمين
+  // ========================
+  // إعداد عنصر التمرير
+  // ========================
+  const parentEl = scrollContainer.value?.$el || scrollContainer.value;
+  if (!parentEl) return;
+
+  const scrollEl = await parentEl.getScrollElement();
+
+  scrollEl.addEventListener('scroll', () => {
+    saveScrollPosition(); // هذه تحدث Page.value
+    const pageNumber = Number(Page.value);
+    if (pageNumber) {
+      ensureSurroundingPages(pageNumber); // تحميل الصفحات المجاورة دائمًا
+    }
+  });
+
+  // ========================
+  // إعداد الهيدر
+  // ========================
+  const el = headerRef.value;
+  if (!el) return;
+
+  items.push({ type: 'decoration' }); // يسار
+  items.push({ type: 'toolbar' });    // مركز ظاهر
+  items.push({ type: 'decoration' }); // يمين
 
   gesture = createGesture({
     el,
@@ -898,62 +913,61 @@ onMounted(async () => {
     threshold: 0,
 
     onStart: ev => {
-      dragging = true
-      startX = headerTranslateX.value // لا تبدأ دائمًا من 0
+      dragging = true;
+      startX = headerTranslateX.value; // لا تبدأ دائمًا من 0
     },
 
     onMove: ev => {
-      if (!dragging) return
-      let nextX = startX + ev.deltaX
+      if (!dragging) return;
+      let nextX = startX + ev.deltaX;
 
       // حدود الحركة
-      const maxRight = PANEL_WIDTH
-      const maxLeft = -PANEL_WIDTH
+      const maxRight = PANEL_WIDTH;
+      const maxLeft = -PANEL_WIDTH;
 
-      nextX = Math.min(maxRight, Math.max(maxLeft, nextX))
-
-      headerTranslateX.value = nextX
+      nextX = Math.min(maxRight, Math.max(maxLeft, nextX));
+      headerTranslateX.value = nextX;
     },
 
     onEnd: ev => {
-      dragging = false
+      dragging = false;
 
-      const SWIPE_THRESHOLD = 20 // px، أقل من هيك يعتبر نقرة فقط
-      if (Math.abs(ev.deltaX) < SWIPE_THRESHOLD) {
-        // لم يحصل سحب حقيقي، فقط نقرة → تجاهل
-        return
-      }
+      const SWIPE_THRESHOLD = 20; // px، أقل من هيك يعتبر نقرة فقط
+      if (Math.abs(ev.deltaX) < SWIPE_THRESHOLD) return;
 
-      const direction = ev.deltaX > 0 ? 1 : -1 // 1 يمين, -1 يسار
-      isAnimating.value = true
+      const direction = ev.deltaX > 0 ? 1 : -1; // 1 يمين, -1 يسار
+      isAnimating.value = true;
 
       // تحريك العنصر إلى النهاية بشكل سلس
-      headerTranslateX.value = direction * PANEL_WIDTH
+      headerTranslateX.value = direction * PANEL_WIDTH;
 
       setTimeout(() => {
-        // بعد الانيميشن، حدّث المصفوفة
-        const currentMiddle = items[1]
+        const currentMiddle = items[1];
         if (direction === 1) {
-          items.pop()
-          items.unshift({ ...currentMiddle, id: nextId++ })
+          items.pop();
+          items.unshift({ ...currentMiddle, id: nextId++ });
         } else {
-          items.shift()
-          items.push({ ...currentMiddle, id: nextId++ })
+          items.shift();
+          items.push({ ...currentMiddle, id: nextId++ });
         }
 
         // إعادة المركز بدون transition
-        isAnimating.value = false
-        headerTranslateX.value = 0
+        isAnimating.value = false;
+        headerTranslateX.value = 0;
 
         // التأكد من عدم تجاوز 3 عناصر
-        if (items.length > 3) items.splice(3)
-      }, 300) // مدة الانيميشن
+        if (items.length > 3) items.splice(3);
+      }, 300);
     }
+  });
 
-  })
-  gesture.enable()
-  checkOrientation(); // أول مرة
-  window.addEventListener("resize", checkOrientation);
+  gesture.enable();
+
+  // ========================
+  // إعداد التوجيه والخيارات
+  // ========================
+  checkOrientation();
+  window.addEventListener('resize', checkOrientation);
 
   isDark.value = localStorage.getItem('isDark') === 'true';
   fontSize.value = parseFloat(localStorage.getItem('fontSize')) || 22;
@@ -964,7 +978,15 @@ onMounted(async () => {
   if (stored) {
     surahVariables.value = JSON.parse(stored);
   }
+
+  // ========================
+  // تحميل الصفحات الأولية
+  // ========================
+  if (Page.value) {
+    ensureSurroundingPages(Number(Page.value)); // تحميل الصفحات المحيطة عند البداية
+  }
 });
+
 
 async function handleScrollTo(scrollTo, surahNumber) {
   if (!scrollTo) return;
@@ -1050,7 +1072,7 @@ function updateSelectedAyah(surahNumber, ayahNumber) {
 }
 
 import surahIndex from '@@/assets/pages/index.json'
-
+const loadedPages = ref({});
 async function handleRouteChange(pageNumberParam, scrollToParam, isRecitingParam) {
   const pageNumber = Number(pageNumberParam);
   if (!pageNumber || pageNumber < 1 || pageNumber > 604) {
@@ -1062,37 +1084,53 @@ async function handleRouteChange(pageNumberParam, scrollToParam, isRecitingParam
   await nextTick();
 
   try {
-    // تحميل ملف الصفحة
-    const res = await fetch(`assets/pages/page_${pageNumber}.json`);
-    if (!res.ok) throw new Error('Failed to load page file');
+    // جلب السورة الحالية
+    const currentSurahIndex = surahIndex
+      .slice()
+      .reverse()
+      .find(s => pageNumber >= s.startPage);
 
-    const pageData = await res.json();
-    surah.value = pageData;
-
-    // إيجاد السورة التي تبدأ قبل أو عند هذه الصفحة
-    surahName.value = 'الْقُرْآنُ الْكَرِيمُ';
-    for (let i = surahIndex.length - 1; i >= 0; i--) {
-      if (pageNumber >= surahIndex[i].startPage) {
-        surahName.value = surahIndex[i].name;
-        break;
-      }
+    if (!currentSurahIndex) {
+      throw new Error("Surah not found for page " + pageNumber);
     }
 
+    surahStartPage.value = currentSurahIndex.startPage;
+
+    // --- تعديل حساب نهاية السورة ---
+    const sortedIndex = [...surahIndex].sort((a, b) => a.startPage - b.startPage);
+    const currentSurahPos = sortedIndex.findIndex(s => s.number === currentSurahIndex.number);
+
+    if (currentSurahPos < sortedIndex.length - 1) {
+      // النهاية هي بداية السورة اللي بعدها ناقص 1
+      surahEndPage.value = sortedIndex[currentSurahPos + 1].startPage - 1;
+    } else {
+      // إذا كانت سورة الناس، النهاية 604
+      surahEndPage.value = 604;
+    }
+
+    console.log(`تم تحديد نطاق السورة: من ${surahStartPage.value} إلى ${surahEndPage.value}`);
+
+    // تحميل الصفحة المطلوبة
+    const currentRes = await fetch(`assets/pages/page_${pageNumber}.json`);
+    if (!currentRes.ok) throw new Error('Failed to load current page');
+
+    const currentPageData = await currentRes.json();
+    loadedPages.value[pageNumber] = currentPageData;
+    surah.value = currentPageData;
+    surahName.value = currentSurahIndex.name;
     document.title = `الْقُرْآنُ الْكَرِيمُ - ${surahName.value}`;
 
-    // استخراج معلومات أول آية
-    const firstAyah = pageData[0];
+    const firstAyah = currentPageData[0];
     if (firstAyah) {
       Juz.value = firstAyah.juz;
       Page.value = firstAyah.page;
       Hizb.value = firstAyah.hizbQuarter;
-      selectedSurahNumber.value = surahIndex.find(s => s.startPage <= pageNumber).number;
+      selectedSurahNumber.value = currentSurahIndex.number;
       selectedAyahNumber.value = firstAyah.numberInSurah;
     }
 
     upperSurahNameShown.value = true;
 
-    // بعد تحميل الصفحة، التمرير إلى الموضع المطلوب
     if (scrollToParam) {
       await handleScrollTo(scrollToParam, pageNumber);
     }
@@ -1101,10 +1139,14 @@ async function handleRouteChange(pageNumberParam, scrollToParam, isRecitingParam
       playAyahAudio(selectedSurahNumber.value, selectedAyahNumber.value, "إلى ختم القرآن الكريم");
     }
 
+    // تشغيل التحميل الذكي
+    ensureSurroundingPages(pageNumber);
+
   } catch (error) {
     console.error("Error loading page:", error);
   }
 }
+
 
 
 // onActivated
@@ -1154,6 +1196,98 @@ function checkOrientation() {
     isDesktop.value = false;
   }
   OnlyOnOrientationLandscape.value = window.innerWidth > window.innerHeight;
+}
+
+
+// 1. تعريف مصفوفة لتتبع الطلبات الحالية (لحذف التكرار)
+const loadingStates = reactive({}); 
+
+function lazyLoadPage(page) {
+  const start = Number(surahStartPage.value);
+  const end = Number(surahEndPage.value);
+
+  if (page < 1 || page > 604) return;
+
+  // التحقق من النطاق
+  if (start && end) {
+    if (page < start || page > end) return;
+  }
+
+  // إذا الصفحة محملة مسبقاً (أو عم تتحمل حالياً)، وقف فوراً
+  if (loadedPages.value[page] || loadingStates[page]) {
+    return;
+  }
+
+  // قفل الصفحة: تسجيل إنها قيد التحميل حالياً
+  loadingStates[page] = true;
+  console.log(`🚀 جاري طلب الصفحة ${page}...`);
+
+  fetch(`assets/pages/page_${page}.json`)
+    .then(res => {
+      if (!res.ok) throw new Error(`Failed to load page ${page}`);
+      return res.json();
+    })
+    .then(data => {
+      loadedPages.value[page] = data;
+      console.log(`✅ وصلت الصفحة ${page}`);
+    })
+    .catch(err => {
+      console.warn(`❌ فشل تحميل الصفحة ${page}`, err);
+    })
+    .finally(() => {
+      // فك القفل سواء نجح الطلب أو فشل (مشان يحاول مرة تانية لو فشل)
+      loadingStates[page] = false;
+    });
+}
+
+// 2. تحديث دالة تأمين الصفحات بمدى أوسع وسرعة أكبر
+function ensureSurroundingPages(currentPage) {
+  const current = Number(currentPage);
+  if (isNaN(current)) return;
+
+  // لما اليوزر ينزل بسرعة، بدنا نحمل لقدام أكتر (Buffer)
+  // رح نحمل 8 صفحات لقدام و 3 لورا
+  
+  // أولاً: صفحات "الأمام" هي الأهم
+  for (let i = 1; i <= 8; i++) {
+    const nextPage = current + i;
+    // استخدام requestAnimationFrame لتوزيع الطلبات مشان ما يهنق المتصفح
+    requestAnimationFrame(() => lazyLoadPage(nextPage));
+  }
+
+  // ثانياً: صفحات "الخلف"
+  for (let i = 1; i <= 3; i++) {
+    const prevPage = current - i;
+    requestAnimationFrame(() => lazyLoadPage(prevPage));
+  }
+}
+
+// 3. تعديل دالة السكرول لتعمل Trigger أبكر
+async function saveScrollPosition() {
+  const el = scrollContainer.value?.$el || scrollContainer.value;
+  const scrollEl = await el?.getScrollElement?.();
+  const scrollTop = scrollEl?.scrollTop || 0;
+
+  if (surah.value) {
+    if (surahVariables.value[surahNumber] === undefined) {
+      surahVariables.value[surahNumber] = { bookmarkedAyahNumber: null, scrollPosition: null };
+    }
+    surahVariables.value[surahNumber].scrollPosition = scrollTop.toFixed(2).toString();
+
+    const scrollData = getAyahAtScrollPosition();
+    if (!scrollData) return;
+
+    // تحديث القيم الحالية
+    AyahNumber.value = scrollData.ayahNumber;
+    Hizb.value = scrollData.hizb;
+    Juz.value = scrollData.juz;
+    Page.value = scrollData.page;
+
+    localStorage.setItem('surahVariables', JSON.stringify(surahVariables.value));
+
+    // استدعاء التحميل الذكي
+    ensureSurroundingPages(Number(Page.value));
+  }
 }
 
 </script>
