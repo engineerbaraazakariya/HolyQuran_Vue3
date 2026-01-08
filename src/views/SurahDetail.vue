@@ -10,7 +10,8 @@
           <div v-for="(item, index) in items" :key="item.id" class="header-panel"
             :style="{ minWidth: PANEL_WIDTH + 'px' }">
             <!-- شريط الأدوات المركزي -->
-            <TopToolbar v-if="item.type === 'toolbar'" :isDark="isDark" v-model:selectedFile="selectedFile" title=""
+            <TopToolbar @go-to-top="goToStartOfSurah"
+  @go-to-bottom="goToEndOfSurah" v-if="item.type === 'toolbar'" :isDark="isDark" v-model:selectedFile="selectedFile" title=""
               :showBack="true" :showScrollUpButton="true" :showScrollDownButton="true" :showFontSizeButtons="true"
               :showThemeToggle="true" :showFontSelector="true" :showSearch="true" :showRibbon="true" />
 
@@ -32,7 +33,8 @@
       <div class="flex flex-row justify-between">
 
         <div v-if="OnlyOnOrientationLandscape" class="flex !w-16 !min-w-16">
-          <TopToolbar :showScrollUpButton="true" :showScrollDownButton="true" :vertical="true" :isDark="isDark" title=""
+          <TopToolbar @go-to-top="goToStartOfSurah"
+  @go-to-bottom="goToEndOfSurah" :showScrollUpButton="true" :showScrollDownButton="true" :vertical="true" :isDark="isDark" title=""
             :showBack="true" :showFontSizeButtons="true" :showThemeToggle="true" :showFontSelector="true"
             :showSearch="true" :showRibbon="false" />
         </div>
@@ -170,7 +172,8 @@
       <div class="flex flex-col w-full justify-center items-center">
         <img src="/assets/decoration.svg" />
         <div class="flex justify-center items-center">
-          <TopToolbar :isDark="isDark" v-model:selectedFile="selectedFile" title="" :showScrollUpButton="true" />
+          <TopToolbar @go-to-top="goToStartOfSurah"
+  @go-to-bottom="goToEndOfSurah" :isDark="isDark" v-model:selectedFile="selectedFile" title="" :showScrollUpButton="true" />
         </div>
       </div>
       <IonPopover :is-open="showFontPopover" :event="fontPopoverEvent" @didDismiss="showFontPopover = false"
@@ -351,6 +354,48 @@ onBeforeUnmount(() => {
 
 const svgRect = ref(null);
 const wordRects = ref(null);
+// الانتقال لأول السورة (تغيير URL لأول صفحة بالسورة)
+const goToStartOfSurah = async () => {
+  if (surahStartPage.value) {
+    await router.replace({ 
+      name: 'SurahDetail', 
+      params: { pageNumber: surahStartPage.value.toString() },
+      query: { 
+        surahNumber: selectedSurahNumber.value, 
+        scrollTo: '0.00' // منشان يصفر السكرول لفوق تماماً
+      }
+    });
+    // منادي التابع ليتحدث المحتوى فوراً
+    await handleRouteChange(surahStartPage.value);
+  }
+}
+
+// الانتقال لآخر السورة (تغيير URL لآخر صفحة بالسورة)
+const goToEndOfSurah = async () => {
+  if (surahEndPage.value) {
+    await router.replace({ 
+      name: 'SurahDetail', 
+      params: { pageNumber: surahEndPage.value.toString() },
+      query: { 
+        surahNumber: selectedSurahNumber.value, 
+        scrollTo: 'bottom' 
+      }
+    });
+    // منادي التابع ليتحدث المحتوى
+    await handleRouteChange(surahEndPage.value);
+
+    // سكرول ناعم لآخر الصفحة بعد ما تتحمل
+    await nextTick();
+    setTimeout(async () => {
+      const el = scrollContainer.value?.$el || scrollContainer.value;
+      if (el && typeof el.scrollToBottom === 'function') {
+        await el.scrollToBottom(800);
+        upperSurahNameShown.value = false; // إخفاء الهيدر
+      }
+    }, 500);
+  }
+}
+
 
 const ayahContainer = ref(null);
 function highlightAyah(ayahNumber) {
@@ -1073,6 +1118,7 @@ function updateSelectedAyah(surahNumber, ayahNumber) {
 
 import surahIndex from '@@/assets/pages/index.json'
 const loadedPages = ref({});
+
 async function handleRouteChange(pageNumberParam, scrollToParam, isRecitingParam) {
   const pageNumber = Number(pageNumberParam);
   if (!pageNumber || pageNumber < 1 || pageNumber > 604) {
@@ -1145,6 +1191,13 @@ async function handleRouteChange(pageNumberParam, scrollToParam, isRecitingParam
   } catch (error) {
     console.error("Error loading page:", error);
   }
+  // داخل handleRouteChange بعد ما تجيب currentPageData
+if (route.query.scrollTo === 'bottom') {
+    // إذا جايين من زر "أدنى السورة"، حمل الصفحات اللي "قبل" الصفحة الأخيرة
+    for (let i = 1; i <= 3; i++) {
+        lazyLoadPage(Number(pageNumber) - i);
+    }
+}
 }
 
 
@@ -1245,48 +1298,59 @@ function ensureSurroundingPages(currentPage) {
   const current = Number(currentPage);
   if (isNaN(current)) return;
 
-  // لما اليوزر ينزل بسرعة، بدنا نحمل لقدام أكتر (Buffer)
-  // رح نحمل 8 صفحات لقدام و 3 لورا
-  
-  // أولاً: صفحات "الأمام" هي الأهم
-  for (let i = 1; i <= 8; i++) {
-    const nextPage = current + i;
-    // استخدام requestAnimationFrame لتوزيع الطلبات مشان ما يهنق المتصفح
-    requestAnimationFrame(() => lazyLoadPage(nextPage));
-  }
+  // المدى المطلوب: 3 للأمام و 3 للخلف
+  const range = 3;
 
-  // ثانياً: صفحات "الخلف"
-  for (let i = 1; i <= 3; i++) {
+  for (let i = 1; i <= range; i++) {
+    // صفحات الأمام
+    const nextPage = current + i;
+    requestAnimationFrame(() => lazyLoadPage(nextPage));
+
+    // صفحات الخلف
     const prevPage = current - i;
     requestAnimationFrame(() => lazyLoadPage(prevPage));
   }
 }
 
-// 3. تعديل دالة السكرول لتعمل Trigger أبكر
 async function saveScrollPosition() {
   const el = scrollContainer.value?.$el || scrollContainer.value;
   const scrollEl = await el?.getScrollElement?.();
   const scrollTop = scrollEl?.scrollTop || 0;
 
   if (surah.value) {
-    if (surahVariables.value[surahNumber] === undefined) {
-      surahVariables.value[surahNumber] = { bookmarkedAyahNumber: null, scrollPosition: null };
+    // 1. حفظ وضع السكرول بالمتغيرات المحلية
+    if (surahVariables.value[surahNumber.value] === undefined) {
+      surahVariables.value[surahNumber.value] = { bookmarkedAyahNumber: null, scrollPosition: null };
     }
-    surahVariables.value[surahNumber].scrollPosition = scrollTop.toFixed(2).toString();
+    surahVariables.value[surahNumber.value].scrollPosition = scrollTop.toFixed(2).toString();
 
+    // 2. الحصول على بيانات الآية والصفحة الحالية من موقع السكرول
     const scrollData = getAyahAtScrollPosition();
     if (!scrollData) return;
 
-    // تحديث القيم الحالية
+    // تحديث الـ Refs (الجزء، الصفحة، الحزب)
     AyahNumber.value = scrollData.ayahNumber;
     Hizb.value = scrollData.hizb;
     Juz.value = scrollData.juz;
-    Page.value = scrollData.page;
+
+    // 3. تحديث الـ URL إذا تغير رقم الصفحة (بدون إعادة تحميل)
+    if (Page.value !== scrollData.page) {
+      Page.value = scrollData.page;
+      
+      // تحديث الـ URL برمجياً بشكل صامت
+      router.replace({
+        params: { pageNumber: Page.value.toString() },
+        query: { 
+          ...route.query, // الحفاظ على surahNumber وأي بارامترات تانية
+          scrollTo: scrollTop.toFixed(2).toString() 
+        }
+      });
+
+      // تحميل الصفحات المجاورة بما إن الصفحة تغيرت
+      ensureSurroundingPages(Number(Page.value));
+    }
 
     localStorage.setItem('surahVariables', JSON.stringify(surahVariables.value));
-
-    // استدعاء التحميل الذكي
-    ensureSurroundingPages(Number(Page.value));
   }
 }
 

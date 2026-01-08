@@ -123,7 +123,11 @@ const props = defineProps({
   selectedFile: String
 });
 
-const emit = defineEmits(['update:selectedFile'])
+const emit = defineEmits(['update:selectedFile', 'go-to-top', 'go-to-bottom']);
+
+const scrollToTop = () => {
+  emit('go-to-top'); // إرسال إشارة للأب ليروح لأول صفحة بالـ URL
+}
 
 // Injected functions and values
 const increaseFontSize = inject('increaseFontSize')
@@ -143,27 +147,11 @@ const selectedFile = computed({
   get: () => props.selectedFile,
   set: (value) => emit('update:selectedFile', value)
 })
-// Scroll to top
-const scrollToTop = () => {
-  const content = document.querySelector('ion-content')
-  if (content && content.scrollToTop) {
-    content.scrollToTop(500) // 500ms animation
-  } else {
-    window.scrollTo({ top: 0, behavior: 'smooth' })
-  }
-}
 
-// Scroll to bottom
+
 const scrollToBottom = () => {
-  const content = document.querySelector('ion-content')
-  if (content && content.scrollToBottom) {
-    content.scrollToBottom(500)
-  } else {
-    window.scrollTo({
-      top: document.body.scrollHeight,
-      behavior: 'smooth'
-    })
-  }
+  // بدل السكرول العادي، نرسل طلب للأب
+  emit('go-to-bottom');
 }
 
 // Watch for saving to localStorage only
