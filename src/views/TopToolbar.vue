@@ -38,11 +38,18 @@
       </ion-button>
 
 
+        <ion-button class="max-w-10 !p-0"  v-if="showNextSurahButton" @click="goToNextSurah" title="السورة التالية">
+          <ion-icon  style="width: 32px; height: 32px;"  slot="icon-only" :icon="arrowForwardCircleOutline" />
+        </ion-button>
+
+        <ion-button class="max-w-10 !p-0"  v-if="showPreviousSurahButton" @click="goToPreviousSurah" title="السورة السابقة">
+          <ion-icon  style="width: 32px; height: 32px;"  slot="icon-only" :icon="arrowBackCircleOutline" />
+        </ion-button>
 
     </div>
 
     <!-- النسخة الأفقية -->
-    <div v-else class="flex justify-between px-2 horizonal-buttons">
+    <div v-else  class="min-h-8 min-w-4 flex justify-center px-2 horizonal-buttons">
       <ion-buttons slot="start" v-if="showBack">
         <ion-back-button defaultHref="/"></ion-back-button>
       </ion-buttons>
@@ -52,8 +59,16 @@
           <ion-icon :icon="arrowDownCircleOutline" />
         </ion-button>
 
+        <ion-button v-if="showPreviousSurahButton" @click="goToPreviousSurah" title="السورة السابقة">
+          <ion-icon :icon="arrowForwardCircleOutline" />
+        </ion-button>
+
         <ion-button v-if="showScrollUpButton" @click="scrollToTop" title="أول السورة">
           <ion-icon :icon="arrowUpCircleOutline" />
+        </ion-button>
+
+        <ion-button v-if="showNextSurahButton" @click="goToNextSurah" title="السورة التالية">
+          <ion-icon :icon="arrowBackCircleOutline" />
         </ion-button>
 
         <ion-button v-if="showFontSizeButtons" @click="increaseFontSize" title="تكبير الخط">
@@ -103,7 +118,7 @@ import {
 
 import {
   addCircle, arrowDownCircleOutline,
-  arrowUpCircleOutline, removeCircle, ribbon, moon, sunny, colorPalette, searchOutline
+  arrowUpCircleOutline,arrowForwardCircleOutline,arrowBackCircleOutline, removeCircle, ribbon, moon, sunny, colorPalette, searchOutline
 } from 'ionicons/icons'
 import { inject, computed, watch } from 'vue';
 
@@ -116,6 +131,8 @@ const props = defineProps({
   showScrollDownButton: Boolean,
   showScrollUpButton: Boolean,
   showFontSizeButtons: Boolean,
+  showPreviousSurahButton: Boolean,
+  showNextSurahButton: Boolean,
   showFontSelector: Boolean,
   showThemeToggle: Boolean,
   showSearch: Boolean,
@@ -128,6 +145,8 @@ const emit = defineEmits(['update:selectedFile'])
 // Injected functions and values
 const increaseFontSize = inject('increaseFontSize')
 const decreaseFontSize = inject('decreaseFontSize')
+const goToNextSurah = inject('goToNextSurah')
+const goToPreviousSurah = inject('goToPreviousSurah')
 const toggleTheme = inject('toggleTheme')
 const openFontPopover = inject('openFontPopover')
 const toggleUpperSurahInfo = inject('toggleUpperSurahInfo')

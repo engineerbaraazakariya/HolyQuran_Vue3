@@ -12,7 +12,8 @@
             <!-- شريط الأدوات المركزي -->
             <TopToolbar v-if="item.type === 'toolbar'" :isDark="isDark" v-model:selectedFile="selectedFile" title=""
               :showBack="true" :showScrollUpButton="true" :showScrollDownButton="true" :showFontSizeButtons="true"
-              :showThemeToggle="true" :showFontSelector="true" :showSearch="true" :showRibbon="true" />
+              :showNextSurahButton="true" :showPreviousSurahButton="true" :showThemeToggle="true"
+              :showFontSelector="true" :showSearch="true" :showRibbon="true" />
 
             <!-- زخرفة -->
             <ion-toolbar v-else :class="{ 'dark-theme': isDark, 'white-theme': !isDark }">
@@ -32,9 +33,10 @@
       <div class="flex flex-row justify-between">
 
         <div v-if="OnlyOnOrientationLandscape" class="flex !w-16 !min-w-16">
-          <TopToolbar :showScrollUpButton="true" :showScrollDownButton="true" :vertical="true" :isDark="isDark" title=""
-            :showBack="true" :showFontSizeButtons="true" :showThemeToggle="true" :showFontSelector="true"
-            :showSearch="true" :showRibbon="false" />
+          <TopToolbar :showScrollUpButton="true" :showScrollDownButton="true" :vertical="true"
+            :showNextSurahButton="true" :showPreviousSurahButton="true" :isDark="isDark" title="" :showBack="true"
+            :showFontSizeButtons="true" :showThemeToggle="true" :showFontSelector="true" :showSearch="true"
+            :showRibbon="false" />
         </div>
         <div ref="ayahContainer" class="relative">
           <svg v-if="svgRect" class="opacity-60 z-[0]" :style="{
@@ -174,8 +176,9 @@
       </div>
       <div class="flex flex-col w-full justify-center items-center">
         <img src="/assets/decoration.svg" />
-        <div class="flex justify-center items-center">
-          <TopToolbar :isDark="isDark" v-model:selectedFile="selectedFile" title="" :showScrollUpButton="true" />
+        <div class="flex justify-between items-center min-h-4 min-w-full ">
+          <TopToolbar :isDark="isDark" v-model:selectedFile="selectedFile" title="" :showScrollUpButton="true"
+            :showNextSurahButton="true" :showPreviousSurahButton="true" />
         </div>
       </div>
       <IonPopover :is-open="showFontPopover" :event="fontPopoverEvent" @didDismiss="showFontPopover = false"
@@ -538,6 +541,19 @@ function stopAyahAudio() {
 const goToSurah = (surahNumber) => {
   localStorage.setItem('lastSurah', surahNumber.toString())
   router.replace({ name: 'SurahDetail', params: { number: surahNumber.toString(), scrollTo: 0.0, isReciting: true } })
+}
+const goToNextSurah = () => {
+  const currentSurah = Number(route.params.number);
+  if (currentSurah === 114) {
+    return;
+  }
+  router.push({ name: 'SurahDetail', params: { number: currentSurah + 1, scrollTo: 0.0, isReciting: true } })
+}
+const goToPreviousSurah = () => {
+const currentSurah = Number(route.params.number);  if (currentSurah === 1) {
+    return;
+  }
+  router.push({ name: 'SurahDetail', params: { number: currentSurah - 1, scrollTo: 0.0, isReciting: true } })
 }
 
 
@@ -1123,7 +1139,8 @@ const toggleUpperSurahInfo = () => {
   upperSurahNameShown.value = !upperSurahNameShown.value
 }
 
-provide('increaseFontSize', increaseFontSize)
+provide('goToNextSurah', goToNextSurah)
+provide('goToPreviousSurah', goToPreviousSurah)
 provide('decreaseFontSize', decreaseFontSize)
 provide('toggleTheme', toggleTheme)
 provide('toggleUpperSurahInfo', toggleUpperSurahInfo)
