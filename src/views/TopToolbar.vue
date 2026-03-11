@@ -206,4 +206,8 @@ ion-toolbar {
   position: relative;
   z-index: 20;
 }
+
+.vertical-toolbar {
+    height: 100vh !important;
+}
 </style>

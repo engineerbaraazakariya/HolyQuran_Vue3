@@ -96,11 +96,11 @@ onMounted(() => {
   /* Firefox */
 }
 
-.plt-mobile {
+.android .ion-app {
   margin-top: 2rem !important;
 }
 
-.plt-mobile body {
+.android body {
   max-height: calc(100vh - 2rem) !important;
 }
 </style>
