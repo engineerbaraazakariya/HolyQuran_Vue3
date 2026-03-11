@@ -1144,6 +1144,7 @@ const toggleUpperSurahInfo = () => {
 provide('goToNextSurah', goToNextSurah)
 provide('goToPreviousSurah', goToPreviousSurah)
 provide('decreaseFontSize', decreaseFontSize)
+provide('increaseFontSize', increaseFontSize)
 provide('toggleTheme', toggleTheme)
 provide('toggleUpperSurahInfo', toggleUpperSurahInfo)
 provide('openFontPopover', openFontPopover)
