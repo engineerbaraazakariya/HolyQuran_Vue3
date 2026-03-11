@@ -547,12 +547,14 @@ const goToNextSurah = () => {
   if (currentSurah === 114) {
     return;
   }
+  localStorage.setItem('lastSurah', currentSurah + 1)
   router.push({ name: 'SurahDetail', params: { number: currentSurah + 1, scrollTo: 0.0, isReciting: true } })
 }
 const goToPreviousSurah = () => {
-const currentSurah = Number(route.params.number);  if (currentSurah === 1) {
+  const currentSurah = Number(route.params.number); if (currentSurah === 1) {
     return;
   }
+  localStorage.setItem('lastSurah', currentSurah - 1)
   router.push({ name: 'SurahDetail', params: { number: currentSurah - 1, scrollTo: 0.0, isReciting: true } })
 }
 
