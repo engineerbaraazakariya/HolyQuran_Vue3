@@ -1,5 +1,4 @@
 const meanings = [
-  [ // سورة 109: الكافرون
 [ // آية 1
       [], // قُل
       [], // يـٰأَيُّهَا
@@ -38,7 +37,6 @@ const meanings = [
       [], // وَلِىَ
       [] // دينِ
     ]
-  ]
 ];
 
 export default meanings;

@@ -1,5 +1,4 @@
 const meanings = [
-  [ // سورة 106: قريش
 [ // آية 1
       [], // لِإيلـٰفِ
       [] // قُرَيشٍ
@@ -25,7 +24,6 @@ const meanings = [
       [], // مِن
       [] // خَوفٍ
     ]
-  ]
 ];
 
 export default meanings;

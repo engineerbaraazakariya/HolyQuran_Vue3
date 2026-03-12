@@ -1,5 +1,4 @@
 const meanings = [
-  [ // سورة 89: الفجر
 [ // آية 1
       [] // وَالفَجرِ
     ],
@@ -197,7 +196,6 @@ const meanings = [
       [], // وَادخُلى
       [] // جَنَّتى
     ]
-  ]
 ];
 
 export default meanings;

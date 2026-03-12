@@ -1,5 +1,4 @@
 const meanings = [
-  [ // سورة 63: المنافقون
 [ // آية 1
       [], // إِذا
       [], // جاءَكَ
@@ -202,7 +201,6 @@ const meanings = [
       [], // بِما
       [] // تَعمَلونَ
     ]
-  ]
 ];
 
 export default meanings;

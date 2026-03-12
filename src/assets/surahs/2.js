@@ -1,5 +1,4 @@
 const meanings = [
-  [ // سورة 2: البقرة
 [ // آية 1
       [] // الم
     ],
@@ -6689,7 +6688,6 @@ const meanings = [
       [], // القَومِ
       [] // الكـٰفِرينَ
     ]
-  ]
 ];
 
 export default meanings;

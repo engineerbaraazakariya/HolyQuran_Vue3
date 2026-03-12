@@ -1,5 +1,4 @@
 const meanings = [
-  [ // سورة 42: الشورى
 [ // آية 1
       [] // حم
     ],
@@ -966,7 +965,6 @@ const meanings = [
       [], // تَصيرُ
       [] // الأُمورُ
     ]
-  ]
 ];
 
 export default meanings;

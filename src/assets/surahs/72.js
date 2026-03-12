@@ -1,5 +1,4 @@
 const meanings = [
-  [ // سورة 72: الجن
 [ // آية 1
       [], // قُل
       [], // أوحِىَ
@@ -341,7 +340,6 @@ const meanings = [
       [], // شَىءٍ
       [] // عَدَدًا
     ]
-  ]
 ];
 
 export default meanings;

@@ -1,5 +1,4 @@
 const meanings = [
-  [ // سورة 96: العلق
 [ // آية 1
       [], // اقرَأ
       [], // بِاسمِ
@@ -110,7 +109,6 @@ const meanings = [
       [], // وَاسجُد
       [] // وَاقتَرِب
     ]
-  ]
 ];
 
 export default meanings;

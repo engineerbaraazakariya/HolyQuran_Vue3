@@ -1,5 +1,4 @@
 const meanings = [
-  [ // سورة 20: طه
 [ // آية 1
       [] // طه
     ],
@@ -1605,7 +1604,6 @@ const meanings = [
       [], // وَمَنِ
       [] // اهتَدىٰ
     ]
-  ]
 ];
 
 export default meanings;

@@ -1,5 +1,4 @@
 const meanings = [
-  [ // سورة 30: الروم
 [ // آية 1
       [] // الم
     ],
@@ -937,7 +936,6 @@ const meanings = [
       [], // لا
       [] // يوقِنونَ
     ]
-  ]
 ];
 
 export default meanings;

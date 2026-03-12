@@ -1,5 +1,4 @@
 const meanings = [
-  [ // سورة 29: العنكبوت
 [ // آية 1
       [] // الم
     ],
@@ -1114,7 +1113,6 @@ const meanings = [
       [], // لَمَعَ
       [] // المُحسِنينَ
     ]
-  ]
 ];
 
 export default meanings;

@@ -1,5 +1,4 @@
 const meanings = [
-  [ // سورة 46: الأحقاف
 [ // آية 1
       [] // حم
     ],
@@ -713,7 +712,6 @@ const meanings = [
       [], // القَومُ
       [] // الفـٰسِقونَ
     ]
-  ]
 ];
 
 export default meanings;

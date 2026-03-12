@@ -1,5 +1,4 @@
 const meanings = [
-  [ // سورة 103: العصر
 [ // آية 1
       [] // وَالعَصرِ
     ],
@@ -20,7 +19,6 @@ const meanings = [
       [], // وَتَواصَوا
       [] // بِالصَّبرِ
     ]
-  ]
 ];
 
 export default meanings;

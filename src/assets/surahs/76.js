@@ -1,5 +1,4 @@
 const meanings = [
-  [ // سورة 76: الإنسان
 [ // آية 1
       [], // هَل
       [], // أَتىٰ
@@ -305,7 +304,6 @@ const meanings = [
       [], // عَذابًا
       [] // أَليمًا
     ]
-  ]
 ];
 
 export default meanings;

@@ -1,5 +1,4 @@
 const meanings = [
-  [ // سورة 27: النمل
 [ // آية 1
       [], // طس
       [], // تِلكَ
@@ -1337,7 +1336,6 @@ const meanings = [
       [], // عَمّا
       [] // تَعمَلونَ
     ]
-  ]
 ];
 
 export default meanings;

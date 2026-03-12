@@ -1,5 +1,4 @@
 const meanings = [
-  [ // سورة 92: الليل
 [ // آية 1
       [], // وَالَّيلِ
       [], // إِذا
@@ -113,7 +112,6 @@ const meanings = [
       [], // وَلَسَوفَ
       [] // يَرضىٰ
     ]
-  ]
 ];
 
 export default meanings;

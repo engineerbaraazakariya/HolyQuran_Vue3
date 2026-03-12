@@ -1,5 +1,4 @@
 const meanings = [
-  [ // سورة 43: الزخرف
 [ // آية 1
       [] // حم
     ],
@@ -1008,7 +1007,6 @@ const meanings = [
       [], // فَسَوفَ
       [] // يَعلَمونَ
     ]
-  ]
 ];
 
 export default meanings;

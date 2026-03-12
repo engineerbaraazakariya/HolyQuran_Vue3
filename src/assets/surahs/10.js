@@ -1,5 +1,4 @@
 const meanings = [
-  [ // سورة 10: يونس
 [ // آية 1
       [], // الر
       [], // تِلكَ
@@ -2051,7 +2050,6 @@ const meanings = [
       [], // خَيرُ
       [] // الحـٰكِمينَ
     ]
-  ]
 ];
 
 export default meanings;

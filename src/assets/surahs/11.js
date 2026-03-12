@@ -1,5 +1,4 @@
 const meanings = [
-  [ // سورة 11: هود
 [ // آية 1
       [], // الر
       [], // كِتـٰبٌ
@@ -2163,7 +2162,6 @@ const meanings = [
       [], // عَمّا
       [] // تَعمَلونَ
     ]
-  ]
 ];
 
 export default meanings;

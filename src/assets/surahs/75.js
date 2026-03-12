@@ -1,5 +1,4 @@
 const meanings = [
-  [ // سورة 75: القيامة
 [ // آية 1
       [], // لا
       [], // أُقسِمُ
@@ -244,7 +243,6 @@ const meanings = [
       [], // يُحـِۧىَ
       [] // المَوتىٰ
     ]
-  ]
 ];
 
 export default meanings;

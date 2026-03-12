@@ -1,5 +1,4 @@
 const meanings = [
-  [ // سورة 38: ص
 [ // آية 1
       [], // ص
       [], // وَالقُرءانِ
@@ -909,7 +908,6 @@ const meanings = [
       [], // بَعدَ
       [] // حينٍ
     ]
-  ]
 ];
 
 export default meanings;

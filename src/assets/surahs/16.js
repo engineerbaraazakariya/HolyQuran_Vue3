@@ -1,5 +1,4 @@
 const meanings = [
-  [ // سورة 16: النحل
 [ // آية 1
       [], // أَتىٰ
       [], // أَمرُ
@@ -2100,7 +2099,6 @@ const meanings = [
       [], // هُم
       [] // مُحسِنونَ
     ]
-  ]
 ];
 
 export default meanings;

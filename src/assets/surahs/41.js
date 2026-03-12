@@ -1,5 +1,4 @@
 const meanings = [
-  [ // سورة 41: فصلت
 [ // آية 1
       [] // حم
     ],
@@ -902,7 +901,6 @@ const meanings = [
       [], // شَىءٍ
       [] // مُحيطٌ
     ]
-  ]
 ];
 
 export default meanings;

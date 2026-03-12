@@ -1,5 +1,4 @@
 const meanings = [
-  [ // سورة 40: غافر
 [ // آية 1
       [] // حم
     ],
@@ -1389,7 +1388,6 @@ const meanings = [
       [], // هُنالِكَ
       [] // الكـٰفِرونَ
     ]
-  ]
 ];
 
 export default meanings;

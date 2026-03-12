@@ -1,5 +1,4 @@
 const meanings = [
-  [ // سورة 3: آل عمران
 [ // آية 1
       [] // الم
     ],
@@ -3881,7 +3880,6 @@ const meanings = [
       [], // لَعَلَّكُم
       [] // تُفلِحونَ
     ]
-  ]
 ];
 
 export default meanings;

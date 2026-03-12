@@ -1,5 +1,4 @@
 const meanings = [
-  [ // سورة 50: ق
 [ // آية 1
       [], // ق
       [], // وَالقُرءانِ
@@ -463,7 +462,6 @@ const meanings = [
       [], // يَخافُ
       [] // وَعيدِ
     ]
-  ]
 ];
 
 export default meanings;

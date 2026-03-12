@@ -1,5 +1,4 @@
 const meanings = [
-  [ // سورة 112: الإخلاص
 [ // آية 1
       [], // قُل
       [], // هُوَ
@@ -23,7 +22,6 @@ const meanings = [
       [], // كُفُوًا
       [] // أَحَدٌ
     ]
-  ]
 ];
 
 export default meanings;

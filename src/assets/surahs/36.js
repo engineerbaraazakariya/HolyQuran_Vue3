@@ -1,5 +1,4 @@
 const meanings = [
-  [ // سورة 36: يس
 [ // آية 1
       [] // يس
     ],
@@ -891,7 +890,6 @@ const meanings = [
       [], // وَإِلَيهِ
       [] // تُرجَعونَ
     ]
-  ]
 ];
 
 export default meanings;

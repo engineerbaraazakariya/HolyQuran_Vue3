@@ -1,5 +1,4 @@
 const meanings = [
-  [ // سورة 12: يوسف
 [ // آية 1
       [], // الر
       [], // تِلكَ
@@ -1999,7 +1998,6 @@ const meanings = [
       [], // لِقَومٍ
       [] // يُؤمِنونَ
     ]
-  ]
 ];
 
 export default meanings;

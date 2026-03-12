@@ -1,5 +1,4 @@
 const meanings = [
-  [ // سورة 31: لقمان
 [ // آية 1
       [] // الم
     ],
@@ -614,7 +613,6 @@ const meanings = [
       [], // عَليمٌ
       [] // خَبيرٌ
     ]
-  ]
 ];
 
 export default meanings;

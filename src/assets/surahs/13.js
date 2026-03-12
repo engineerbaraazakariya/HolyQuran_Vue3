@@ -1,5 +1,4 @@
 const meanings = [
-  [ // سورة 13: الرعد
 [ // آية 1
       [], // المر
       [], // تِلكَ
@@ -940,7 +939,6 @@ const meanings = [
       [], // عِلمُ
       [] // الكِتـٰبِ
     ]
-  ]
 ];
 
 export default meanings;

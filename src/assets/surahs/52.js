@@ -1,5 +1,4 @@
 const meanings = [
-  [ // سورة 52: الطور
 [ // آية 1
       [] // وَالطّورِ
     ],
@@ -410,7 +409,6 @@ const meanings = [
       [], // وَإِدبـٰرَ
       [] // النُّجومِ
     ]
-  ]
 ];
 
 export default meanings;

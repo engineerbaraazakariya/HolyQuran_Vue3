@@ -1,5 +1,4 @@
 const meanings = [
-  [ // سورة 28: القصص
 [ // آية 1
       [] // طسم
     ],
@@ -1606,7 +1605,6 @@ const meanings = [
       [], // وَإِلَيهِ
       [] // تُرجَعونَ
     ]
-  ]
 ];
 
 export default meanings;

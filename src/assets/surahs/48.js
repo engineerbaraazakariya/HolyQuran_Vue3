@@ -1,5 +1,4 @@
 const meanings = [
-  [ // سورة 48: الفتح
 [ // آية 1
       [], // إِنّا
       [], // فَتَحنا
@@ -618,7 +617,6 @@ const meanings = [
       [], // وَأَجرًا
       [] // عَظيمًا
     ]
-  ]
 ];
 
 export default meanings;

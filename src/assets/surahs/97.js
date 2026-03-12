@@ -1,5 +1,4 @@
 const meanings = [
-  [ // سورة 97: القدر
 [ // آية 1
       [], // إِنّا
       [], // أَنزَلنـٰهُ
@@ -40,7 +39,6 @@ const meanings = [
       [], // مَطلَعِ
       [] // الفَجرِ
     ]
-  ]
 ];
 
 export default meanings;

@@ -98,32 +98,26 @@
                 <div class="flex-1 h-px bg-gray-400 dark:bg-gray-600"></div>
               </div>
 
-<span v-for="(word, index) in ayah.text.split(' ')" 
-      :data-ayah-group="ayah.numberInSurah" 
-      :key="index"
-      :style="{
-        fontSize: fontSize + 'px',
-        fontFamily: fontFamily,
-        color: basicMeaning[0] && basicMeaning[0][ayah.numberInSurah - 1] && basicMeaning[0][ayah.numberInSurah - 1][index]?.length > 0 
-               ? '#6363f9' 
-               : isDark ? 'white' : 'black',
-        wordSpacing: '0.25em',
-        cursor: 'default',
-      }" 
-      @touchstart="startLongPress($event, surah.number, ayah.numberInSurah)"
-      @click="basicMeaning[0] && basicMeaning[0][ayah.numberInSurah - 1] && basicMeaning[0][ayah.numberInSurah - 1][index]?.length > 0 && setMaany(surah, ayah, index)"
-      @touchend="stopLongPress" 
-      @touchmove="stopLongPress"
-      @contextmenu.prevent="startLongPress($event, surah.number, ayah.numberInSurah, 0)"
-      class="relative inline-block mx-1">
-  {{ word }}
-  <span class="!w-2 !max-w-2 !min-w-2 flex" 
-        :style="{
-          backgroundColor: surahVariables[surah.number]?.longPressedAyahNumber === ayah.numberInSurah ? 'green' : !isDark ? 'white' : 'black',
-        }" 
-        v-if="index !== ayah.text.split(' ').length - 1">
-  </span>
-</span>
+              <span v-for="(word, index) in ayah.text.split(' ')" :data-ayah-group="ayah.numberInSurah" :key="index"
+                :style="{
+                  fontSize: fontSize + 'px',
+                  fontFamily: fontFamily,
+                  color: basicMeaning && basicMeaning[ayah.numberInSurah - 1] && basicMeaning[ayah.numberInSurah - 1][index]?.length > 0
+                    ? '#6363f9'
+                    : isDark ? 'white' : 'black',
+                  wordSpacing: '0.25em',
+                  cursor: 'default',
+                }" @touchstart="startLongPress($event, surah.number, ayah.numberInSurah)"
+                @click="basicMeaning && basicMeaning[ayah.numberInSurah - 1] && basicMeaning[ayah.numberInSurah - 1][index]?.length > 0 && setMaany(surah, ayah, index)"
+                @touchend="stopLongPress" @touchmove="stopLongPress"
+                @contextmenu.prevent="startLongPress($event, surah.number, ayah.numberInSurah, 0)"
+                class="relative inline-block mx-1">
+                {{ word }}
+                <span class="!w-2 !max-w-2 !min-w-2 flex" :style="{
+                  backgroundColor: surahVariables[surah.number]?.longPressedAyahNumber === ayah.numberInSurah ? 'green' : !isDark ? 'white' : 'black',
+                }" v-if="index !== ayah.text.split(' ').length - 1">
+                </span>
+              </span>
               <span :data-ayah-group="ayah.numberInSurah" :data-page="ayah.page" :data-hizbQuarter="ayah.hizbQuarter"
                 :data-juz="ayah.juz" :id='"ayah-" + ayah.numberInSurah'
                 class="relative flex justify-center items-center" :style="{
@@ -557,11 +551,10 @@ const loadSurahMeanings = async (surahNumber) => {
     // استيراد ديناميكي للملف المطلوب
     const module = await import(`@/assets/surahs/${surahNumber}.js`)
     basicMeaning.value = module.default
-    console.log(`✅ تم تحميل سورة ${surahNumber}`,basicMeaning.value)
   } catch (err) {
     console.error(err)
-  } 
-  } 
+  }
+}
 
 const goToNextSurah = () => {
   const currentSurah = Number(route.params.number);
@@ -918,7 +911,7 @@ function setMaany(surah, ayah, index) {
   selectedSurahNumber.value = surah.number;
   selectedAyahNumber.value = ayah.numberInSurah;
   currentMaanyAyah.value = ayah;
-  showCurrentMaany.value = basicMeaning.value[0][ayah.numberInSurah - 1][index][0];
+  showCurrentMaany.value = basicMeaning.value[ayah.numberInSurah - 1][index][0];
 }
 
 onBeforeUnmount(() => {

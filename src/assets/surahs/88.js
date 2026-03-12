@@ -1,5 +1,4 @@
 const meanings = [
-  [ // سورة 88: الغاشية
 [ // آية 1
       [], // هَل
       [], // أَتىٰكَ
@@ -144,7 +143,6 @@ const meanings = [
       [], // عَلَينا
       [] // حِسابَهُم
     ]
-  ]
 ];
 
 export default meanings;

@@ -1,5 +1,4 @@
 const meanings = [
-  [ // سورة 32: السجدة
 [ // آية 1
       [] // الم
     ],
@@ -432,7 +431,6 @@ const meanings = [
       [], // إِنَّهُم
       [] // مُنتَظِرونَ
     ]
-  ]
 ];
 
 export default meanings;

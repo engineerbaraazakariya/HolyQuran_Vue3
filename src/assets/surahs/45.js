@@ -1,5 +1,4 @@
 const meanings = [
-  [ // سورة 45: الجاثية
 [ // آية 1
       [] // حم
     ],
@@ -562,7 +561,6 @@ const meanings = [
       [], // العَزيزُ
       [] // الحَكيمُ
     ]
-  ]
 ];
 
 export default meanings;

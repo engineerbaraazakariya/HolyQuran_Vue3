@@ -1,5 +1,4 @@
 const meanings = [
-  [ // سورة 98: البينة
 [ // آية 1
       [], // لَم
       [], // يَكُنِ
@@ -110,7 +109,6 @@ const meanings = [
       [], // خَشِىَ
       [] // رَبَّهُ
     ]
-  ]
 ];
 
 export default meanings;

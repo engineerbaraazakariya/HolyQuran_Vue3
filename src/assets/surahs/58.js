@@ -1,5 +1,4 @@
 const meanings = [
-  [ // سورة 58: المجادلة
 [ // آية 1
       [], // قَد
       [], // سَمِعَ
@@ -516,7 +515,6 @@ const meanings = [
       [], // هُمُ
       [] // المُفلِحونَ
     ]
-  ]
 ];
 
 export default meanings;

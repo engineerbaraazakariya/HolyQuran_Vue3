@@ -1,5 +1,4 @@
 const meanings = [
-  [ // سورة 93: الضحى
 [ // آية 1
       [] // وَالضُّحىٰ
     ],
@@ -62,7 +61,6 @@ const meanings = [
       [], // رَبِّكَ
       [] // فَحَدِّث
     ]
-  ]
 ];
 
 export default meanings;

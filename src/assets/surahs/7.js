@@ -1,5 +1,4 @@
 const meanings = [
-  [ // سورة 7: الأعراف
 [ // آية 1
       [] // المص
     ],
@@ -3732,7 +3731,6 @@ const meanings = [
       [], // وَلَهُ
       [] // يَسجُدونَ
     ]
-  ]
 ];
 
 export default meanings;

@@ -1,5 +1,4 @@
 const meanings = [
-  [ // سورة 68: القلم
 [ // آية 1
       [], // ن
       [], // وَالقَلَمِ
@@ -404,7 +403,6 @@ const meanings = [
       [], // ذِكرٌ
       [] // لِلعـٰلَمينَ
     ]
-  ]
 ];
 
 export default meanings;

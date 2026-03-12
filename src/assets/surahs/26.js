@@ -1,5 +1,4 @@
 const meanings = [
-  [ // سورة 26: الشعراء
 [ // آية 1
       [] // طسم
     ],
@@ -1772,7 +1771,6 @@ const meanings = [
       [], // مُنقَلَبٍ
       [] // يَنقَلِبونَ
     ]
-  ]
 ];
 
 export default meanings;

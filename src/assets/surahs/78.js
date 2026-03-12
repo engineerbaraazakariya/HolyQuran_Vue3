@@ -1,5 +1,4 @@
 const meanings = [
-  [ // سورة 78: النبأ
 [ // آية 1
       [], // عَمَّ
       [] // يَتَساءَلونَ
@@ -253,7 +252,6 @@ const meanings = [
       [], // كُنتُ
       [] // تُرٰبًا
     ]
-  ]
 ];
 
 export default meanings;

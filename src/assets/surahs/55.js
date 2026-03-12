@@ -1,5 +1,4 @@
 const meanings = [
-  [ // سورة 55: الرحمن
 [ // آية 1
       [] // الرَّحمـٰنُ
     ],
@@ -507,7 +506,6 @@ const meanings = [
       [], // الجَلـٰلِ
       [] // وَالإِكرامِ
     ]
-  ]
 ];
 
 export default meanings;
