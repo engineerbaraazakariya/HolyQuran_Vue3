@@ -559,14 +559,15 @@ const loadSurahMeanings = async (surahNumber) => {
 const goToNextSurah = () => {
   const currentSurah = Number(route.params.number);
   if (currentSurah === 114) {
-    return;
+    currentSurah = 0;
   }
   localStorage.setItem('lastSurah', currentSurah + 1)
   router.push({ name: 'SurahDetail', params: { number: currentSurah + 1, scrollTo: 0.0, isReciting: true } })
 }
 const goToPreviousSurah = () => {
-  const currentSurah = Number(route.params.number); if (currentSurah === 1) {
-    return;
+  const currentSurah = Number(route.params.number);
+  if (currentSurah === 1) {
+    currentSurah = 115;
   }
   localStorage.setItem('lastSurah', currentSurah - 1)
   router.push({ name: 'SurahDetail', params: { number: currentSurah - 1, scrollTo: 0.0, isReciting: true } })
