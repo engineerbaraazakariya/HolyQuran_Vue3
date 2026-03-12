@@ -60,6 +60,7 @@
         </ion-button>
 
         <ion-button v-if="showPreviousSurahButton" @click="goToPreviousSurah" title="السورة السابقة">
+          <span v-if="previousSurahLabel">{{previousSurahLabel}}</span>
           <ion-icon :icon="arrowForwardCircleOutline" />
         </ion-button>
 
@@ -69,6 +70,7 @@
 
         <ion-button v-if="showNextSurahButton" @click="goToNextSurah" title="السورة التالية">
           <ion-icon :icon="arrowBackCircleOutline" />
+          <span v-if="nextSurahLabel">{{nextSurahLabel}}</span>
         </ion-button>
 
         <ion-button v-if="showFontSizeButtons" @click="increaseFontSize" title="تكبير الخط">
@@ -132,6 +134,8 @@ const props = defineProps({
   showScrollUpButton: Boolean,
   showFontSizeButtons: Boolean,
   showPreviousSurahButton: Boolean,
+  previousSurahLabel: String|null,
+  nextSurahLabel: String|null,
   showNextSurahButton: Boolean,
   showFontSelector: Boolean,
   showThemeToggle: Boolean,

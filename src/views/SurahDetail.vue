@@ -176,7 +176,8 @@
       <div class="flex flex-col w-full justify-center items-center">
         <img src="/assets/decoration.svg" />
         <div class="flex justify-between items-center min-h-4 min-w-full ">
-          <TopToolbar :isDark="isDark" v-model:selectedFile="selectedFile" title="" :showScrollUpButton="true"
+          <TopToolbar :withLabels="true" :isDark="isDark" v-model:selectedFile="selectedFile"
+            :previousSurahLabel="previousSurahLabel" :nextSurahLabel="nextSurahLabel" :showScrollUpButton="true"
             :showNextSurahButton="true" :showPreviousSurahButton="true" />
         </div>
       </div>
@@ -272,9 +273,6 @@
 
         </ion-list>
       </IonPopover>
-
-
-
     </ion-content>
     <TafsirModal v-if="surah" :is-open="modalOpen" :surah-number="selectedSurah" :ayah-number="selectedAyah"
       :type="modalType" :selectedFile="modalType === 'tafsir' ? selectedTafsir : selectedTranslation"
@@ -284,6 +282,7 @@
 </template>
 
 <script setup>
+import surahNames from '/public/assets/quran_minimal.js'
 
 // Ionic Vue components
 import {
@@ -360,6 +359,8 @@ const svgRect = ref(null);
 const wordRects = ref(null);
 
 const ayahContainer = ref(null);
+const nextSurahLabel = ref(null);
+const previousSurahLabel = ref(null);
 function highlightAyah(ayahNumber) {
   nextTick(() => {
     const spans = document.querySelectorAll(
@@ -487,6 +488,7 @@ let selectedTafsir = ref('qortoby.json')
 let selectedTranslation = ref('en_tafheem.json')
 let selectedRecitingWay = ref('الآية فقط')
 let copyAyahWithTashkeel = ref(true)
+
 onActivated(async () => {
   await handleRouteChange(route.params.number, route.params.scrollTo);
 });
@@ -557,7 +559,7 @@ const loadSurahMeanings = async (surahNumber) => {
 }
 
 const goToNextSurah = () => {
-  const currentSurah = Number(route.params.number);
+  let currentSurah = Number(route.params.number);
   if (currentSurah === 114) {
     currentSurah = 0;
   }
@@ -565,7 +567,7 @@ const goToNextSurah = () => {
   router.push({ name: 'SurahDetail', params: { number: currentSurah + 1, scrollTo: 0.0, isReciting: true } })
 }
 const goToPreviousSurah = () => {
-  const currentSurah = Number(route.params.number);
+  let currentSurah = Number(route.params.number);
   if (currentSurah === 1) {
     currentSurah = 115;
   }
@@ -1004,6 +1006,17 @@ onMounted(async () => {
   if (stored) {
     surahVariables.value = JSON.parse(stored);
   }
+
+  // تحويل رقم السورة إلى رقم (parseInt)
+  const currentNumber = parseInt(route.params.number) // الرقم الحالي من 1-114
+
+  // حساب السورة التالية بشكل دائري
+  const nextNumber = (currentNumber % 114) + 1 // 1->2, 2->3, ..., 113->114, 114->1
+  nextSurahLabel.value = surahNames[nextNumber - 1] // ناقص 1 لأن المصفوفة تبدأ من 0
+
+  // حساب السورة السابقة بشكل دائري
+  const prevNumber = currentNumber === 1 ? 114 : currentNumber - 1 // 1->114, 2->1, 3->2, ...
+  previousSurahLabel.value = surahNames[prevNumber - 1]
   await loadSurahMeanings(route.params.number);
 });
 
