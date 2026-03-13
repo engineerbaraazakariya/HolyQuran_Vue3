@@ -4,7 +4,9 @@
 
     <!-- النسخة العمودية -->
     <div v-if="vertical" class="vertical-buttons z-50 flex flex-wrap gap-2">
-      <ion-back-button v-if="showBack" defaultHref="/"></ion-back-button>
+      <ion-button router-link="/list">
+        <ion-icon :icon="arrowForward" />
+      </ion-button>
 
       <ion-button class="max-w-10" v-if="showSearch" router-link="/search">
         <ion-icon slot="icon-only" :icon="searchOutline" />
@@ -38,20 +40,23 @@
       </ion-button>
 
 
-        <ion-button class="max-w-10 !p-0"  v-if="showNextSurahButton" @click="goToNextSurah" title="السورة التالية">
-          <ion-icon  style="width: 32px; height: 32px;"  slot="icon-only" :icon="arrowForwardCircleOutline" />
-        </ion-button>
+      <ion-button class="max-w-10 !p-0" v-if="showNextSurahButton" @click="goToNextSurah" title="السورة التالية">
+        <ion-icon style="width: 32px; height: 32px;" slot="icon-only" :icon="arrowForwardCircleOutline" />
+      </ion-button>
 
-        <ion-button class="max-w-10 !p-0"  v-if="showPreviousSurahButton" @click="goToPreviousSurah" title="السورة السابقة">
-          <ion-icon  style="width: 32px; height: 32px;"  slot="icon-only" :icon="arrowBackCircleOutline" />
-        </ion-button>
+      <ion-button class="max-w-10 !p-0" v-if="showPreviousSurahButton" @click="goToPreviousSurah"
+        title="السورة السابقة">
+        <ion-icon style="width: 32px; height: 32px;" slot="icon-only" :icon="arrowBackCircleOutline" />
+      </ion-button>
 
     </div>
 
     <!-- النسخة الأفقية -->
-    <div v-else  class="min-h-8 min-w-4 flex justify-center px-2 horizonal-buttons">
+    <div v-else class="min-h-8 min-w-4 flex justify-center px-2 horizonal-buttons">
       <ion-buttons slot="start" v-if="showBack">
-        <ion-back-button defaultHref="/"></ion-back-button>
+        <ion-button router-link="/list">
+          <ion-icon :icon="arrowForward" />
+        </ion-button>
       </ion-buttons>
 
       <ion-buttons slot="end">
@@ -60,7 +65,7 @@
         </ion-button>
 
         <ion-button v-if="showPreviousSurahButton" @click="goToPreviousSurah" title="السورة السابقة">
-          <span v-if="previousSurahLabel">{{previousSurahLabel}}</span>
+          <span v-if="previousSurahLabel">{{ previousSurahLabel }}</span>
           <ion-icon :icon="arrowForwardCircleOutline" />
         </ion-button>
 
@@ -70,7 +75,7 @@
 
         <ion-button v-if="showNextSurahButton" @click="goToNextSurah" title="السورة التالية">
           <ion-icon :icon="arrowBackCircleOutline" />
-          <span v-if="nextSurahLabel">{{nextSurahLabel}}</span>
+          <span v-if="nextSurahLabel">{{ nextSurahLabel }}</span>
         </ion-button>
 
         <ion-button v-if="showFontSizeButtons" @click="increaseFontSize" title="تكبير الخط">
@@ -120,7 +125,8 @@ import {
 
 import {
   addCircle, arrowDownCircleOutline,
-  arrowUpCircleOutline,arrowForwardCircleOutline,arrowBackCircleOutline, removeCircle, ribbon, moon, sunny, colorPalette, searchOutline
+  arrowUpCircleOutline, arrowForwardCircleOutline,
+  arrowForward, arrowBackCircleOutline, removeCircle, ribbon, moon, sunny, colorPalette, searchOutline
 } from 'ionicons/icons'
 import { inject, computed, watch } from 'vue';
 
@@ -134,8 +140,8 @@ const props = defineProps({
   showScrollUpButton: Boolean,
   showFontSizeButtons: Boolean,
   showPreviousSurahButton: Boolean,
-  previousSurahLabel: String|null,
-  nextSurahLabel: String|null,
+  previousSurahLabel: String | null,
+  nextSurahLabel: String | null,
   showNextSurahButton: Boolean,
   showFontSelector: Boolean,
   showThemeToggle: Boolean,
@@ -212,6 +218,6 @@ ion-toolbar {
 }
 
 .vertical-toolbar {
-    height: 100vh !important;
+  height: 100vh !important;
 }
 </style>
